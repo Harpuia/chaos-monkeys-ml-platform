@@ -1,0 +1,51 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Skeleton",
+		"_postman_id": "aeeeddb9-0d91-0a4d-c976-404f3a50f2ee",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "RegisterRequest",
+			"request": {
+				"url": "http://127.0.0.1:3000/registerService",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"ip\":\"127.0.0.36\",\"type\":\"Input\",\"name\":\"Input Service\",\"description\":\"My service yo!\",\"status\":\"On!\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "SetStatus",
+			"request": {
+				"url": "http://127.0.0.1:3000/setStatus",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"ip\":\"127.0.0.20\",\"status\":\"Pending\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
