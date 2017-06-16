@@ -2,6 +2,8 @@ package com.chaosmonkeys;
 
 import com.chaosmonkeys.DTO.StatusInfo;
 
+import com.chaosmonkeys.Utilities.LogType;
+import com.chaosmonkeys.Utilities.Logger;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
 
@@ -41,7 +43,7 @@ public class HeartBeatsClient {
                     StatusInfo status = new StatusInfo(Launcher.getHostIP(), Launcher.getServiceStatus());
                     Response response = invocationBuilder.post(Entity.entity(status, MediaType.APPLICATION_JSON));
                 } catch (ProcessingException e) {
-                    System.out.println("heartbeat Connection Timeout, retry");
+                    Logger.SaveLog(LogType.Exception,"EXCEPTION: Heartbeat Connection Timeout, retrying...");
                 }
                 try {
                     Thread.sleep(3 * 1000);

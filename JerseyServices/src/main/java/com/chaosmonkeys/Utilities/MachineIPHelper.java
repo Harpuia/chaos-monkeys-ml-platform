@@ -20,7 +20,7 @@ public class MachineIPHelper {
         try {
             whatIsMyIP = new URL("http://checkip.amazonaws.com");
         } catch (MalformedURLException e) {
-            System.out.println("EXCEPTION: Could not create Amazon URL (my IP).");
+            Logger.SaveLog(LogType.Exception,"EXCEPTION: Could not create Amazon URL (my IP).");
         }
 
         BufferedReader in = null;
@@ -28,14 +28,14 @@ public class MachineIPHelper {
             in = new BufferedReader(new InputStreamReader(
                     whatIsMyIP.openStream()));
         } catch (IOException e) {
-            System.out.println("EXCEPTION: Could not open stream to Amazon (my IP).");
+            Logger.SaveLog(LogType.Exception,"EXCEPTION: Could not open stream to Amazon (my IP).");
         }
 
         String ip = null;
         try {
             ip = in.readLine();
         } catch (IOException e) {
-            System.out.println("EXCEPTION: Could not read value (my IP).");
+            Logger.SaveLog(LogType.Exception,"EXCEPTION: Could not read value (my IP).");
         }
         return ip;
     }
@@ -98,7 +98,7 @@ public class MachineIPHelper {
         try {
             address = InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
-            System.out.println("EXCEPTION: Unknown host ");
+            Logger.SaveLog(LogType.Exception,"EXCEPTION: Unknown host ");
         }
         //Get local machine IP address
         return address.getHostAddress().toString();

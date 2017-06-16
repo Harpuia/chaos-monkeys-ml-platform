@@ -4,12 +4,15 @@ import com.chaosmonkeys.DTO.ConfigInfo;
 import com.chaosmonkeys.DTO.BasicResponse;
 import com.chaosmonkeys.DTO.RegistrationInfo;
 import com.chaosmonkeys.Utilities.ConfigurationHelper;
+import com.chaosmonkeys.Utilities.LogType;
+import com.chaosmonkeys.Utilities.Logger;
 import com.chaosmonkeys.Utilities.MachineIPHelper;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.*;
 import javax.ws.rs.core.MediaType;
@@ -91,26 +94,26 @@ public class Launcher {
         try {
             localhostIP = InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
-            System.out.println("EXCEPTION: could not get localhost IP address.");
+            Logger.SaveLog(LogType.Exception, "EXCEPTION: could not get localhost IP address.");
         }
 
         //Start http server
         startServiceServer();
 
         //Loading the basic info
-        ConfigInfo basicInfo = ConfigurationHelper.loadBasicInfo(configPath);
-        serviceName = basicInfo.serviceName;
-        serviceType = basicInfo.serviceType;
-        serviceDescription = basicInfo.serviceDescription;
-        coordinationIP = basicInfo.coordinationIP;
+        ConfigInfo configInfoInfo = ConfigurationHelper.loadBasicInfo(configPath);
+        serviceName = configInfoInfo.getServiceName();
+        serviceType = configInfoInfo.getServiceType();
+        serviceDescription = configInfoInfo.getServiceDescription();
+        coordinationIP = configInfoInfo.getCoordinationIP();
 
         //Displaying service information
-        System.out.println("The Coordination IP is :" + coordinationIP);
-        System.out.println("Local IP of my system is := " + localhostIP.getHostAddress());
+        Logger.SaveLog(LogType.Information, "The Coordination IP is :" + coordinationIP);
+        Logger.SaveLog(LogType.Information, "Local IP of my system is := " + localhostIP.getHostAddress());
         try {
-            System.out.println("Web IP of my system is := " + MachineIPHelper.getIPfromAWS());
+            Logger.SaveLog(LogType.Information, "Web IP of my system is := " + MachineIPHelper.getIPfromAWS());
         } catch (Exception e) {
-            System.out.println("EXCEPTION: Failed to get IP from AWS.");
+            Logger.SaveLog(LogType.Exception, "EXCEPTION: Failed to get IP from AWS.");
         }
 
         //Self IP, which is sent to the coordination service
@@ -128,14 +131,14 @@ public class Launcher {
         try {
             registerThread.join();
         } catch (InterruptedException e) {
-            System.out.println("EXCEPTION: Failed to register.");
+            Logger.SaveLog(LogType.Exception, "EXCEPTION: Failed to register.");
         }
         if (isRegistered) {
             //Send heartbeats
             HeartBeatsClient hbClient = new HeartBeatsClient();
             hbClient.startSendHeartBeat(coordinationIP);
         } else {
-            System.out.println("ERROR: Failed to register on coordination service! Please contact administrator.");
+            Logger.SaveLog(LogType.Error, "ERROR: Failed to register on coordination service! Please contact administrator.");
         }
     }
 
@@ -144,7 +147,7 @@ public class Launcher {
      */
     public void startServiceServer() {
         final HttpServer server = startServer();
-        System.out.println(String.format("Jersey app started with WADL available at " + "%sapplication.wadl\nHit enter to stop it...", BASE_URI));
+        Logger.SaveLog(LogType.Information, String.format("Jersey app started with WADL available at " + "%sapplication.wadl\nHit enter to stop it...", BASE_URI));
     }
 
     /**
@@ -181,7 +184,7 @@ public class Launcher {
                 try {
                     response = invocationBuilder.post(Entity.entity(serviceInfo, MediaType.APPLICATION_JSON));
                 } catch (ProcessingException e) {
-                    System.out.println("EXCEPTION: Register Connection timeout, retrying...");
+                    Logger.SaveLog(LogType.Exception, "EXCEPTION: Register Connection timeout, retrying...");
                 }
                 if (null != response) {
                     BasicResponse basicResponse = response.readEntity(BasicResponse.class);
@@ -195,7 +198,7 @@ public class Launcher {
                 try {
                     Thread.sleep(3 * 1000);
                 } catch (InterruptedException e) {
-                    System.out.println("EXCEPTION: Interrupted Exception.");
+                    Logger.SaveLog(LogType.Exception, "EXCEPTION: Interrupted Exception.");
                 }
             }
 
