@@ -12,17 +12,33 @@
 
     <title>ChaosMonkeys</title>
 
-    <!--script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script-->
-    <!--script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-route.min.js"></script-->
-    <!--script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-resource.min.js"></script-->
-    <!--script src="/public/js/app.js"></script-->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-route.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-resource.min.js"></script>
+    <script src="/public/js/app.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
         crossorigin="anonymous">
 
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+        crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+
     <!-- Custom styles for this template -->
-    <link href="justified-nav.css" rel="stylesheet">
+    <!--link href="justified-nav.css" rel="stylesheet"-->
+
+    <!-- Custom styles for this template -->
+    <!--link href="grid.css" rel="stylesheet"-->
+
+    <!-- To use the Font Awesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 </head>
 
@@ -47,9 +63,103 @@
         </div>
     </header>
 
-    <div class="container">
-        <div ng-view></div>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h2 class="sub-header">Results</h2>
+            <!-- Button trigger modal -->
+            <div class="container">
+                <!-- Button trigger modal -->
+                <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-lg">Upload</button></p>
+
+                <!-- Modal -->
+                <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <i class="fa fa-database" aria-hidden="true" fa-3x></i>
+                                <h4 class="modal-title" id="myModalLabel">Upload Datas</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6 col-md-offset-0">
+                                        <h5>Data files</h5>
+                                        <form ng-submit="submit()">
+                                            <input type="file" id="myFile">
+                                        </form>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <i class="fa fa-database" aria-hidden="true"></i>
+                                <a href="#">100-Sleep-Data</a>
+                            </td>
+                            <td>
+                                This data set includes 100 students' sleeping data
+                                <br>
+                                <span class="label label-success">800 instances</span>
+                                <span class="label label-success">15 features</span>
+                                <span class="label label-success">3 classes</span>
+                            </td>
+                            <td>
+                                <input type="submit" value="Define a new task" class="btn btn-primary" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <i class="fa fa-database" aria-hidden="true"></i>
+                                <a href="#">30-Sqrill-Data</a>
+                            </td>
+                            <td>
+                                This data set includes 100 students' sleeping data
+                                <br>
+                                <span class="label label-success">500 instances</span>
+                                <span class="label label-success">12 features</span>
+                                <span class="label label-success">5 classes</span>
+                            </td>
+                            <td>
+                                <input type="submit" value="Define a new task" class="btn btn-primary" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
+
+    <!--div class="container">
+        <h3>Results</h3>
+        <p>Here are the data sets.</p>
+        <div class="row">
+            <div class="col-md-3">
+                <i class="fa fa-database" aria-hidden="true"></i> 100-Sleep-Data
+            </div>
+            <div class="col-md-6">
+                This data set includes 100 students' sleeping data
+            </div>
+            <div class="col-md-3">
+                <form>
+                    <input type="submit" value="Define a new task" class="btn btn-primary" />
+                </form>
+            </div>
+        </div>
+        <div class="col-md-3">.col-md-3</div>
+        <div class="col-md-6">.col-md-6</div>
+        <div class="col-md-3">.col-md-3</div>
+    </div-->
 </body>
 
 </html>
