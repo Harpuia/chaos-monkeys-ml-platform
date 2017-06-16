@@ -11,7 +11,9 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.*;
@@ -158,7 +160,10 @@ public class Launcher {
     public static HttpServer startServer() {
         //Create a resource config that scans for JAX-RS resources and providers in com.chaosmonkeys package
         final ResourceConfig rc = new ResourceConfig().packages("com.chaosmonkeys");
-
+        // register jackson for parsing JSON
+        rc.register(JacksonFeature.class);
+        // register multipart for supporting file upload
+        rc.register(MultiPartFeature.class);
         //Create and start a new instance of grizzly http server exposing the Jersey application at BASE_URI
         return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
     }
