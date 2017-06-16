@@ -1,5 +1,7 @@
 package com.chaosmonkeys.inputservice;
 
+import com.chaosmonkeys.Utilities.LogType;
+import com.chaosmonkeys.Utilities.Logger;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -46,12 +48,13 @@ public class InputService {
 
 
     /**
-     * Store file under dataset folder
-     *
+     * Handling upload request and store file under dataset folder
+     *  using multipart form
      * @param fileInputStream
      * @param fileMetaData
      * @param dataName
      * @param userId
+     * @param projectId
      * @return
      */
     @POST
@@ -65,7 +68,7 @@ public class InputService {
 
         String UPLOAD_PATH = DATA_SET_PATH;
         if (null != userId && !userId.equals("")) {
-            System.out.println("Received upload request from" + userId);
+            Logger.SaveLog(LogType.Information, "Received upload request from" + userId);
         }
         //create Datasets folder if it does not exist yet
         File datasetFolder = createDatasetFolder();
@@ -86,9 +89,11 @@ public class InputService {
             DatasetRecord record = new DatasetRecord(projectId, targetFolder.getAbsolutePath());
             datasets.add(record);
         } catch (IOException e) {
-            throw new WebApplicationException("Error while uploading file. Please try again !!");
+            Logger.SaveLog(LogType.Exception, "Error while uploading file. Please try again !!");
+            e.printStackTrace();
+            //throw new WebApplicationException("Error while uploading file. Please try again !!");
         }
-        return Response.ok("Data uploaded successfully!").build();
+        return Response.ok("Data uploaded successfully").build();
     }
 
 
