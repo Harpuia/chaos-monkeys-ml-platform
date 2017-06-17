@@ -102,17 +102,12 @@
                                             <div class="form-group">
                                                 <label for="DataFormat">Data Format</label>
                                                 <br>
-                                                <div class="btn-group">
-                                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        CSV
-                                                        <span class="caret"></span>
-                                                    </button>
-                                                    <ul class="dropdown-menu">
-                                                        <li><a href="#">CSV</a></li>
-                                                        <li><a href="#">JSON</a></li>
-                                                    </ul>
-                                                </div>
-                                                <a href="#" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover">Introduction</a>
+                                                <select class="form-control" id="format-select">
+                                                        <option>CSV</option>
+                                                        <option>JSON</option>
+                                                </select>
+                                                <a href="#" data-toggle="popover" title="Input Data Format" data-content="In CSV, column represents different types of attributes, and row represents one instance of data record. JSON file specifies an array of data records.
+">Introduction</a>
 
                                                 <script>
                                                     $(document).ready(function () {
@@ -124,7 +119,10 @@
                                             <div class="form-group">
                                                 <label for="Metadata">Metadata</label>
                                                 <input type="file" id="metadataFile">
-                                                <a href="#" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover">Introduction</a>
+                                                <a href="#" data-toggle="popover" title="Metadata Schema" data-content="For CSV, first cell defines the file type of data, including CSV and JSON. Second column in first row defines how many attributes are there in one data record. The last cell in first row defines how many data records/instances are in this dataset.
+Second row specifies types of each attribute separately. Third row is optional, specifying names of each attribute. JSON metadata’s root element is an object. The first key is type, specifying dataset file type: JSON or CSV. Second key is attributes, including types array and names array. Names array is optional.
+
+">Introduction</a>
                                                 <script>
                                                     $(document).ready(function () {
                                                         $('[data-toggle="popover"]').popover();
