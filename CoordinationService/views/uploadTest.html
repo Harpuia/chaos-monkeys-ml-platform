@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <title>Dataset Upload Demo</title>
+        <!-- <script type="text/javascript" src="./callUpload.js"></script> -->
+        <meta http-equiv="description" content="this is my page">
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    </head>
+
+    <body>
+        <!-- in input label, using the name attribute to specify FormDataParam in jersey side-->
+        <form action="http://127.0.0.1:8080/services/upload" method="post" 
+              enctype="multipart/form-data">
+            <div>
+                <label for="file">Which file do you want to upload?</label>
+                <input type="file" name="file" id="file" />    
+            </div>
+            <div>
+                <label for="data name">Dataset Name?</label>
+                <input type="text" name="name" id="name" />
+            </div>
+            <div>
+                <label>User ID: </label>
+                <input type="text" name="user_id" id="user_id" />
+            </div>
+            <div>
+                <label>Project ID</label>
+                <input type="text" name="project_id" id="project_id" />
+            </div>
+            <div>
+                <input type="submit" value="Upload" />
+            </div>
+        </form>
+    </body>
+</html>
