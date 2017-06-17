@@ -1,0 +1,146 @@
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <meta name="description" content="Monitoring page">
+  <meta name="author" content="Chaos Monkeys @ CMU">
+  <!--link rel="icon" href="../../favicon.ico"-->
+
+  <title>ChaosMonkeys</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-route.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-resource.min.js"></script>
+    <script src="/public/js/app.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+        crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+
+    <!-- Custom styles for this template -->
+    <link href="justified-nav.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <!--link href="grid.css" rel="stylesheet"-->
+
+    <!-- To use the Font Awesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+
+    table,
+    th,
+    td {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container" style="
+      margin-left: 0px;
+      margin-right: 0px;
+    ">
+      <!-- The justified navigation menu is meant for single line per list item.
+           Multiple lines will require custom code not provided by Bootstrap. -->
+      <div class="masthead">
+        <div class="row">
+          <div class="col-md-12 col-md-offset-1">
+            <h3 class="text-muted">Project Amazon</h3>
+            <nav>
+              <ul class="nav nav-justified">
+                <li><a href="experiments.html">Experiments</a></li>
+                <li><a href="tasks.html">Tasks</a></li>
+                <li><a href="datasets.html">Data Sets</a></li>
+                <li><a href="algorithms.html">Algorithms</a></li>
+                <li><a href="models.html">Models</a></li>
+                <li class="active"><a href="monitoring.html">Monitoring</a></li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="row">
+    <div class="col-md-6 col-md-offset-1">
+      <h2 class="sub-header">Connected services</h2>
+      <h4 class="sub-header">Coordination Service IP: 127.0.0.1:3000</h4>
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>IP</th>
+              <th>Type</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Last Contacted</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+      <script>
+        //Update view with table values
+        setInterval(function () {
+          $('table').find("tr:not(:first)").remove();
+          $.getJSON('http://127.0.0.1:3000/table', function (data) {
+            $.each(data['table'], function (i, item) {
+              var tr = $('<tr>');
+              tr.append('<td>' + item['ip'] + '</td>');
+              tr.append('<td>' + item['type'] + '</td>');
+              tr.append('<td>' + item['name'] + '</td>');
+              tr.append('<td>' + item['description'] + '</td>');
+              tr.append('<td>' + item['status'] + '</td>');
+              tr.append('<td>' + item['lastcontacted'] + '</td>');
+              tr.append('<td><button type="submit" onclick="Run(\'' + item['ip'] + '\')">Run</button></td>');
+              tr.append('<td><button type="submit" onclick="Stop(\'' + item['ip'] + '\')">Stop</button></td>');
+              tr.append('</tr>');
+              $('table').append(tr);
+            })
+          })
+        }, 3000);
+
+        //Call change status to RUN
+        function Run(ip) {
+          var xhttp = new XMLHttpRequest();
+          var url = "http://" + ip + "/services/changeState/RUN";
+          console.log(url);
+          xhttp.open("GET", url, false);
+          xhttp.send();
+          var response = JSON.parse(xhttp.responseText);
+        }
+
+        //Call change status to STOP
+        function Stop(ip) {
+          var xhttp = new XMLHttpRequest();
+          var url = "http://" + ip + "/services/changeState/STOP";
+          console.log(url);
+          xhttp.open("GET", url, false);
+          xhttp.send();
+          var response = JSON.parse(xhttp.responseText);
+        }
+      </script>
+    </div>
+  </div>
+</body>
+
+</html>
