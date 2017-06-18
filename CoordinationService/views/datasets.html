@@ -86,23 +86,7 @@
                                         <form ng-submit="submit()">
                                             <div class="form-group">
                                                 <label for="DataFile">Data Files</label>
-                                                <input type="file" id="dataFile" >
-                                                <script>
-                                                    $('#dataFile').change(function () {
-                                                        var e = document.getElementById("format-select");
-                                                        var selectedValue = e.options[e.selectedIndex].text;
-                                                        var filename = document.getElementById("dataFile").value;
-                                                        var extension = filename.substring(filename.lastIndexOf('.') + 1, filename.length);
-                                                        var x = document.getElementById('warning');
-                                                        if (selectedValue.length != 0 && selectedValue.toLowerCase() != extension.toLowerCase()) {
-                                                            x.style.display = 'block';
-                                                            x.style.color = 'Red';
-                                                        }
-                                                        else
-                                                            x.style.display = 'none';
-
-                                                    });
-                                                </script>
+                                                <input type="file" id="dataFile" onchange="checkValue(document.getElementById('format-select').options[document.getElementById('format-select').selectedIndex].text)">
 
 
                                             </div>
@@ -120,26 +104,24 @@
                                             <div class="form-group">
                                                 <label for="DataFormat">Data Format</label>
                                                 <br>
-                                                <select class="form-control" id="format-select" onchange="checkValue()">
+                                                <select class="form-control" id="format-select" onchange="checkValue(document.getElementById('dataFile').value)">
                                                         <option>CSV</option>
                                                         <option>JSON</option>
                                                 </select>
                                                 <script>
-                                                    function checkValue() {
+                                                    function checkValue(name) {
                                                         var e = document.getElementById("format-select");
                                                         var selectedValue = e.options[e.selectedIndex].text;
                                                         var filename = document.getElementById("dataFile").value;
                                                         var extension = filename.substring(filename.lastIndexOf('.') + 1, filename.length);
                                                         var x = document.getElementById('warning');
-                                                        if (filename.length != 0 && selectedValue.toLowerCase() != extension.toLowerCase()) {
+                                                        if (name.length != 0 && selectedValue.toLowerCase() != extension.toLowerCase()) {
                                                             x.style.display = 'block';
                                                             x.style.color = 'Red';
                                                         }
                                                         else
                                                             x.style.display = 'none';
                                                     }
-
-                                                   
                                                 </script>
                                                 <a href="#" data-toggle="popover" title="Input Data Format" data-content="In CSV, column represents different types of attributes, and row represents one instance of data record. JSON file specifies an array of data records.
 ">Introduction</a>
