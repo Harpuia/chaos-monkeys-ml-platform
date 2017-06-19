@@ -78,53 +78,16 @@
                             <div class="modal-body">
                                 <div class="row">
                                     <div class="col-md-6 col-md-offset-1">
+                                        <!-- in input label, using the name attribute to specify FormDataParam in jersey side-->
                                         <form action="http://127.0.0.1:8080/services/upload" method="post" enctype="multipart/form-data">
-                                            <div class="form-group">
-                                                <label for="DataFile">Data Files</label>
-                                                <input type="file" name="file" id="file">
+                                            <div>
+                                                <label for="file">Which file do you want to upload?</label>
+                                                <input type="file" name="file" id="file" />
                                             </div>
-
-                                            <div class="form-group">
-                                                <label for="name">Name</label>
-                                                <input type="text" class="form-control" name="name" id="name" />
+                                            <div>
+                                                <label for="data name">Dataset Name?</label>
+                                                <input type="text" name="name" id="name" />
                                             </div>
-
-                                            <div class="form-group">
-                                                <label for="description">Description</label>
-                                                <textarea class="form-control" rows="5" id="description" ng-model="Description"> </textarea>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="DataFormat">Data Format</label>
-                                                <br>
-                                                <select class="form-control" id="format-select">
-                                                        <option>CSV</option>
-                                                        <option>JSON</option>
-                                                </select>
-                                                <a href="#" data-toggle="popover" title="Input Data Format" data-content="In CSV, column represents different types of attributes, and row represents one instance of data record. JSON file specifies an array of data records.
-">Introduction</a>
-
-                                                <script>
-                                                    $(document).ready(function () {
-                                                        $('[data-toggle="popover"]').popover();
-                                                    });
-                                                </script>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="Metadata">Metadata</label>
-                                                <input type="file" id="metadataFile">
-                                                <a href="#" data-toggle="popover" title="Metadata Schema" data-content="For CSV, first cell defines the file type of data, including CSV and JSON. Second column in first row defines how many attributes are there in one data record. The last cell in first row defines how many data records/instances are in this dataset.
-Second row specifies types of each attribute separately. Third row is optional, specifying names of each attribute. JSON metadata’s root element is an object. The first key is type, specifying dataset file type: JSON or CSV. Second key is attributes, including types array and names array. Names array is optional.
-
-">Introduction</a>
-                                                <script>
-                                                    $(document).ready(function () {
-                                                        $('[data-toggle="popover"]').popover();
-                                                    });
-                                                </script>
-                                            </div>
-                                            
                                             <div>
                                                 <label>User ID: </label>
                                                 <input type="text" name="user_id" id="user_id" />
@@ -133,7 +96,9 @@ Second row specifies types of each attribute separately. Third row is optional, 
                                                 <label>Project ID</label>
                                                 <input type="text" name="project_id" id="project_id" />
                                             </div>
-                                            <input type="submit" value="Upload" class="btn btn-primary">Submit</button>
+                                            <div>
+                                                <input type="submit" value="Upload" />
+                                            </div>
                                         </form>
 
                                     </div>
@@ -141,7 +106,7 @@ Second row specifies types of each attribute separately. Third row is optional, 
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                
+
                             </div>
                         </div>
                     </div>
