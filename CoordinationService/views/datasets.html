@@ -2,6 +2,82 @@
 <html lang="en">
 
 <head>
+    <style>
+        /* Center the loader */
+
+        #uploading {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            z-index: 1;
+            width: 150px;
+            height: 150px;
+            margin: -20px 0 0 -75px;
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 100px;
+            height: 100px;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+        }
+
+        @-webkit-keyframes spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        /* Add animation to "page content" */
+
+        .animate-bottom {
+            position: relative;
+            -webkit-animation-name: animatebottom;
+            -webkit-animation-duration: 1s;
+            animation-name: animatebottom;
+            animation-duration: 1s
+        }
+
+        @-webkit-keyframes animatebottom {
+            from {
+                bottom: -100px;
+                opacity: 0
+            }
+            to {
+                bottom: 0px;
+                opacity: 1
+            }
+        }
+
+        @keyframes animatebottom {
+            from {
+                bottom: -100px;
+                opacity: 0
+            }
+            to {
+                bottom: 0;
+                opacity: 1
+            }
+        }
+
+        #myDiv {
+            display: none;
+            text-align: center;
+        }
+    </style>
+
+
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -76,10 +152,16 @@
                                 <h4 class="modal-title" id="myModalLabel">Upload Datas</h4>
                             </div>
                             <div class="modal-body">
-                                <div class="row">
+                                <div class="uploadingpopup" id="uploading" style="display:none">
+                                    <div style="height: 400px;" >
+                                        <br><br><br><br><br><br><br><br><br><br><br><br>
+                                    </div>
+
+                                </div>
+                                <div class="row" id="contents" style="display:block">
                                     <div class="col-md-6 col-md-offset-1">
                                         <!-- in input label, using the name attribute to specify FormDataParam in jersey side-->
-                                        <form action="http://127.0.0.1:8080/services/upload" method="post" enctype="multipart/form-data">
+                                        <form method="post" enctype="multipart/form-data">
                                             <div>
                                                 <label for="file">Which file do you want to upload?</label>
                                                 <input type="file" name="file" id="file" />
@@ -97,7 +179,21 @@
                                                 <input type="text" name="project_id" id="project_id" />
                                             </div>
                                             <div>
-                                                <input type="submit" value="Upload" />
+                                                <button  type="button" onclick="showPage()">Upload</button>
+                                                <script>
+
+                                                    var myVar;
+
+                                                    function showUpload() {
+                                                        myVar = setTimeout(showPage, 3000);
+                                                    }
+
+                                                    function showPage() {
+                                                        document.getElementById("contents").style.display = "none";
+                                                        document.getElementById("uploading").style.display = "block";
+                                                    }
+                                                </script>
+
                                             </div>
                                         </form>
 
