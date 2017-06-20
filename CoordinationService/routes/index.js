@@ -37,6 +37,8 @@ router.post('/registerService', function (req, res) {
 
 /* sets status */
 router.post('/setStatus', function (req, res) {
+  //TODO: uncomment this for viewing heartbeats msg
+  //console.log(req.body)
   var currentdate = new Date();
   var serviceStatus = req.body;
   var exists = false;
@@ -51,6 +53,7 @@ router.post('/setStatus', function (req, res) {
     var dateTime = dateToText(currentdate);
     table[existingIndex]['lastcontacted'] = dateTime;
     table[existingIndex]['status'] = serviceStatus['status'];
+    if( table[ex])
     res.json({ response: "OK" });
   } else {
     res.json({ response: "ERROR" });

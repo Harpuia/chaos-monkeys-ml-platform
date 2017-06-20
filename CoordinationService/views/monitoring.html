@@ -87,6 +87,8 @@
               <th>Description</th>
               <th>Status</th>
               <th>Last Contacted</th>
+              <!--<th>Uploading</th>
+              <th>Checking</th>-->
               <th></th>
               <th></th>
             </tr>
@@ -106,13 +108,24 @@
               tr.append('<td>' + item['description'] + '</td>');
               tr.append('<td>' + item['status'] + '</td>');
               tr.append('<td>' + item['lastcontacted'] + '</td>');
+              //TODO: filter null
+              // if(item['inputServiceStatus']['uploadingList'] == undefined){
+              //   tr.append('N/A');
+              // }else{
+              //   tr.append('<td>' + item['inputServiceStatus']['uploadingList'] + '</td>');
+              // }
+              // if(item['inputServiceStatus']['checkingList'] == undefined){
+              //   tr.append('N/A');
+              // }else{
+              //   tr.append('<td>' + item['inputServiceStatus']['checkingList'] + '</td>');
+              // }
               tr.append('<td><button type="submit" onclick="Run(\'' + item['ip'] + '\')">Run</button></td>');
               tr.append('<td><button type="submit" onclick="Stop(\'' + item['ip'] + '\')">Stop</button></td>');
               tr.append('</tr>');
               $('table').append(tr);
             })
           })
-        }, 3000);
+        }, 1000);
 
         //Call change status to RUN
         function Run(ip) {

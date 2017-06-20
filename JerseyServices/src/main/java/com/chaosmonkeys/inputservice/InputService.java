@@ -10,7 +10,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -22,9 +24,16 @@ public class InputService {
     private static final String DATA_SET_PATH = "./Datasets/";
     private static final String EXECUTION_DATA = "Execution";
     private static final String TRAINING_DATA = "Predications";
+    // Constants operating with service status
+    private static final String STATUS_RUN = "RUNNING";
+    private static final String STATUS_IDLE = "IDLE";
 
     // states variables
-    private boolean hasDatasetFolder = false;
+    public static String serviceStatus = "IDLE";
+    public boolean hasDatasetFolder = false;
+    // sets store datasets name that are under processing
+    final public Set<String> uploadSet = new HashSet<>();
+    final public Set<String> checkSet = new HashSet<>();
 
     // fake database
     List<DatasetRecord> datasets = new ArrayList<>();
@@ -65,26 +74,31 @@ public class InputService {
                                @FormDataParam("name") String dataName,
                                @FormDataParam("user_id") String userId,
                                @FormDataParam("project_id") int projectId) {
-
+        refreshServiceState();
         String UPLOAD_PATH = DATA_SET_PATH;
         if (null != userId && !userId.equals("")) {
             Logger.SaveLog(LogType.Information, "Received upload request from" + userId);
         }
         //create Datasets folder if it does not exist yet
         File datasetFolder = createDatasetFolder();
-        //TODO: determine it is execution or not
+        //TODO: determine it is execution or not, delete the folder if uploading fail
         // Open the direct parent folder
         File executionFolder = createNewFolderUnder(EXECUTION_DATA, datasetFolder);
         try {
             int read = 0;       // the total number of bytes read into the buffer
             byte[] bytes = new byte[1024];
             File targetFolder = createNewFolderUnder(dataName, executionFolder);
-            OutputStream out = new FileOutputStream(new File(targetFolder, fileMetaData.getFileName()));
+            String fileName = fileMetaData.getFileName();
+            // add to uploading set
+            uploadSet.add(fileName);
+            OutputStream out = new FileOutputStream(new File(targetFolder, fileName));
             while ((read = fileInputStream.read(bytes)) != -1) {
                 out.write(bytes, 0, read);
             }
             out.flush();
             out.close();
+            // remove this one from uploading list
+            uploadSet.remove(fileName);
             // TODO: store file path in database
             DatasetRecord record = new DatasetRecord(projectId, targetFolder.getAbsolutePath());
             datasets.add(record);
@@ -93,9 +107,32 @@ public class InputService {
             e.printStackTrace();
             //throw new WebApplicationException("Error while uploading file. Please try again !!");
         }
+        refreshServiceState();
         return Response.ok("Data uploaded successfully").build();
     }
 
+    /**
+     * Refresh Service Status based on the size of checking set and uploading list
+     */
+    public void refreshServiceState(){
+        if( checkSet.isEmpty() && uploadSet.isEmpty() ){
+            this.serviceStatus = STATUS_IDLE;
+        }else{
+            this.serviceStatus = STATUS_RUN;
+        }
+    }
+
+    /**
+     * Refresh the service status at first, then check whether it is idle or not
+     * @return true if it is idld
+     */
+    public boolean isIdle(){
+        refreshServiceState();
+        if (this.serviceStatus.equals(STATUS_IDLE)){
+            return true;
+        }
+        return false;
+    }
 
     // Methods used to manage file and folder
 
