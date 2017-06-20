@@ -81,6 +81,10 @@
                                 <h4 class="modal-title" id="myModalLabel">Upload Datas</h4>
                             </div>
                             <div class="modal-body">
+                                <div class="alert alert-warning alert-dismissible" id="formatAlert" style="display: none;" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <strong>Warning!</strong> The selected data format doesn't match the input data format.
+                                </div>
                                 <div class="row">
                                     <div class="col-md-6 col-md-offset-1">
                                         <form ng-submit="submit()">
@@ -114,20 +118,17 @@
                                                         var selectedValue = e.options[e.selectedIndex].text;
                                                         var filename = document.getElementById("dataFile").value;
                                                         var extension = filename.substring(filename.lastIndexOf('.') + 1, filename.length);
-                                                        var x = document.getElementById('warning');
+                                                        var alert = document.getElementById('formatAlert');
                                                         if (name.length != 0 && selectedValue.toLowerCase() != extension.toLowerCase()) {
-                                                            x.style.display = 'block';
-                                                            x.style.color = 'Red';
+                                                            alert.style.display = "block";
                                                         }
-                                                        else
-                                                            x.style.display = 'none';
+                                                        else {
+                                                            alert.style.display = "none";
+                                                        }
                                                     }
                                                 </script>
                                                 <a href="#" data-toggle="popover" title="Input Data Format" data-content="In CSV, column represents different types of attributes, and row represents one instance of data record. JSON file specifies an array of data records.
 ">Introduction</a>
-                                                <div id="warning" style="display: none;">Warning: The selected data format doesn't match the input data format.
-                                                </div>
-
                                                 <script>
                                                     $(document).ready(function () {
                                                         $('[data-toggle="popover"]').popover();
