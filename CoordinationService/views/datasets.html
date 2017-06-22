@@ -153,7 +153,7 @@
                             </div>
                             <div class="modal-body">
                                 <div class="uploadingpopup" id="uploading" style="display:none">
-                                    <div style="height: 400px;" >
+                                    <div style="height: 400px;">
                                         <br><br><br><br><br><br><br><br><br><br><br><br>
                                     </div>
 
@@ -161,7 +161,7 @@
                                 <div class="row" id="contents" style="display:block">
                                     <div class="col-md-6 col-md-offset-1">
                                         <!-- in input label, using the name attribute to specify FormDataParam in jersey side-->
-                                        <form method="post" enctype="multipart/form-data">
+                                        <form id="dataForm" action="http://127.0.0.1:8080/services/upload" method="post" enctype="multipart/form-data">
                                             <div>
                                                 <label for="file">Which file do you want to upload?</label>
                                                 <input type="file" name="file" id="file" />
@@ -179,24 +179,51 @@
                                                 <input type="text" name="project_id" id="project_id" />
                                             </div>
                                             <div>
-                                                <button  type="button" onclick="showPage()">Upload</button>
-                                                <script>
-
-                                                    var myVar;
-
-                                                    function showUpload() {
-                                                        myVar = setTimeout(showPage, 3000);
-                                                    }
-
-                                                    function showPage() {
-                                                        document.getElementById("contents").style.display = "none";
-                                                        document.getElementById("uploading").style.display = "block";
-                                                    }
-                                                </script>
-
+                                                <input type="submit" id="submitButton" value="Upload" onclick="showPage()">
                                             </div>
                                         </form>
 
+                                        <script type="text/javascript">
+                                            $(document).ready(function () {
+                                                
+                                                var myVar;
+
+                                                function showUpload() {
+                                                    myVar = setTimeout(showPage, 3000);
+                                                }
+
+                                                function showPage() {
+                                                    document.getElementById("contents").style.display = "none";
+                                                    document.getElementById("uploading").style.display = "block";
+                                                }
+                                                
+                                                $("input#submitButton").click(function() {
+                                                    // TODO: Fix the bug: File uploads successfully but AJAX returns error
+                                                    $.ajax({
+                                                        url: "http://127.0.0.1:8080/services/upload",
+                                                        type: "POST",
+                                                        dataType: "json",
+                                                        contentType:'application/json',
+                                                        data: $('form#dataForm').serialize(),
+                                                        beforeSend: function() {
+                                                            // TODO: Setting a timeout
+                                                            showPage();
+                                                        },
+                                                        success: function(data) {
+                                                            //console.log("Submitted");
+                                                            alert("Submitted");
+                                                        },
+                                                        error: function(request, status, error) {
+                                                            //console.log(status + error);
+                                                            alert("error");
+                                                        },
+                                                        complete: function() {
+                                                            document.getElementById("contents").style.display = "none";
+                                                        }});
+                                                });
+                                                
+                                            });
+                                        </script>
                                     </div>
                                 </div>
                             </div>
