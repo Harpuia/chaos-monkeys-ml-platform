@@ -38,7 +38,7 @@ router.post('/registerService', function (req, res) {
 /* sets status */
 router.post('/setStatus', function (req, res) {
   //TODO: uncomment this for viewing heartbeats msg
-  //console.log(req.body)
+  console.log(req.body)
   var currentdate = new Date();
   var serviceStatus = req.body;
   var exists = false;
@@ -53,7 +53,11 @@ router.post('/setStatus', function (req, res) {
     var dateTime = dateToText(currentdate);
     table[existingIndex]['lastcontacted'] = dateTime;
     table[existingIndex]['status'] = serviceStatus['status'];
-    if( table[ex])
+    // determine the type of web services, add specific field
+    // TODO: more proper design
+    if( 'input' === table[existingIndex]['type']){  // add input service status
+      table[existingIndex]['inputServiceStatus'] = serviceStatus['inputServiceStatus']
+    }
     res.json({ response: "OK" });
   } else {
     res.json({ response: "ERROR" });

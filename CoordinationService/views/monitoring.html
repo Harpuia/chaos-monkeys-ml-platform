@@ -87,8 +87,8 @@
               <th>Description</th>
               <th>Status</th>
               <th>Last Contacted</th>
-              <!--<th>Uploading</th>
-              <th>Checking</th>-->
+              <th>Uploading</th>
+              <th>Checking</th>
               <th></th>
               <th></th>
             </tr>
@@ -108,24 +108,27 @@
               tr.append('<td>' + item['description'] + '</td>');
               tr.append('<td>' + item['status'] + '</td>');
               tr.append('<td>' + item['lastcontacted'] + '</td>');
-              //TODO: filter null
-              // if(item['inputServiceStatus']['uploadingList'] == undefined){
-              //   tr.append('N/A');
-              // }else{
-              //   tr.append('<td>' + item['inputServiceStatus']['uploadingList'] + '</td>');
-              // }
-              // if(item['inputServiceStatus']['checkingList'] == undefined){
-              //   tr.append('N/A');
-              // }else{
-              //   tr.append('<td>' + item['inputServiceStatus']['checkingList'] + '</td>');
-              // }
+              //TODO: design this table to display different types of service,
+              // may be we can use different table for different types services
+              uploadList = item['inputServiceStatus']['uploadingList']
+              checkList = item['inputServiceStatus']['checkingList']
+              if( !uploadList || 0 === uploadList.length){
+                tr.append('<td> N/A </td>');
+              }else{
+                tr.append('<td>' + item['inputServiceStatus']['uploadingList'] + '</td>');
+              }
+              if( !checkList || 0 === checkList.length){
+                tr.append('<td> N/A </td>');
+              }else{
+                tr.append('<td>' + item['inputServiceStatus']['checkingList'] + '</td>');
+              }
               tr.append('<td><button type="submit" onclick="Run(\'' + item['ip'] + '\')">Run</button></td>');
               tr.append('<td><button type="submit" onclick="Stop(\'' + item['ip'] + '\')">Stop</button></td>');
               tr.append('</tr>');
               $('table').append(tr);
             })
           })
-        }, 1000);
+        }, 2000);
 
         //Call change status to RUN
         function Run(ip) {

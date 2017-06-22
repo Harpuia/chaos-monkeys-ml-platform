@@ -46,7 +46,7 @@ public class InputServiceHeartBeatsClient {
             Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
             while (true) {
                 try {
-                    InputServiceWorkState workState = new InputServiceWorkState();
+                    InputServiceWorkState workState = new InputServiceWorkState(InputService.checkSet, InputService.uploadSet);
                     InputServiceStatusInfo serviceStatusInfo = new InputServiceStatusInfo(Launcher.getHostIP(), InputService.serviceStatus, workState );
 
                     Response response = invocationBuilder.post(Entity.entity(serviceStatusInfo, MediaType.APPLICATION_JSON));
