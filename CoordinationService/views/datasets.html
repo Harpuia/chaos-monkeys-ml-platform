@@ -153,26 +153,17 @@
                             </div>
                             <div class="modal-body">
                                 <div class="uploadingpopup" id="uploading" style="display:none">
-<<<<<<< HEAD
-                                    <div style="height: 400px;">
-                                        <br><br><br><br><br><br><br><br><br><br><br><br>
-=======
                                     
                                     <div style="height: 400px;" >
                                         
->>>>>>> 752ed0745520a329b33077e2ae4d1070550f9c4a
                                     </div>
 
                                 </div>
                                 <div class="row" >
                                     <div class="col-md-6 col-md-offset-1">
                                         <!-- in input label, using the name attribute to specify FormDataParam in jersey side-->
-<<<<<<< HEAD
                                         <form id="dataForm" action="http://127.0.0.1:8080/services/upload" method="post" enctype="multipart/form-data">
-=======
-                                        <form method="post" enctype="multipart/form-data">
                                         <div class="description" id="contents" style="display:block">
->>>>>>> 752ed0745520a329b33077e2ae4d1070550f9c4a
                                             <div>
                                                 <label for="file">Which file do you want to upload?</label>
                                                 <input type="file" name="file" id="file" />
@@ -190,10 +181,7 @@
                                                 <input type="text" name="project_id" id="project_id" />
                                             </div>
                                             <div>
-<<<<<<< HEAD
                                                 <input type="submit" id="submitButton" value="Upload" onclick="showPage()">
-=======
-                                                <button  type="button" onclick="showPage()">Upload</button>
                                                 <script>
                                                     function showPage() {
                                                         //document.getElementById("contents").style.display = "none";
@@ -202,25 +190,12 @@
                                                     }
                                                 </script>
 
->>>>>>> 752ed0745520a329b33077e2ae4d1070550f9c4a
                                             </div>
                                             </div>
                                         </form>
 
                                         <script type="text/javascript">
                                             $(document).ready(function () {
-                                                
-                                                var myVar;
-
-                                                function showUpload() {
-                                                    myVar = setTimeout(showPage, 3000);
-                                                }
-
-                                                function showPage() {
-                                                    document.getElementById("contents").style.display = "none";
-                                                    document.getElementById("uploading").style.display = "block";
-                                                }
-                                                
                                                 $("input#submitButton").click(function() {
                                                     // TODO: Fix the bug: File uploads successfully but AJAX returns error
                                                     $.ajax({
@@ -299,27 +274,6 @@
             </div>
         </div>
     </div>
-
-    <!--div class="container">
-        <h3>Results</h3>
-        <p>Here are the data sets.</p>
-        <div class="row">
-            <div class="col-md-3">
-                <i class="fa fa-database" aria-hidden="true"></i> 100-Sleep-Data
-            </div>
-            <div class="col-md-6">
-                This data set includes 100 students' sleeping data
-            </div>
-            <div class="col-md-3">
-                <form>
-                    <input type="submit" value="Define a new task" class="btn btn-primary" />
-                </form>
-            </div>
-        </div>
-        <div class="col-md-3">.col-md-3</div>
-        <div class="col-md-6">.col-md-6</div>
-        <div class="col-md-3">.col-md-3</div>
-    </div-->
 </body>
 
 </html>
