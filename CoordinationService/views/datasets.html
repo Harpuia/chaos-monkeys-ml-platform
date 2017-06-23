@@ -12,12 +12,12 @@
             z-index: 1;
             width: 150px;
             height: 150px;
-            margin: -20px 0 0 -75px;
+            margin: -60px 0 0 -75px;
             border: 16px solid #f3f3f3;
             border-radius: 50%;
             border-top: 16px solid #3498db;
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             -webkit-animation: spin 2s linear infinite;
             animation: spin 2s linear infinite;
         }
@@ -153,15 +153,26 @@
                             </div>
                             <div class="modal-body">
                                 <div class="uploadingpopup" id="uploading" style="display:none">
+<<<<<<< HEAD
                                     <div style="height: 400px;">
                                         <br><br><br><br><br><br><br><br><br><br><br><br>
+=======
+                                    
+                                    <div style="height: 400px;" >
+                                        
+>>>>>>> 752ed0745520a329b33077e2ae4d1070550f9c4a
                                     </div>
 
                                 </div>
-                                <div class="row" id="contents" style="display:block">
+                                <div class="row" >
                                     <div class="col-md-6 col-md-offset-1">
                                         <!-- in input label, using the name attribute to specify FormDataParam in jersey side-->
+<<<<<<< HEAD
                                         <form id="dataForm" action="http://127.0.0.1:8080/services/upload" method="post" enctype="multipart/form-data">
+=======
+                                        <form method="post" enctype="multipart/form-data">
+                                        <div class="description" id="contents" style="display:block">
+>>>>>>> 752ed0745520a329b33077e2ae4d1070550f9c4a
                                             <div>
                                                 <label for="file">Which file do you want to upload?</label>
                                                 <input type="file" name="file" id="file" />
@@ -179,7 +190,20 @@
                                                 <input type="text" name="project_id" id="project_id" />
                                             </div>
                                             <div>
+<<<<<<< HEAD
                                                 <input type="submit" id="submitButton" value="Upload" onclick="showPage()">
+=======
+                                                <button  type="button" onclick="showPage()">Upload</button>
+                                                <script>
+                                                    function showPage() {
+                                                        //document.getElementById("contents").style.display = "none";
+                                                        $(".description").css('visibility', 'hidden');
+                                                        document.getElementById("uploading").style.display = "block";
+                                                    }
+                                                </script>
+
+>>>>>>> 752ed0745520a329b33077e2ae4d1070550f9c4a
+                                            </div>
                                             </div>
                                         </form>
 

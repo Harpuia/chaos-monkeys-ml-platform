@@ -40,6 +40,7 @@ public class InputServiceWorkState {
             sb.append(s);
             sb.append(";");
         }
+        uploadingList = sb.toString();
     }
 
     public List<String> getChecking() {
