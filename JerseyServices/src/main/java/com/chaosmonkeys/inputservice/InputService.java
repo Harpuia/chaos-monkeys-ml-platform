@@ -32,8 +32,8 @@ public class InputService {
     public static String serviceStatus = "IDLE";
     public boolean hasDatasetFolder = false;
     // sets store datasets name that are under processing
-    final public Set<String> uploadSet = new HashSet<>();
-    final public Set<String> checkSet = new HashSet<>();
+    public static Set<String> uploadSet = new HashSet<>();
+    public static Set<String> checkSet = new HashSet<>();
 
     // fake database
     List<DatasetRecord> datasets = new ArrayList<>();
