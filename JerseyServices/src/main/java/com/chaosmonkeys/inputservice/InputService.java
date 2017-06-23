@@ -1,5 +1,7 @@
 package com.chaosmonkeys.inputservice;
 
+import com.chaosmonkeys.DTO.DbConfigInfo;
+import com.chaosmonkeys.Utilities.DbConfigurationHelper;
 import com.chaosmonkeys.Utilities.LogType;
 import com.chaosmonkeys.Utilities.Logger;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -13,7 +15,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+import java.sql.DriverManager;
+import java.sql.Connection;
 
 /**
  * Class containing all possible service calls (API methods)
@@ -62,8 +65,10 @@ public class InputService {
      * @param fileInputStream
      * @param fileMetaData
      * @param dataName
+     * @param dataDescription
      * @param userId
      * @param projectId
+     * @param format
      * @return
      */
     @POST
@@ -72,8 +77,10 @@ public class InputService {
     public Response uploadFile(@FormDataParam("file") InputStream fileInputStream,
                                @FormDataParam("file") FormDataContentDisposition fileMetaData,
                                @FormDataParam("name") String dataName,
+                               @FormDataParam("description") String dataDescription,
                                @FormDataParam("user_id") String userId,
-                               @FormDataParam("project_id") int projectId) {
+                               @FormDataParam("project_id") String projectId,
+                               @FormDataParam("format") String format){
         refreshServiceState();
         String UPLOAD_PATH = DATA_SET_PATH;
         if (null != userId && !userId.equals("")) {
@@ -99,9 +106,10 @@ public class InputService {
             out.close();
             // remove this one from uploading list
             uploadSet.remove(fileName);
-            // TODO: store file path in database
-            DatasetRecord record = new DatasetRecord(projectId, targetFolder.getAbsolutePath());
-            datasets.add(record);
+
+            //insert data sets into database.
+            storeDataSets(userId,projectId,dataName,dataDescription,targetFolder.getAbsolutePath(),format);
+
         } catch (IOException e) {
             Logger.SaveLog(LogType.Exception, "Error while uploading file. Please try again !!");
             e.printStackTrace();
@@ -109,6 +117,58 @@ public class InputService {
         }
         refreshServiceState();
         return Response.ok("Data uploaded successfully").build();
+    }
+
+    /**
+     * Insert the data sets information to the ConfigurationDatabase database.
+     * @param userId the user id.
+     * @param projectId the project id.
+     * @param dataName the target database name.
+     * @param dataDescription the description regarding the input data.
+     * @param path the input data path.
+     * @param format the input data format.
+     */
+    public void storeDataSets(String userId, String projectId, String dataName,String dataDescription, String path,String format){
+
+        Connection DBConn=null;
+        boolean connectError=false;
+        java.sql.Statement statement = null;        // SQL statement pointer
+        try
+        {
+            //load JDBC driver class for MySQL
+            Class.forName( "com.mysql.jdbc.Driver" );
+
+            //get dbc onnection info from dbConfig.ini
+            DbConfigInfo configInfo = DbConfigurationHelper.loadBasicInfo("dbConfig.ini");
+            String userName = configInfo.getUserName();
+            String password = configInfo.getPassword();
+            String dbName=configInfo.getDbName();
+            String SQLServerIP = configInfo.getHost();
+            String port=configInfo.getPort();
+            String sourceURL = "jdbc:mysql://" + SQLServerIP + ":"+port+"/"+dbName+"";
+
+            //create a connection to the db
+            DBConn = DriverManager.getConnection(sourceURL,userName,password);
+
+        } catch (Exception e) {
+
+            String errString =  "\nProblem connecting to database:: " + e;
+            Logger.SaveLog(LogType.Exception,errString);
+            connectError = true;
+
+        }
+        if(!connectError){
+            try {
+                statement=DBConn.createStatement();
+                statement.executeUpdate("INSERT INTO datasets (user_id, project_id,path,name,description,format) "
+                        +"VALUES ('"+userId+"', '"+projectId+"', '"+path+"', '"+dataName+"', '"+dataDescription+"', '"+format+"')");
+                DBConn.close();
+            }catch(Exception ex){
+                String errString="\nProblem with insert:: " + ex;
+                Logger.SaveLog(LogType.Exception,errString);
+                connectError=true;
+            }
+        }
     }
 
     /**
