@@ -85,3 +85,6 @@ cred/
 
 # Terraform AWS access key pairs
 *.tf
+
+# Built target
+# JerseyServices/target
