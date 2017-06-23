@@ -76,12 +76,18 @@
                                 <h4 class="modal-title" id="myModalLabel">Upload Datas</h4>
                             </div>
                             <div class="modal-body">
+                                <div class="alert alert-warning alert-dismissible" id="formatAlert" style="display: none;" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <strong>Warning!</strong> The selected data format doesn't match the input data format.
+                                </div>
                                 <div class="row">
                                     <div class="col-md-6 col-md-offset-1">
                                         <form ng-submit="submit()">
                                             <div class="form-group">
                                                 <label for="DataFile">Data Files</label>
-                                                <input type="file" id="dataFile">
+                                                <input type="file" id="dataFile" onchange="checkValue(document.getElementById('format-select').options[document.getElementById('format-select').selectedIndex].text)">
+
+
                                             </div>
 
                                             <div class="form-group">
@@ -97,13 +103,28 @@
                                             <div class="form-group">
                                                 <label for="DataFormat">Data Format</label>
                                                 <br>
-                                                <select class="form-control" id="format-select">
+                                                <select class="form-control" id="format-select" onchange="checkValue(document.getElementById('dataFile').value)">
                                                         <option>CSV</option>
                                                         <option>JSON</option>
                                                 </select>
+                                                <script>
+                                                    //check if the input data format matches the data format the user selected.
+                                                    function checkValue(name) {
+                                                        var e = document.getElementById("format-select");
+                                                        var selectedValue = e.options[e.selectedIndex].text;
+                                                        var filename = document.getElementById("dataFile").value;
+                                                        var extension = filename.substring(filename.lastIndexOf('.') + 1, filename.length);
+                                                        var alert = document.getElementById('formatAlert');
+                                                        if (name.length != 0 && selectedValue.toLowerCase() != extension.toLowerCase()) {
+                                                            alert.style.display = "block";
+                                                        }
+                                                        else {
+                                                            alert.style.display = "none";
+                                                        }
+                                                    }
+                                                </script>
                                                 <a href="#" data-toggle="popover" title="Input Data Format" data-content="In CSV, column represents different types of attributes, and row represents one instance of data record. JSON file specifies an array of data records.
 ">Introduction</a>
-
                                                 <script>
                                                     $(document).ready(function () {
                                                         $('[data-toggle="popover"]').popover();
