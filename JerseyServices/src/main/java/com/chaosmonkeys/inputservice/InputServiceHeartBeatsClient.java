@@ -46,12 +46,12 @@ public class InputServiceHeartBeatsClient {
             Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
             while (true) {
                 try {
-                    InputServiceWorkState workState = new InputServiceWorkState(InputService.checkSet, InputService.uploadSet);
-                    InputServiceStatusInfo serviceStatusInfo = new InputServiceStatusInfo(Launcher.getHostIP(), InputService.serviceStatus, workState );
+                    InputServiceWorkState workState = new InputServiceWorkState(InputService.checkSet, InputService.uploadSet, InputService.serviceStatus);
+                    InputServiceStatusInfo serviceStatusInfo = new InputServiceStatusInfo(Launcher.getHostIP(), workState);
 
                     Response response = invocationBuilder.post(Entity.entity(serviceStatusInfo, MediaType.APPLICATION_JSON));
                 } catch (ProcessingException e) {
-                    Logger.SaveLog(LogType.Exception,"EXCEPTION: Heartbeat Connection Timeout, retrying...");
+                    Logger.SaveLog(LogType.Exception, "EXCEPTION: Heartbeat Connection Timeout, retrying...");
                 }
                 try {
                     Thread.sleep(3 * 1000);

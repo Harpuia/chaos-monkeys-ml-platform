@@ -9,6 +9,16 @@ import java.util.Set;
  * including: datasets is under checking, datasets is under uploading
  */
 public class InputServiceWorkState {
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    private String status;
+
     private List<String> checking;
     private List<String> uploading;
 
@@ -18,19 +28,22 @@ public class InputServiceWorkState {
 
     // Constructors
 
-    public InputServiceWorkState(){
+    public InputServiceWorkState() {
 
     }
-    public InputServiceWorkState(List<String> checking, List<String> uploading) {
+
+    public InputServiceWorkState(List<String> checking, List<String> uploading, String status) {
+        this.status = status;
         this.checking = checking;
         this.uploading = uploading;
     }
-    public InputServiceWorkState(Set<String> checking, Set<String> uploading) {
+
+    public InputServiceWorkState(Set<String> checking, Set<String> uploading, String status) {
+        this.status = status;
         this.checking = new ArrayList<>(checking);
         this.uploading = new ArrayList<>(uploading);
         StringBuilder strBuilder = new StringBuilder();
-        for (String s : checking)
-        {
+        for (String s : checking) {
             strBuilder.append(s);
             strBuilder.append("; ");
         }
@@ -58,6 +71,7 @@ public class InputServiceWorkState {
     public void setUploading(List<String> uploading) {
         this.uploading = uploading;
     }
+
     public String getCheckingList() {
         return checkingList;
     }

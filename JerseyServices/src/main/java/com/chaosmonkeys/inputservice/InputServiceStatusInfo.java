@@ -6,16 +6,14 @@ package com.chaosmonkeys.inputservice;
  */
 public class InputServiceStatusInfo {
     private String IP;
-    private String Status;
-    private InputServiceWorkState InputServiceStatus;
+    private InputServiceWorkState status;
 
+    public InputServiceStatusInfo() {
+    }
 
-    public InputServiceStatusInfo(){}
-
-    public InputServiceStatusInfo(String IP, String status, InputServiceWorkState inputServiceStatus) {
+    public InputServiceStatusInfo(String IP, InputServiceWorkState status) {
         this.IP = IP;
-        Status = status;
-        InputServiceStatus = inputServiceStatus;
+        this.status = status;
     }
 
 
@@ -27,19 +25,11 @@ public class InputServiceStatusInfo {
         this.IP = IP;
     }
 
-    public String getStatus() {
-        return Status;
+    public InputServiceWorkState getStatus() {
+        return status;
     }
 
-    public void setStatus(String status) {
-        this.Status = status;
-    }
-
-    public InputServiceWorkState getInputServiceStatus() {
-        return InputServiceStatus;
-    }
-
-    public void setInputServiceStatus(InputServiceWorkState inputServiceStatus) {
-        InputServiceStatus = inputServiceStatus;
+    public void setStatus(InputServiceWorkState status) {
+        this.status = status;
     }
 }
