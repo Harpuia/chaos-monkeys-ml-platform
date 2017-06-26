@@ -7,11 +7,14 @@ import com.chaosmonkeys.Utilities.ConfigurationHelper;
 import com.chaosmonkeys.Utilities.LogType;
 import com.chaosmonkeys.Utilities.Logger;
 import com.chaosmonkeys.Utilities.MachineIPHelper;
+import com.chaosmonkeys.inputservice.InputServiceHeartBeatsClient;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.*;
@@ -120,8 +123,8 @@ public class Launcher {
         //TODO: Replace with appropriate IP (development/production)
         //For testing
         Launcher.hostIP = "127.0.0.1:8080";
-        /*For production
-        Launcher.hostIP = MachineIPUtility.getRealIp();*/
+    /*For production
+    Launcher.hostIP = MachineIPUtility.getRealIp();*/
 
         //Start registration
         ThreadSafeRegister registerThread = new ThreadSafeRegister();
@@ -135,11 +138,15 @@ public class Launcher {
         }
         if (isRegistered) {
             //Send heartbeats
-            HeartBeatsClient hbClient = new HeartBeatsClient();
-            hbClient.startSendHeartBeat(coordinationIP);
+//            HeartBeatsClient hbClient = new HeartBeatsClient();
+//            hbClient.startSendHeartBeat(coordinationIP);
+            // input service heartbeats clients
+            InputServiceHeartBeatsClient inputServiceHeartBeatsClient = new InputServiceHeartBeatsClient();
+            inputServiceHeartBeatsClient.startSendHeartBeat(coordinationIP);
         } else {
             Logger.SaveLog(LogType.Error, "ERROR: Failed to register on coordination service! Please contact administrator.");
         }
+
     }
 
     /**
@@ -158,7 +165,10 @@ public class Launcher {
     public static HttpServer startServer() {
         //Create a resource config that scans for JAX-RS resources and providers in com.chaosmonkeys package
         final ResourceConfig rc = new ResourceConfig().packages("com.chaosmonkeys");
-
+        // register jackson for parsing JSON
+        rc.register(JacksonFeature.class);
+        // register multipart for supporting file upload
+        rc.register(MultiPartFeature.class);
         //Create and start a new instance of grizzly http server exposing the Jersey application at BASE_URI
         return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
     }

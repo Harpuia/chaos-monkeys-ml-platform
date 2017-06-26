@@ -2,6 +2,82 @@
 <html lang="en">
 
 <head>
+    <style>
+        /* Center the loader */
+
+        #uploading {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            z-index: 1;
+            width: 150px;
+            height: 150px;
+            margin: -60px 0 0 -75px;
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 120px;
+            height: 120px;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+        }
+
+        @-webkit-keyframes spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        /* Add animation to "page content" */
+
+        .animate-bottom {
+            position: relative;
+            -webkit-animation-name: animatebottom;
+            -webkit-animation-duration: 1s;
+            animation-name: animatebottom;
+            animation-duration: 1s
+        }
+
+        @-webkit-keyframes animatebottom {
+            from {
+                bottom: -100px;
+                opacity: 0
+            }
+            to {
+                bottom: 0px;
+                opacity: 1
+            }
+        }
+
+        @keyframes animatebottom {
+            from {
+                bottom: -100px;
+                opacity: 0
+            }
+            to {
+                bottom: 0;
+                opacity: 1
+            }
+        }
+
+        #myDiv {
+            display: none;
+            text-align: center;
+        }
+    </style>
+
+
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -76,83 +152,121 @@
                                 <h4 class="modal-title" id="myModalLabel">Upload Datas</h4>
                             </div>
                             <div class="modal-body">
-                                <div class="alert alert-warning alert-dismissible" id="formatAlert" style="display: none;" role="alert">
+                                <div class="uploadingpopup" id="uploading" style="display:none">
+
+                                    <div style="height: 400px;">
+
+                                    </div>
+
+                                </div>
+                                <div class="alert alert-danger alert-dismissible" id="formatAlert" style="display: none;" role="alert">
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                     <strong>Warning!</strong> The selected data format doesn't match the input data format.
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 col-md-offset-1">
-                                        <form ng-submit="submit()">
-                                            <div class="form-group">
-                                                <label for="DataFile">Data Files</label>
-                                                <input type="file" id="dataFile" onchange="checkValue(document.getElementById('format-select').options[document.getElementById('format-select').selectedIndex].text)">
+                                        <!-- in input label, using the name attribute to specify FormDataParam in jersey side-->
+                                        <form id="dataForm" action="http://127.0.0.1:8080/services/upload" method="post" enctype="multipart/form-data">
+                                            <div class="description" id="contents" style="display:block">
+                                                <div class="form-group">
+                                                    <label for="file">Data Files</label>
+                                                    <input type="file" name="file" id="file" onchange="checkValue(document.getElementById('format').options[document.getElementById('format').selectedIndex].text)"
+                                                    />
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="data name">Name</label>
+                                                    <input type="text" class="form-control" name="name" id="name" />
+                                                </div>
 
+                                                <div class="form-group">
+                                                    <label for="description">Description</label>
+                                                    <textarea class="form-control" rows="5" id="description"> </textarea>
+                                                </div>
 
-                                            </div>
+                                                <div class="form-group">
+                                                    <label for="user id">User ID</label>
+                                                    <input type="text" class="form-control" name="user_id" id="user_id" />
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="project id">Project ID</label>
+                                                    <input type="text" class="form-control" name="project_id" id="project_id" />
+                                                </div>
 
-                                            <div class="form-group">
-                                                <label for="name">Name</label>
-                                                <input type="text" class="form-control" ng-model="Name" />
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="description">Description</label>
-                                                <textarea class="form-control" rows="5" id="description" ng-model="Description"> </textarea>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="DataFormat">Data Format</label>
-                                                <br>
-                                                <select class="form-control" id="format-select" onchange="checkValue(document.getElementById('dataFile').value)">
+                                                <div class="form-group">
+                                                    <label for="DataFormat">Data Format</label>
+                                                    <br>
+                                                    <select class="form-control" id="format" onchange="checkValue(document.getElementById('file').value)">
                                                         <option>CSV</option>
                                                         <option>JSON</option>
                                                 </select>
-                                                <script>
-                                                    //check if the input data format matches the data format the user selected.
-                                                    function checkValue(name) {
-                                                        var e = document.getElementById("format-select");
-                                                        var selectedValue = e.options[e.selectedIndex].text;
-                                                        var filename = document.getElementById("dataFile").value;
-                                                        var extension = filename.substring(filename.lastIndexOf('.') + 1, filename.length);
-                                                        var alert = document.getElementById('formatAlert');
-                                                        if (name.length != 0 && selectedValue.toLowerCase() != extension.toLowerCase()) {
-                                                            alert.style.display = "block";
+                                                    <script>
+                                                        function checkValue(name) {
+                                                            var e = document.getElementById("format");
+                                                            var selectedValue = e.options[e.selectedIndex].text;
+                                                            var filename = document.getElementById("file").value;
+                                                            var extension = filename.substring(filename.lastIndexOf('.') + 1, filename.length);
+                                                            var alert = document.getElementById('formatAlert');
+                                                            if (name.length != 0 && selectedValue.toLowerCase() != extension.toLowerCase()) {
+                                                                alert.style.display = "block";
+                                                            }
+                                                            else {
+                                                                alert.style.display = "none";
+                                                            }
                                                         }
-                                                        else {
-                                                            alert.style.display = "none";
+                                                    </script>
+                                                    <a href="#" data-toggle="popover" title="Input Data Format" data-content="In CSV, column represents different types of attributes, and row represents one instance of data record. JSON file specifies an array of data records.
+">Introduction</a>
+                                                    <script>
+                                                        $(document).ready(function () {
+                                                            $('[data-toggle="popover"]').popover();
+                                                        });
+                                                    </script>
+                                                </div>
+
+                                                <div>
+                                                    <!--input type="submit" id="submitButton" class="btn btn-primary" value="Upload"-->
+                                                    <button id="submitButton" class="btn btn-primary" onclick="showPage()">Upload</button>
+                                                    <script>
+                                                        function showPage() {
+                                                            //document.getElementById("contents").style.display = "none";
+                                                            $(".description").css('visibility', 'hidden');
+                                                            document.getElementById("uploading").style.display = "block";
                                                         }
-                                                    }
-                                                </script>
-                                                <a href="#" data-toggle="popover" title="Input Data Format" data-content="In CSV, column represents different types of attributes, and row represents one instance of data record. JSON file specifies an array of data records.
-">Introduction</a>
-                                                <script>
-                                                    $(document).ready(function () {
-                                                        $('[data-toggle="popover"]').popover();
-                                                    });
-                                                </script>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="Metadata">Metadata</label>
-                                                <input type="file" id="metadataFile">
-                                                <a href="#" data-toggle="popover" title="Metadata Schema" data-content="For CSV, first cell defines the file type of data, including CSV and JSON. Second column in first row defines how many attributes are there in one data record. The last cell in first row defines how many data records/instances are in this dataset.
-Second row specifies types of each attribute separately. Third row is optional, specifying names of each attribute. JSON metadata’s root element is an object. The first key is type, specifying dataset file type: JSON or CSV. Second key is attributes, including types array and names array. Names array is optional.
-
-">Introduction</a>
-                                                <script>
-                                                    $(document).ready(function () {
-                                                        $('[data-toggle="popover"]').popover();
-                                                    });
-                                                </script>
+                                                    </script>
+                                                </div>
                                             </div>
                                         </form>
 
+                                        <script type="text/javascript">
+                                                        $(document).ready(function () {
+                                                            $("button#submitButton").click(function () {
+                                                                // TODO: Fix the bug: File uploads successfully but AJAX returns error
+                                                                $.ajax({
+                                                                    url: "http://127.0.0.1:8080/services/upload",
+                                                                    type: "POST",
+                                                                    dataType: "json",
+                                                                    contentType: 'application/json',
+                                                                    data: $('form#dataForm').serialize(),
+                                                                    success: function (data) {
+                                                                        console.log("Submitted");
+                                                                    },
+                                                                    error: function (request, status, error) {
+                                                                        console.log(status + error);
+                                                                        alert("Oops! An error occurs when uploading the data. Please check the error log in log path for possible reasons: " + status + error);
+                                                                    },
+                                                                    complete: function () {
+                                                                        document.getElementById("contents").style.display = "none";
+                                                                    }
+                                                                });
+                                                            });
+
+                                                        });
+                                        </script>
                                     </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Submit</button>
                             </div>
                         </div>
                     </div>
@@ -198,27 +312,6 @@ Second row specifies types of each attribute separately. Third row is optional, 
             </div>
         </div>
     </div>
-
-    <!--div class="container">
-        <h3>Results</h3>
-        <p>Here are the data sets.</p>
-        <div class="row">
-            <div class="col-md-3">
-                <i class="fa fa-database" aria-hidden="true"></i> 100-Sleep-Data
-            </div>
-            <div class="col-md-6">
-                This data set includes 100 students' sleeping data
-            </div>
-            <div class="col-md-3">
-                <form>
-                    <input type="submit" value="Define a new task" class="btn btn-primary" />
-                </form>
-            </div>
-        </div>
-        <div class="col-md-3">.col-md-3</div>
-        <div class="col-md-6">.col-md-6</div>
-        <div class="col-md-3">.col-md-3</div>
-    </div-->
 </body>
 
 </html>

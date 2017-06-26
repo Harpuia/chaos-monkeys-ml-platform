@@ -79,3 +79,18 @@ typings/
 
 # dotenv environment variables file
 .env
+
+# AWS credentials
+cred/
+
+# Terraform AWS access key pairs
+*.tf
+
+# Built target
+target/
+
+# Maven Dependency Reduced Pom
+dependency-reduced-pom.xml
+
+# Maven Archiver
+maven-archiver/
