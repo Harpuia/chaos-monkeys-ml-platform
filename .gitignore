@@ -87,4 +87,7 @@ cred/
 *.tf
 
 # Built target
-# JerseyServices/target
+JerseyServices/target
+
+# Maven Dependency Reduced Pom
+JerseyServices/dependency-reduced-pom.xml
