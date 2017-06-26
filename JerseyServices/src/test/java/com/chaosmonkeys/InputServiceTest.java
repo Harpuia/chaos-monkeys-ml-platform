@@ -69,14 +69,14 @@ public class InputServiceTest extends JerseyTest {
     @Test
     public void testUnsupportedMediaType() {
         int responseMsg = target("services/upload").request().post(Entity.text("asb")).getStatus();
-        assertEquals(Response.Status.UNSUPPORTED_MEDIA_TYPE, responseMsg);
+        assertEquals(Response.Status.UNSUPPORTED_MEDIA_TYPE.getStatusCode(), responseMsg);
     }
 
     /**
      * Test with wrong parameter type (project id)
      */
     @Test
-    public void testWrongFormParameterType(){
+    public void testLackOfFormBodyPart(){
         MediaType contentType = MediaType.MULTIPART_FORM_DATA_TYPE;
         contentType = Boundary.addBoundary(contentType);
         // declare a file as part of the form data
@@ -84,13 +84,8 @@ public class InputServiceTest extends JerseyTest {
         try {
             // create test file
             final File testFile = folder.newFile("test.txt");
-            if (!testFile.exists()) {
-                testFile.createNewFile();
-            }
+
             filePart = new FileDataBodyPart("file", testFile);   // pom.xml
-            // The below code is not needed. It's redundant.
-            // Using the FileDataBodyPart already sets the Content-Disposition information.
-            // filePart.setContentDisposition(FormDataContentDisposition.name("file").fileName("harry.png").build());
 
             // construct the entire form with all required parameters
             MultiPart multipartEntity = new FormDataMultiPart()
@@ -107,7 +102,7 @@ public class InputServiceTest extends JerseyTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }*
+    }
 
     /**
      * Test with normal operation
@@ -120,14 +115,8 @@ public class InputServiceTest extends JerseyTest {
         FormDataBodyPart filePart;
         try {
             // create test file
-            File testFile = new File("harry.png");
-            if (!testFile.exists()) {
-                testFile.createNewFile();
-            }
+            final File testFile = folder.newFile("test.txt");
             filePart = new FileDataBodyPart("file", testFile);   // pom.xml
-            // The below code is not needed. It's redundant.
-            // Using the FileDataBodyPart already sets the Content-Disposition information.
-            // filePart.setContentDisposition(FormDataContentDisposition.name("file").fileName("harry.png").build());
 
             // construct the entire form with all required parameters
             MultiPart multipartEntity = new FormDataMultiPart()
