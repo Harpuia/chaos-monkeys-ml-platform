@@ -153,119 +153,117 @@
                             </div>
                             <div class="modal-body">
                                 <div class="uploadingpopup" id="uploading" style="display:none">
-                                    
-                                    <div style="height: 400px;" >
-                                        
+
+                                    <div style="height: 400px;">
+
                                     </div>
 
                                 </div>
-                                <div class="alert alert-warning alert-dismissible" id="formatAlert" style="display: none;" role="alert">
+                                <div class="alert alert-danger alert-dismissible" id="formatAlert" style="display: none;" role="alert">
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                     <strong>Warning!</strong> The selected data format doesn't match the input data format.
                                 </div>
-                                <div class="row" >
+                                <div class="row">
                                     <div class="col-md-6 col-md-offset-1">
                                         <!-- in input label, using the name attribute to specify FormDataParam in jersey side-->
                                         <form id="dataForm" action="http://127.0.0.1:8080/services/upload" method="post" enctype="multipart/form-data">
-                                        <div class="description" id="contents" style="display:block">
-                                            <div class="form-group">
-                                                <label for="file">Data Files</label>
-                                                <input type="file" name="file" id="file" onchange="checkValue(document.getElementById('format').options[document.getElementById('format').selectedIndex].text)"/>
-                                            </div>
+                                            <div class="description" id="contents" style="display:block">
+                                                <div class="form-group">
+                                                    <label for="file">Data Files</label>
+                                                    <input type="file" name="file" id="file" onchange="checkValue(document.getElementById('format').options[document.getElementById('format').selectedIndex].text)"
+                                                    />
+                                                </div>
 
-                                            <div class="form-group">
-                                                <label for="data name">Name</label>
-                                                <input type="text" class="form-control" name="name" id="name" />
-                                            </div>
-                                            
-                                            <div class="form-group">
-                                                <label for="description">Description</label>
-                                                <textarea class="form-control" rows="5" id="description"> </textarea>
-                                            </div>
-                                            
-                                            <div class="form-group">
-                                                <label for="user id">User ID</label>
-                                                <input type="text" class="form-control" name="user_id" id="user_id" />
-                                            </div>
-                                            
-                                            <div class="form-group">
-                                                <label for="project id">Project ID</label>
-                                                <input type="text" class="form-control" name="project_id" id="project_id" />
-                                            </div>
-                                            
-                                            <div class="form-group">
-                                                <label for="DataFormat">Data Format</label>
-                                                <br>
-                                                <select class="form-control" id="format" onchange="checkValue(document.getElementById('dataFile').value)">
+                                                <div class="form-group">
+                                                    <label for="data name">Name</label>
+                                                    <input type="text" class="form-control" name="name" id="name" />
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="description">Description</label>
+                                                    <textarea class="form-control" rows="5" id="description"> </textarea>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="user id">User ID</label>
+                                                    <input type="text" class="form-control" name="user_id" id="user_id" />
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="project id">Project ID</label>
+                                                    <input type="text" class="form-control" name="project_id" id="project_id" />
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="DataFormat">Data Format</label>
+                                                    <br>
+                                                    <select class="form-control" id="format" onchange="checkValue(document.getElementById('file').value)">
                                                         <option>CSV</option>
                                                         <option>JSON</option>
                                                 </select>
-                                                <script>
-                                                    function checkValue(name) {
-                                                        var e = document.getElementById("format");
-                                                        var selectedValue = e.options[e.selectedIndex].text;
-                                                        var filename = document.getElementById("dataFile").value;
-                                                        var extension = filename.substring(filename.lastIndexOf('.') + 1, filename.length);
-                                                        var alert = document.getElementById('formatAlert');
-                                                        if (name.length != 0 && selectedValue.toLowerCase() != extension.toLowerCase()) {
-                                                            alert.style.display = "block";
+                                                    <script>
+                                                        function checkValue(name) {
+                                                            var e = document.getElementById("format");
+                                                            var selectedValue = e.options[e.selectedIndex].text;
+                                                            var filename = document.getElementById("file").value;
+                                                            var extension = filename.substring(filename.lastIndexOf('.') + 1, filename.length);
+                                                            var alert = document.getElementById('formatAlert');
+                                                            if (name.length != 0 && selectedValue.toLowerCase() != extension.toLowerCase()) {
+                                                                alert.style.display = "block";
+                                                            }
+                                                            else {
+                                                                alert.style.display = "none";
+                                                            }
                                                         }
-                                                        else {
-                                                            alert.style.display = "none";
-                                                        }
-                                                    }
-                                                </script>
-                                                <a href="#" data-toggle="popover" title="Input Data Format" data-content="In CSV, column represents different types of attributes, and row represents one instance of data record. JSON file specifies an array of data records.
+                                                    </script>
+                                                    <a href="#" data-toggle="popover" title="Input Data Format" data-content="In CSV, column represents different types of attributes, and row represents one instance of data record. JSON file specifies an array of data records.
 ">Introduction</a>
-                                                <script>
-                                                    $(document).ready(function () {
-                                                        $('[data-toggle="popover"]').popover();
-                                                    });
-                                                </script>
-                                            </div>
-                                            
-                                            <div>
-                                                <input type="submit" id="submitButton" value="Upload" onclick="showPage()">
-                                                <script>
-                                                    function showPage() {
-                                                        //document.getElementById("contents").style.display = "none";
-                                                        $(".description").css('visibility', 'hidden');
-                                                        document.getElementById("uploading").style.display = "block";
-                                                    }
-                                                </script>
+                                                    <script>
+                                                        $(document).ready(function () {
+                                                            $('[data-toggle="popover"]').popover();
+                                                        });
+                                                    </script>
+                                                </div>
 
-                                            </div>
+                                                <div>
+                                                    <!--input type="submit" id="submitButton" class="btn btn-primary" value="Upload"-->
+                                                    <button id="submitButton" class="btn btn-primary" onclick="showPage()">Upload</button>
+                                                    <script>
+                                                        function showPage() {
+                                                            //document.getElementById("contents").style.display = "none";
+                                                            $(".description").css('visibility', 'hidden');
+                                                            document.getElementById("uploading").style.display = "block";
+                                                        }
+                                                    </script>
+
+                                                </div>
                                             </div>
                                         </form>
 
                                         <script type="text/javascript">
-                                            $(document).ready(function () {
-                                                $("input#submitButton").click(function() {
-                                                    // TODO: Fix the bug: File uploads successfully but AJAX returns error
-                                                    $.ajax({
-                                                        url: "http://127.0.0.1:8080/services/upload",
-                                                        type: "POST",
-                                                        dataType: "json",
-                                                        contentType:'application/json',
-                                                        data: $('form#dataForm').serialize(),
-                                                        beforeSend: function() {
-                                                            // TODO: Setting a timeout
-                                                            showPage();
-                                                        },
-                                                        success: function(data) {
-                                                            //console.log("Submitted");
-                                                            alert("Submitted");
-                                                        },
-                                                        error: function(request, status, error) {
-                                                            //console.log(status + error);
-                                                            alert("error");
-                                                        },
-                                                        complete: function() {
-                                                            document.getElementById("contents").style.display = "none";
-                                                        }});
-                                                });
-                                                
-                                            });
+                                                        $(document).ready(function () {
+                                                            $("button#submitButton").click(function () {
+                                                                // TODO: Fix the bug: File uploads successfully but AJAX returns error
+                                                                $.ajax({
+                                                                    url: "http://127.0.0.1:8080/services/upload",
+                                                                    type: "POST",
+                                                                    dataType: "json",
+                                                                    contentType: 'application/json',
+                                                                    data: $('form#dataForm').serialize(),
+                                                                    success: function (data) {
+                                                                        console.log("Submitted");
+                                                                    },
+                                                                    error: function (request, status, error) {
+                                                                        console.log(status + error);
+                                                                        alert("Oops! An error occurs when uploading the data. Please check the error log in log path for possible reasons: " + status + error);
+                                                                    },
+                                                                    complete: function () {
+                                                                        document.getElementById("contents").style.display = "none";
+                                                                    }
+                                                                });
+                                                            });
+
+                                                        });
                                         </script>
                                     </div>
                                 </div>
