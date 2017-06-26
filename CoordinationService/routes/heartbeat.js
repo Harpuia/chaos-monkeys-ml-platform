@@ -13,7 +13,7 @@ router.get('/table', function getServiceTable(req, res) {
 
   //Return all services
   var results = connection.query('select * from connected_services', function (err, rows, fields) {
-    res.json(rows);
+    res.json({ table: rows });
   });
 
   //Closing connection

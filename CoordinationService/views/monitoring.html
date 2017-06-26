@@ -79,7 +79,6 @@
       <h4 class="sub-header">Coordination Service IP: 127.0.0.1:3000</h4>
       <div class="table-responsive">
         <table class="table table-striped">
-          <thead>
             <tr>
               <th>IP</th>
               <th>Type</th>
@@ -88,7 +87,6 @@
               <th>Status</th>
               <th>Last Contacted</th>
             </tr>
-          </thead>
         </table>
       </div>
       <script>
@@ -97,6 +95,7 @@
           $('table').find("tr:not(:first)").remove();
           $.getJSON('http://127.0.0.1:3000/table', function (data) {
             $.each(data['table'], function (i, item) {
+              console.log('Works inside too!');
               var tr = $('<tr>');
               tr.append('<td>' + item['ip'] + '</td>');
               tr.append('<td>' + item['type'] + '</td>');
@@ -107,29 +106,10 @@
               tr.append('<td>' + item['lastcontacted'] + '</td>');
               tr.append('</tr>');
               $('table').append(tr);
+              console.log($('table'));
             })
           })
         }, 2000);
-
-        //Call change status to RUN
-        function Run(ip) {
-          var xhttp = new XMLHttpRequest();
-          var url = "http://" + ip + "/services/changeState/RUN";
-          console.log(url);
-          xhttp.open("GET", url, false);
-          xhttp.send();
-          var response = JSON.parse(xhttp.responseText);
-        }
-
-        //Call change status to STOP
-        function Stop(ip) {
-          var xhttp = new XMLHttpRequest();
-          var url = "http://" + ip + "/services/changeState/STOP";
-          console.log(url);
-          xhttp.open("GET", url, false);
-          xhttp.send();
-          var response = JSON.parse(xhttp.responseText);
-        }
       </script>
     </div>
   </div>
