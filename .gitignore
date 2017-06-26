@@ -87,7 +87,13 @@ cred/
 *.tf
 
 # Built target
-JerseyServices/target
+target/
 
 # Maven Dependency Reduced Pom
-JerseyServices/dependency-reduced-pom.xml
+dependency-reduced-pom.xml
+
+# Package Lock JSON File in Coordination Service
+package-lock.json
+
+# Maven Archiver
+maven-archiver/
