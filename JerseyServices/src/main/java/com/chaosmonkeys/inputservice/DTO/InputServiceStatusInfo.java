@@ -1,4 +1,4 @@
-package com.chaosmonkeys.inputservice;
+package com.chaosmonkeys.inputservice.DTO;
 
 /**
  * DTO for InputService,

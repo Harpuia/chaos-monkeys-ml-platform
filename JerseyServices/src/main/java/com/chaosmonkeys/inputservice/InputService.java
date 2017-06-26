@@ -2,6 +2,7 @@ package com.chaosmonkeys.inputservice;
 
 import com.chaosmonkeys.DTO.DbConfigInfo;
 import com.chaosmonkeys.Utilities.DbConfigurationHelper;
+import com.chaosmonkeys.Utilities.FileUtils;
 import com.chaosmonkeys.Utilities.LogType;
 import com.chaosmonkeys.Utilities.Logger;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -23,18 +24,15 @@ import java.sql.Connection;
  */
 @Path("/services")
 public class InputService {
-    // Constants operating with dataset upload and storage
-    private static final String DATA_SET_PATH = "./Datasets/";
-    private static final String EXECUTION_DATA = "Execution";
-    private static final String TRAINING_DATA = "Predications";
+
     // Constants operating with service status
     private static final String STATUS_RUN = "RUNNING";
     private static final String STATUS_IDLE = "IDLE";
 
     // states variables
     public static String serviceStatus = "IDLE";
-    public boolean hasDatasetFolder = false;
-    // sets store datasets name that are under processing
+
+    // sets store data sets name that are under processing
     public static Set<String> uploadSet = new HashSet<>();
     public static Set<String> checkSet = new HashSet<>();
 
@@ -82,19 +80,19 @@ public class InputService {
                                @FormDataParam("project_id") String projectId,
                                @FormDataParam("format") String format){
         refreshServiceState();
-        String UPLOAD_PATH = DATA_SET_PATH;
+        String UPLOAD_PATH = FileUtils.DATA_SET_PATH;
         if (null != userId && !userId.equals("")) {
             Logger.SaveLog(LogType.Information, "Received upload request from" + userId);
         }
         //create Datasets folder if it does not exist yet
-        File datasetFolder = createDatasetFolder();
+        File datasetFolder = FileUtils.createDatasetFolder();
         //TODO: determine it is execution or not, delete the folder if uploading fail
         // Open the direct parent folder
-        File executionFolder = createNewFolderUnder(EXECUTION_DATA, datasetFolder);
+        File executionFolder = FileUtils.createNewFolderUnder(FileUtils.EXECUTION_DATA, datasetFolder);
         try {
             int read = 0;       // the total number of bytes read into the buffer
             byte[] bytes = new byte[1024];
-            File targetFolder = createNewFolderUnder(dataName, executionFolder);
+            File targetFolder = FileUtils.createNewFolderUnder(dataName, executionFolder);
             String fileName = fileMetaData.getFileName();
             // add to uploading set
             uploadSet.add(fileName);
@@ -194,36 +192,6 @@ public class InputService {
         return false;
     }
 
-    // Methods used to manage file and folder
 
-    /**
-     * Create datasets folder if it does not exist
-     *
-     * @return
-     */
-    public File createDatasetFolder() {
-        File rootFolder = new File(DATA_SET_PATH);
-        if (rootFolder.exists()) {
-            hasDatasetFolder = true;
-        } else {
-            rootFolder.mkdir();
-        }
-        return rootFolder;
-    }
-
-    /**
-     * Create a folder with specified name under parent folder
-     *  return the File object of folder created
-     * @param folderName
-     * @param parentFolder
-     * @return
-     */
-    public File createNewFolderUnder(String folderName, File parentFolder) {
-        File folder = new File(parentFolder, folderName);
-        if (!folder.exists()) {
-            folder.mkdir();
-        }
-        return folder;
-    }
 
 }

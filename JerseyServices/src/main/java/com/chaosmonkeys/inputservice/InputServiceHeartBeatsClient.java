@@ -1,10 +1,10 @@
 package com.chaosmonkeys.inputservice;
 
-import com.chaosmonkeys.DTO.StatusInfo;
-import com.chaosmonkeys.HeartBeatsClient;
 import com.chaosmonkeys.Launcher;
 import com.chaosmonkeys.Utilities.LogType;
 import com.chaosmonkeys.Utilities.Logger;
+import com.chaosmonkeys.inputservice.DTO.InputServiceStatusInfo;
+import com.chaosmonkeys.inputservice.DTO.InputServiceWorkState;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
 

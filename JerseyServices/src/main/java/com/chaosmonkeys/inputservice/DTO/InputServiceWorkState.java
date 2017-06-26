@@ -1,4 +1,4 @@
-package com.chaosmonkeys.inputservice;
+package com.chaosmonkeys.inputservice.DTO;
 
 import java.util.ArrayList;
 import java.util.List;
