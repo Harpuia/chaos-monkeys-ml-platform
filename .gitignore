@@ -92,8 +92,5 @@ target/
 # Maven Dependency Reduced Pom
 dependency-reduced-pom.xml
 
-# Package Lock JSON File in Coordination Service
-package-lock.json
-
 # Maven Archiver
 maven-archiver/
