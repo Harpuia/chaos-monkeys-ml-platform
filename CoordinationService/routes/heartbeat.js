@@ -13,7 +13,7 @@ router.get('/table', function getServiceTable(req, res) {
 
   //Return all services
   var results = connection.query('select * from connected_services', function getAllConnectedServices(err, rows, fields) {
-    if(err){  // pass the err to error handler
+    if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;
       next(err)
@@ -57,8 +57,8 @@ router.post('/setStatus', function handleHeartbeatMsg(req, res) {
   var connection = createDbConnection();
   connection.connect();
   serviceStatus['lastcontacted'] = toMysqlFormat(currentdate);
-  var sql = 'update connected_services set status = \'' + serviceStatus['status'] + '\', last_updated = \'' + serviceStatus['lastcontacted'] + '\' where ip_address =\'' + serviceStatus['ip'] + '\'';
-  console.log(sql);
+  console.log(serviceStatus['status']);
+  var sql = 'update connected_services set status = \'' + JSON.stringify(serviceStatus['status']) + '\', last_updated = \'' + serviceStatus['lastcontacted'] + '\' where ip_address =\'' + serviceStatus['ip'] + '\'';
   connection.query(sql, function checkUpdateOperationStatus(err, result) {
     if (err) {
       res.json({ response: err });

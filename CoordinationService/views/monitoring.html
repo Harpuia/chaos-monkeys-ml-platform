@@ -102,7 +102,7 @@
               tr.append('<td>' + item['name'] + '</td>');
               tr.append('<td>' + item['description'] + '</td>');
               //TODO: cleanup display later
-              tr.append('<td>' + JSON.stringify(item['status']) + '</td>');
+              tr.append('<td>' + item['status'] + '</td>');
               tr.append('<td>' + item['last_updated'].replace('T', ' ').replace('.000Z', '') + '</td>');
               tr.append('</tr>');
               $('table').append(tr);

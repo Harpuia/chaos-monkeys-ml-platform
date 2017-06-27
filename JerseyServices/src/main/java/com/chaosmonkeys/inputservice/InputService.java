@@ -80,7 +80,6 @@ public class InputService {
                                @FormDataParam("project_id") String projectId,
                                @FormDataParam("format") String format){
         refreshServiceState();
-        String UPLOAD_PATH = FileUtils.DATA_SET_PATH;
         if (null != userId && !userId.equals("")) {
             Logger.SaveLog(LogType.Information, "Received upload request from" + userId);
         }
@@ -111,7 +110,6 @@ public class InputService {
         } catch (IOException e) {
             Logger.SaveLog(LogType.Exception, "Error while uploading file. Please try again !!");
             e.printStackTrace();
-            //throw new WebApplicationException("Error while uploading file. Please try again !!");
         }
         refreshServiceState();
         return Response.ok("Data uploaded successfully").build();
