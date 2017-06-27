@@ -2,11 +2,87 @@
 <html lang="en">
 
 <head>
+    <style>
+        /* Center the loader */
+
+        #uploading {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            z-index: 1;
+            width: 150px;
+            height: 150px;
+            margin: -60px 0 0 -75px;
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 120px;
+            height: 120px;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+        }
+
+        @-webkit-keyframes spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        /* Add animation to "page content" */
+
+        .animate-bottom {
+            position: relative;
+            -webkit-animation-name: animatebottom;
+            -webkit-animation-duration: 1s;
+            animation-name: animatebottom;
+            animation-duration: 1s
+        }
+
+        @-webkit-keyframes animatebottom {
+            from {
+                bottom: -100px;
+                opacity: 0
+            }
+            to {
+                bottom: 0px;
+                opacity: 1
+            }
+        }
+
+        @keyframes animatebottom {
+            from {
+                bottom: -100px;
+                opacity: 0
+            }
+            to {
+                bottom: 0;
+                opacity: 1
+            }
+        }
+
+        #myDiv {
+            display: none;
+            text-align: center;
+        }
+    </style>
+
+
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="Algorithm page">
+    <meta name="description" content="Dataset page">
     <meta name="author" content="Chaos Monkeys @ CMU">
 
     <title>ChaosMonkeys</title>
@@ -58,8 +134,156 @@
         </div>
     </header>
 
-    <div class="container">
-        <div ng-view></div>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h2 class="sub-header">Results</h2>
+            <!-- Button trigger modal -->
+            <div class="container">
+                <!-- Button trigger modal -->
+                <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uploadModal">Upload</button></p>
+
+                <!-- Modal -->
+                <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <i class="fa fa-server" aria-hidden="true" fa-3x></i>
+                                <h3 class="modal-title" id="myModalLabel">Upload New Algorithm</h3>
+                            </div>
+                            <div class="modal-body">
+                                <div class="uploadingpopup" id="uploading" style="display:none">
+
+                                    <div style="height: 400px;">
+
+                                    </div>
+
+                                </div>
+                                <div class="alert alert-danger alert-dismissible" id="formatAlert" style="display: none;" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <strong>Warning!</strong> The selected data format doesn't match the input data format.
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-md-offset-1">
+
+                                        <h4>Choose Algorithm Task Type</h4>
+                                        <!-- in input label, using the name attribute to specify FormDataParam in jersey side-->
+                                        <form id="algorithmForm" action="http://127.0.0.1:8080/services/algr/upload" method="post" enctype="multipart/form-data">
+                                            <div class="description" id="contents" style="display:block">
+                                                <div class="form-group">
+                                                    <label for="algorithm name">Name</label>
+                                                    <input type="text" class="form-control" name="name" id="name" />
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="Language">Languages</label>
+                                                    <br>
+                                                    <select class="form-control" id="language">
+                                                        <option>R</option>
+                                                        <option>Python</option>
+                                                    </select>
+                                                    <a href="#" data-toggle="popover" title="Algorithms Structure" data-content="There are no instructions here......">Instructions?</a>
+                                                    <script>
+                                                        $(document).ready(function () {
+                                                            $('[data-toggle="popover"]').popover();
+                                                        });
+                                                    </script>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="description">Description</label>
+                                                    <textarea class="form-control" rows="5" id="description"> </textarea>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="file">Algorithm Files</label>
+                                                    <input type="file" name="file" id="file"/>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="user id">User ID</label>
+                                                    <input type="text" class="form-control" name="user_id" id="user_id" />
+                                                </div>
+                                                <div>
+                                                    <!--input type="submit" id="submitButton" class="btn btn-primary" value="Upload"-->
+                                                    <button id="submitButton" class="btn btn-primary" onclick="showPage()">Upload</button>
+                                                    <script>
+                                                        function showPage() {
+                                                            //document.getElementById("contents").style.display = "none";
+                                                            $(".description").css('visibility', 'hidden');
+                                                            document.getElementById("uploading").style.display = "block";
+                                                        }
+                                                    </script>
+                                                </div>
+                                            </div>
+                                        </form>
+
+                                        <script type="text/javascript">
+                                                        $(document).ready(function () {
+                                                            $("button#submitButton").click(function () {
+                                                                // TODO: Fix the bug: File uploads successfully but AJAX returns error
+                                                                $.ajax({
+                                                                    url: "http://127.0.0.1:8080/services/algr/upload",
+                                                                    type: "POST",
+                                                                    dataType: "json",
+                                                                    contentType: 'application/json',
+                                                                    data: $('form#algorithmForm').serialize(),
+                                                                    success: function (data) {
+                                                                        console.log("Submitted");
+                                                                    },
+                                                                    error: function (request, status, error) {
+                                                                        console.log(status + error);
+                                                                        alert("Oops! An error occurs when uploading the data. Please check the error log in log path for possible reasons: " + status + error);
+                                                                    },
+                                                                    complete: function () {
+                                                                        document.getElementById("contents").style.display = "none";
+                                                                    }
+                                                                });
+                                                            });
+
+                                                        });
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                                <a href="#">Logistic Regression</a>
+                            </td>
+                            <td>
+                                This data set includes 100 msit-se students' sleeping data......
+                                <br>
+                                <span class="label label-success">3 tasks</span>
+                            </td>
+                            <td>
+                                <input type="submit" value="Define a new task" class="btn btn-primary" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                                <a href="#">Decision Tree</a>
+                            </td>
+                            <td>
+                                This data set includes 100 msit-se students' sleeping data......
+                                <br>
+                                <span class="label label-success">0 tasks</span>
+                            </td>
+                            <td>
+                                <input type="submit" value="Define a new task" class="btn btn-primary" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </body>
 
