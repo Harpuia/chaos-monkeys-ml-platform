@@ -79,14 +79,14 @@
       <h4 class="sub-header">Coordination Service IP: 127.0.0.1:3000</h4>
       <div class="table-responsive">
         <table class="table table-striped">
-            <tr>
-              <th>IP</th>
-              <th>Type</th>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Status</th>
-              <th>Last Contacted</th>
-            </tr>
+          <tr>
+            <th>IP</th>
+            <th>Type</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Last Contacted</th>
+          </tr>
         </table>
       </div>
       <script>
@@ -97,13 +97,13 @@
             $.each(data['table'], function (i, item) {
               console.log('Works inside too!');
               var tr = $('<tr>');
-              tr.append('<td>' + item['ip'] + '</td>');
+              tr.append('<td>' + item['ip_address'] + '</td>');
               tr.append('<td>' + item['type'] + '</td>');
               tr.append('<td>' + item['name'] + '</td>');
               tr.append('<td>' + item['description'] + '</td>');
               //TODO: cleanup display later
               tr.append('<td>' + JSON.stringify(item['status']) + '</td>');
-              tr.append('<td>' + item['lastcontacted'] + '</td>');
+              tr.append('<td>' + item['last_updated'].replace('T', ' ').replace('.000Z', '') + '</td>');
               tr.append('</tr>');
               $('table').append(tr);
               console.log($('table'));
