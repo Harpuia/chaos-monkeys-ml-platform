@@ -12,7 +12,12 @@ router.get('/table', function getServiceTable(req, res) {
   connection.connect();
 
   //Return all services
-  var results = connection.query('select * from connected_services', function (err, rows, fields) {
+  var results = connection.query('select * from connected_services', function getAllConnectedServices(err, rows, fields) {
+    if(err){  // pass the err to error handler
+      err.source = 'mysql'; // add error source for tracing
+      err.status = 500;
+      next(err)
+    }
     res.json({ table: rows });
   });
 
@@ -37,7 +42,7 @@ router.post('/registerService', function registerService(req, res) {
       else
         res.json({ response: err });
     } else {
-      res.json({ response: 'Ok.' });
+      res.json({ response: 'OK' });
     }
   });
   connection.end();
