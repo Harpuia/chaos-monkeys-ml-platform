@@ -1,4 +1,4 @@
-router.get("/listExperiments", function (req, res) {
+router.get("/listExperiments", function getExperiments(req, res) {
   var connection = createDbConnection();
   connection.connect();
   
