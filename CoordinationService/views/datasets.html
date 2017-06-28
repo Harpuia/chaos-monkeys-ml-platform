@@ -139,7 +139,6 @@
             <div class="table-responsive">
                 <table class="table table-striped">
                     <tbody id='datasetsTableBody'>
-                        <h3>Loading...</h3>
                     </tbody>
                 </table>
             </div>
@@ -148,6 +147,9 @@
     <script type="text/javascript">
         //Initialization
         $(document).ready(function () {
+            //Showing the loading text
+            $('#datasetsTableBody').text('Loading...');
+            
             $('[data-toggle="popover"]').popover();
             //Load datasets list
             $.get("datasets/list", function (data) {
