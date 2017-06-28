@@ -2,95 +2,14 @@
 <html lang="en">
 
 <head>
-    <style>
-        /* Center the loader */
-
-        #uploading {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            z-index: 1;
-            width: 150px;
-            height: 150px;
-            margin: -60px 0 0 -75px;
-            border: 16px solid #f3f3f3;
-            border-radius: 50%;
-            border-top: 16px solid #3498db;
-            width: 120px;
-            height: 120px;
-            -webkit-animation: spin 2s linear infinite;
-            animation: spin 2s linear infinite;
-        }
-
-        @-webkit-keyframes spin {
-            0% {
-                -webkit-transform: rotate(0deg);
-            }
-            100% {
-                -webkit-transform: rotate(360deg);
-            }
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-        /* Add animation to "page content" */
-
-        .animate-bottom {
-            position: relative;
-            -webkit-animation-name: animatebottom;
-            -webkit-animation-duration: 1s;
-            animation-name: animatebottom;
-            animation-duration: 1s
-        }
-
-        @-webkit-keyframes animatebottom {
-            from {
-                bottom: -100px;
-                opacity: 0
-            }
-            to {
-                bottom: 0px;
-                opacity: 1
-            }
-        }
-
-        @keyframes animatebottom {
-            from {
-                bottom: -100px;
-                opacity: 0
-            }
-            to {
-                bottom: 0;
-                opacity: 1
-            }
-        }
-
-        #myDiv {
-            display: none;
-            text-align: center;
-        }
-    </style>
-
-
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="Dataset page">
     <meta name="author" content="Chaos Monkeys @ CMU">
-
     <title>ChaosMonkeys</title>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-route.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-resource.min.js"></script>
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
     <!-- Latest compiled and minified CSS -->
@@ -111,6 +30,8 @@
     <!-- To use the Font Awesome icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
+    <!-- Common CSS -->
+    <link href="/public/stylesheets/common.css" rel="stylesheet">
 </head>
 
 <body>
@@ -122,12 +43,12 @@
                 <h3 class="text-muted">Project Amazon</h3>
                 <nav>
                     <ul class="nav nav-justified">
-                        <li><a href="/views/experiments.html">Experiments</a></li>
-                        <li><a href="/views/tasks.html">Tasks</a></li>
-                        <li class="active"><a href="/views/datasets.html">Data Sets</a></li>
-                        <li><a href="/views/algorithms.html">Algorithms</a></li>
-                        <li><a href="/views/models.html">Models</a></li>
-                        <li><a href="/views/monitoring.html">Monitoring</a></li>
+                        <li><a href="/experiments">Experiments</a></li>
+                        <li><a href="/tasks">Tasks</a></li>
+                        <li class="active"><a href="/datasets">Data Sets</a></li>
+                        <li><a href="/algorithms">Algorithms</a></li>
+                        <li><a href="/models">Models</a></li>
+                        <li><a href="/monitoring">Monitoring</a></li>
                     </ul>
                 </nav>
             </div>
@@ -159,19 +80,19 @@
                                     </div>
 
                                 </div>
-                                <div class="alert alert-danger alert-dismissible" id="formatAlert" style="display: none;" role="alert">
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                    <strong>Warning!</strong> The selected data format doesn't match the input data format.
+                                <div class="alert alert-danger alert-dismissible" id="formAlert" style="display: none;" role="alert">
+                                    <a class="close" onclick="$('#formAlert').hide()">×</a>
+                                    <strong>Error!</strong>
+                                    <div id='formAlertText'></div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 col-md-offset-1">
                                         <!-- in input label, using the name attribute to specify FormDataParam in jersey side-->
-                                        <form id="dataForm" action="http://127.0.0.1:8080/services/upload" method="post" enctype="multipart/form-data">
+                                        <form id="dataForm" enctype="multipart/form-data">
                                             <div class="description" id="contents" style="display:block">
                                                 <div class="form-group">
                                                     <label for="file">Data Files</label>
-                                                    <input type="file" name="file" id="file" onchange="checkValue(document.getElementById('format').options[document.getElementById('format').selectedIndex].text)"
-                                                    />
+                                                    <input type="file" name="file" id="file" onchange="checkExtension()" />
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="data name">Name</label>
@@ -195,73 +116,16 @@
                                                 <div class="form-group">
                                                     <label for="DataFormat">Data Format</label>
                                                     <br>
-                                                    <select class="form-control" id="format" onchange="checkValue(document.getElementById('file').value)">
-                                                        <option>CSV</option>
-                                                        <option>JSON</option>
+                                                    <select class="form-control" id="format" onchange="checkExtension()">
                                                 </select>
-                                                    <script>
-                                                        function checkValue(name) {
-                                                            var e = document.getElementById("format");
-                                                            var selectedValue = e.options[e.selectedIndex].text;
-                                                            var filename = document.getElementById("file").value;
-                                                            var extension = filename.substring(filename.lastIndexOf('.') + 1, filename.length);
-                                                            var alert = document.getElementById('formatAlert');
-                                                            if (name.length != 0 && selectedValue.toLowerCase() != extension.toLowerCase()) {
-                                                                alert.style.display = "block";
-                                                            }
-                                                            else {
-                                                                alert.style.display = "none";
-                                                            }
-                                                        }
-                                                    </script>
                                                     <a href="#" data-toggle="popover" title="Input Data Format" data-content="In CSV, column represents different types of attributes, and row represents one instance of data record. JSON file specifies an array of data records.
 ">Instruction</a>
-                                                    <script>
-                                                        $(document).ready(function () {
-                                                            $('[data-toggle="popover"]').popover();
-                                                        });
-                                                    </script>
-                                                </div>
-
-                                                <div>
-                                                    <!--input type="submit" id="submitButton" class="btn btn-primary" value="Upload"-->
-                                                    <button id="submitButton" class="btn btn-primary" onclick="showPage()">Upload</button>
-                                                    <script>
-                                                        function showPage() {
-                                                            //document.getElementById("contents").style.display = "none";
-                                                            $(".description").css('visibility', 'hidden');
-                                                            document.getElementById("uploading").style.display = "block";
-                                                        }
-                                                    </script>
                                                 </div>
                                             </div>
                                         </form>
-
-                                        <script type="text/javascript">
-                                                        $(document).ready(function () {
-                                                            $("button#submitButton").click(function () {
-                                                                // TODO: Fix the bug: File uploads successfully but AJAX returns error
-                                                                $.ajax({
-                                                                    url: "http://127.0.0.1:8080/services/upload",
-                                                                    type: "POST",
-                                                                    dataType: "json",
-                                                                    contentType: 'application/json',
-                                                                    data: $('form#dataForm').serialize(),
-                                                                    success: function (data) {
-                                                                        console.log("Submitted");
-                                                                    },
-                                                                    error: function (request, status, error) {
-                                                                        console.log(status + error);
-                                                                        alert("Oops! An error occurs when uploading the data. Please check the error log in log path for possible reasons: " + status + error);
-                                                                    },
-                                                                    complete: function () {
-                                                                        document.getElementById("contents").style.display = "none";
-                                                                    }
-                                                                });
-                                                            });
-
-                                                        });
-                                        </script>
+                                        <div>
+                                            <button id="submitButton" class="btn btn-primary" onclick="submitForm()">Upload</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -312,6 +176,88 @@
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+        //Initialization
+        $(document).ready(function () {
+            $('[data-toggle="popover"]').popover();
+            //Load upload types
+            $.get("datasets/formats", function (data) {
+                var formats = '';
+                for (i = 0; i < data['formats'].length; i++) {
+                    formats += '<option>' + data['formats'][i]['format'] + '</option>\n';
+                }
+                $('#format').html(formats);
+            });
+        });
+
+        //Shows upload spinner
+        function showUploadingSpinner() {
+            $(".description").css('visibility', 'hidden');
+            document.getElementById("uploading").style.display = "block";
+        }
+
+        //Checks form fields for correctness
+        function checkExtension() {
+            var result;
+            var e = $("#format")[0];
+            var selectedValue = e.options[e.selectedIndex].text;
+            var filename = $("#file")[0].value;
+            var extension = filename.substring(filename.lastIndexOf('.') + 1, filename.length);
+            var alert = $('#formAlert')[0];
+            var alertText = $('#formAlertText')[0];
+            if (filename.length == 0) {
+                showFormError('Select a file to upload.', alert, alertText);
+                result = false;
+            } else {
+                if (selectedValue.toLowerCase() != extension.toLowerCase()) {
+                    showFormError('The selected data format doesn\'t match the input data format.', alert, alertText);
+                    result = false;
+                }
+                else {
+                    hideFormError(alert);
+                    result = true;
+                }
+            }
+            return (result);
+        }
+
+        //Handles the submit action
+        function submitForm() {
+            //Sending post request
+            if (checkExtension()) {
+                $.ajax({
+                    url: "http://127.0.0.1:8080/services/upload",
+                    type: "POST",
+                    dataType: "json",
+                    contentType: 'application/json',
+                    data: $('form#dataForm').serialize(),
+                    success: function (data) {
+                        console.log("Submitted");
+                        console.log('Data: ' + data);
+                        alert("Success!");
+                    },
+                    error: function (request, status, error) {
+                        console.log(status + error);
+                        alert("Oops! An error occurs when uploading the data. Please check the error log in log path for possible reasons: " + status + error);
+                    },
+                    complete: function () {
+                        //$('contents')[0].style.display = "none";
+                    }
+                });
+            }
+        }
+
+        //Show error
+        function showFormError(message, alert, alertText) {
+            alertText.innerText = message;
+            alert.style.display = "block";
+        }
+
+        //Hide form error
+        function hideFormError(alert) {
+            alert.style.display = "none";
+        }
+    </script>
 </body>
 
 </html>

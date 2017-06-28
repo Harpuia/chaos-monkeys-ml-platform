@@ -36,27 +36,6 @@ public class InputService {
     public static Set<String> uploadSet = new HashSet<>();
     public static Set<String> checkSet = new HashSet<>();
 
-    // fake database
-    List<DatasetRecord> datasets = new ArrayList<>();
-    private static int IdCounter = 0;
-
-    /**
-     * Inner class as a fake dataset database
-     */
-    public class DatasetRecord {
-        int id;
-        int project_id;
-        String path;
-
-        public DatasetRecord(int pId, String storePath) {
-            id = IdCounter;
-            IdCounter += 1;
-            this.project_id = pId;
-            this.path = storePath;
-        }
-    }
-
-
     /**
      * Handling upload request and store file under dataset folder
      *  using multipart form
@@ -125,7 +104,6 @@ public class InputService {
      * @param format the input data format.
      */
     public void storeDataSets(String userId, String projectId, String dataName,String dataDescription, String path,String format){
-
         Connection DBConn=null;
         boolean connectError=false;
         java.sql.Statement statement = null;        // SQL statement pointer
@@ -189,7 +167,4 @@ public class InputService {
         }
         return false;
     }
-
-
-
 }

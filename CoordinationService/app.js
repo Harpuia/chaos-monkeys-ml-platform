@@ -5,13 +5,14 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var stylus = require('stylus');
+var request = require('request');
 
 var index = require('./routes/index');
 var heartbeat = require('./routes/heartbeat');
+var datasets = require('./routes/datasets');
 var users = require('./routes/users');
 
 var app = express();
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -28,9 +29,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 // mounting middleware
 app.use('/', index);
 app.use('/', heartbeat);
+app.use('/datasets', datasets);
 app.use('/users', users);
 app.use('/public', express.static(__dirname + '/public'));
 app.use('/views', express.static(__dirname + '/views'));
+
+//Proxy to circumvent CORS
+/*app.use('/proxy', function(req, res) {
+  var url = req.url.replace('/?url=','');
+  console.log(url);
+  req.pipe(request(url), {end: true}).pipe(res, {end: true});
+});*/
 
 // catch 404 and forward to error handler
 app.use(function handleNotFoundError(req, res, next) {
