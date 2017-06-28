@@ -72,10 +72,4 @@ router.post('/setStatus', function handleHeartbeatMsg(req, res) {
   connection.end();
 });
 
-router.get("/listExperiments", function (req, res) {
-  var connection = createDbConnection();
-  connection.connect();
-  
-});
-
 module.exports = router;
