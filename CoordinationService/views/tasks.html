@@ -57,9 +57,43 @@
             </div>
         </div>
     </header>
-
-    <div class="container">
-        <div ng-view></div>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h2 class="sub-header">Results</h2>
+            <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createTaskModal">Create task</button></p>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <i class="fa fa-database" aria-hidden="true"></i>
+                                <a href="#">100-Sleep-Data</a>
+                            </td>
+                            <td>
+                                This data set includes 100 students' sleeping data
+                                <br>
+                                <span class="label label-success">800 instances</span>
+                                <span class="label label-success">15 features</span>
+                                <span class="label label-success">3 classes</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <i class="fa fa-database" aria-hidden="true"></i>
+                                <a href="#">30-Sqrill-Data</a>
+                            </td>
+                            <td>
+                                This data set includes 100 students' sleeping data
+                                <br>
+                                <span class="label label-success">500 instances</span>
+                                <span class="label label-success">12 features</span>
+                                <span class="label label-success">5 classes</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </body>
 
