@@ -176,7 +176,7 @@ CREATE TABLE `tasks` (
 
 LOCK TABLES `tasks` WRITE;
 /*!40000 ALTER TABLE `tasks` DISABLE KEYS */;
-INSERT INTO `tasks` VALUES (1,1,1,1,NULL,'Sample algorithm 1','Training'),(2,2,2,2,NULL,'Sample algorithm 2','Execution'),(3,3,3,3,NULL,'Sample algorithm 3','Training'),(4,4,4,4,NULL,'Sample algorithm 4','Execution'),(5,5,5,5,NULL,'Sample algorithm 5','Training');
+INSERT INTO `tasks` VALUES (1,1,1,1,'Task1','Sample algorithm 1','Training'),(2,2,2,2,'Task2','Sample algorithm 2','Execution'),(3,3,3,3,'Task3','Sample algorithm 3','Training'),(4,4,4,4,'Task4','Sample algorithm 4','Execution'),(5,5,5,5,'Task5','Sample algorithm 5','Training');
 /*!40000 ALTER TABLE `tasks` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -189,4 +189,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-06-28 15:45:47
+-- Dump completed on 2017-06-28 16:06:52
