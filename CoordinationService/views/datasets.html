@@ -138,8 +138,9 @@
             </div>
             <div class="table-responsive">
                 <table class="table table-striped">
-                    <tbody>
-                        <tr>
+                    <tbody id='datasetsTableBody'>
+                        <h3>Loading...</h3>
+                        <!--tr>
                             <td>
                                 <i class="fa fa-database" aria-hidden="true"></i>
                                 <a href="#">100-Sleep-Data</a>
@@ -170,7 +171,7 @@
                             <td>
                                 <input type="submit" value="Define a new task" class="btn btn-primary" />
                             </td>
-                        </tr>
+                        </tr-->
                     </tbody>
                 </table>
             </div>
@@ -180,6 +181,15 @@
         //Initialization
         $(document).ready(function () {
             $('[data-toggle="popover"]').popover();
+            //Load datasets list
+            $.get("datasets/list", function (data) {
+                var datasetsList = '';
+                for (i = 0; i < data['datasets'].length; i++) {
+                    datasetsList += '<tr><td><i class="fa fa-database" aria-hidden="true"></i><a href="#">' + data['datasets'][i]['name'] + '</a></td><td>' + data['datasets'][i]['description'] + '<br><span class="label label-success">' + data['datasets'][i]['path'] + '</span><span class="label label-success">' + data['datasets'][i]['format'] + '</span></td></tr>';
+                }
+                $('#datasetsTableBody').html(datasetsList);
+            });
+            
             //Load upload types
             $.get("datasets/formats", function (data) {
                 var formats = '';
