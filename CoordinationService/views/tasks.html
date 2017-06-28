@@ -64,7 +64,6 @@
             <div class="table-responsive">
                 <table class="table table-striped">
                     <tbody id='tasksTableBody'>
-                        <h3>Loading...</h3>
                     </tbody>
                 </table>
             </div>
@@ -72,13 +71,17 @@
     </div>
 
     <script type="text/javascript">
+        var tasksData;
         //Initialization
         $(document).ready(function () {
+            //Showing the loading text
+            $('#tasksTableBody').text('Loading...');
             //Load upload types
             $.get("tasks/list", function (data) {
+                tasksData = data;
                 var tasksList = '';
                 for (i = 0; i < data['tasks'].length; i++) {
-                    tasksList += '<tr><td><i class="fa fa-database" aria-hidden="true"></i><a href="#">' + data['tasks'][i]['name'] + '</a></td><td>' + data['tasks'][i]['description'] + '<br><span class="label label-success">' + data['tasks'][i]['project_id'] + '</span><span class="label label-success">' + data['tasks'][i]['dataset_id'] + '</span><span class="label label-success">' + data['tasks'][i]['algorithm_id'] + '</span><span class="label label-success">' + data['tasks'][i]['type'] + '</span></td></tr>';
+                    tasksList += '<tr><td><i class="fa fa-database" aria-hidden="true"></i>' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '<br><span class="label label-success">' + data['tasks'][i]['project_id'] + '</span><span class="label label-success">' + data['tasks'][i]['dataset_id'] + '</span><span class="label label-success">' + data['tasks'][i]['algorithm_id'] + '</span><span class="label label-success">' + data['tasks'][i]['type'] + '</span></td><td><button type="button" onclick="alert(' + data['tasks'][i]['id'] + ')" class="btn btn-primary">Details</button></td></tr>';
                 }
                 $('#tasksTableBody').html(tasksList);
             });
