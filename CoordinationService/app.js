@@ -10,6 +10,7 @@ var request = require('request');
 var index = require('./routes/index');
 var heartbeat = require('./routes/heartbeat');
 var datasets = require('./routes/datasets');
+var tasks = require('./routes/tasks');
 var users = require('./routes/users');
 
 var app = express();
@@ -30,6 +31,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/', heartbeat);
 app.use('/datasets', datasets);
+app.use('/tasks', tasks);
 app.use('/users', users);
 app.use('/public', express.static(__dirname + '/public'));
 app.use('/views', express.static(__dirname + '/views'));

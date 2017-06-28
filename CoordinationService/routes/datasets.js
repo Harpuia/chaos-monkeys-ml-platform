@@ -29,7 +29,7 @@ router.get('/formats', function getFormats(req, res) {
   connection.connect();
 
   //Return all services
-  var results = connection.query('select format from formats', function getAllConnectedServices(err, rows, fields) {
+  var results = connection.query('select format from formats', function getAllDatasets(err, rows, fields) {
     if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;

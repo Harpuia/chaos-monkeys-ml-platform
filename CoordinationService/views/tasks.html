@@ -57,10 +57,33 @@
             </div>
         </div>
     </header>
-
-    <div class="container">
-        <div ng-view></div>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h2 class="sub-header">Results</h2>
+            <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createTaskModal">Create task</button></p>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <tbody id='tasksTableBody'>
+                        <h3>Loading...</h3>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
+
+    <script type="text/javascript">
+        //Initialization
+        $(document).ready(function () {
+            //Load upload types
+            $.get("tasks/list", function (data) {
+                var tasksList = '';
+                for (i = 0; i < data['tasks'].length; i++) {
+                    tasksList += '<tr><td><i class="fa fa-database" aria-hidden="true"></i><a href="#">' + data['tasks'][i]['name'] + '</a></td><td>' + data['tasks'][i]['description'] + '<br><span class="label label-success">' + data['tasks'][i]['project_id'] + '</span><span class="label label-success">' + data['tasks'][i]['dataset_id'] + '</span><span class="label label-success">' + data['tasks'][i]['algorithm_id'] + '</span><span class="label label-success">' + data['tasks'][i]['type'] + '</span></td></tr>';
+                }
+                $('#tasksTableBody').html(tasksList);
+            });
+        });
+    </script>
 </body>
 
 </html>
