@@ -5,8 +5,12 @@ import com.chaosmonkeys.DTO.DbConfigInfo;
 import org.ini4j.Wini;
 import java.io.File;
 import java.io.IOException;
+
 /**
- * Created by rachel on 6/23/17.
+ * Configuration Helper for reading database config, including Host, Database name, username
+ * password and port number
+ *
+ * Rachel
  */
 public class DbConfigurationHelper {
     /**
