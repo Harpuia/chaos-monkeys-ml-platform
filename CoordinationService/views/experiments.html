@@ -59,10 +59,33 @@
             </div>
         </div>
     </header>
-
-    <div class="container">
-        <div ng-view></div>
+ <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h2 class="sub-header">Results</h2>
+            <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createExperimentModal">Create experiment</button></p>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <tbody id='experimentsTableBody'>
+                        <!--<h3>Loading...</h3>-->
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
+
+    <script type="text/javascript">
+        //Initialization
+        $(document).ready(function () {
+            //Load upload types
+            $.get("experiments/list", function (data) {
+                var experimentsList = '';
+                for (i = 0; i < data['experiments'].length; i++) {
+                    experimentsList += '<tr><td><i class="fa fa-database" aria-hidden="true"></i><a href="#">' + data['experiments'][i]['experiment_name'] + '</a></td><td>' + data['experiments'][i]['description'] + '<br><span class="label label-success">' + data['experiments'][i]['project_id'] + '</span><span class="label label-success">' + data['experiments'][i]['task_id'] + '</span><span class="label label-success">' + data['experiments'][i]['start'] + '</span><span class="label label-success">' + data['experiments'][i]['end'] + '</span><span class="label label-success">' + data['experiments'][i]['last_status'] + '</span><span class="label label-success">' + data['experiments'][i]['last_updated'] + '</span></td></tr>';
+                }
+                $('#experimentsTableBody').html(experimentsList);
+            });
+        });
+    </script>
 </body>
 
 </html>
