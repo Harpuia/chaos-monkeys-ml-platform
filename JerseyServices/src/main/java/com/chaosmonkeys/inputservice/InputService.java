@@ -30,7 +30,7 @@ public class InputService {
     private static final String STATUS_IDLE = "IDLE";
 
     // states variables
-    public static String serviceStatus = "IDLE";
+    public static String serviceStatus = STATUS_IDLE;
 
     // sets store data sets name that are under processing
     public static Set<String> uploadSet = new HashSet<>();
@@ -60,7 +60,7 @@ public class InputService {
                                @FormDataParam("format") String format){
         refreshServiceState();
         if (null != userId && !userId.equals("")) {
-            Logger.SaveLog(LogType.Information, "Received upload request from" + userId);
+            Logger.SaveLog(LogType.Information, "INPUT: Received dataset upload request from" + userId);
         }
         //create Datasets folder if it does not exist yet
         File datasetFolder = FileUtils.createDatasetFolder();
@@ -107,8 +107,7 @@ public class InputService {
         Connection DBConn=null;
         boolean connectError=false;
         java.sql.Statement statement = null;        // SQL statement pointer
-        try
-        {
+        try {
             //load JDBC driver class for MySQL
             Class.forName( "com.mysql.jdbc.Driver" );
 
