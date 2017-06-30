@@ -44,7 +44,8 @@ public class AlgorithmResource {
     public static final int ERR_BLANK_PARAMS = -1;
     public static final int ERR_UNSUPPORTED_LANG = -2;
     public static final int ERR_TRANSMISSION_FILE = -3;
-
+    public static final int ERR_FILE_BODYPART_MISSING = -4;
+    public static final int ERR_UNKNOWN = -5;
     @POST
     @Path("/upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -60,7 +61,7 @@ public class AlgorithmResource {
             Logger.SaveLog(LogType.Information, "INPUT: Received algorithm upload request from" + userId);
         }
         // --::ERROR DETECTING
-        int validCode = detectUploadServiceParamError(algrName,algrDescription,userId,language);
+        int validCode = detectUploadServiceParamError(fileInputStream, fileMetaData, algrName,algrDescription,userId,language);
         if( validCode != CHECK_SUCCESS){
             Response errorResponse = genErrorResponse(validCode);
             return errorResponse;
@@ -137,14 +138,20 @@ public class AlgorithmResource {
 
     /**
      * Detect whether all parameters are fulfilled or not
-     * @param name
+     *
+     * @param fileInputStream
+     * @param fileMetaData
+     *@param name
      * @param description
      * @param userId
-     * @param language
-     * @return error code that has been defined in the global config or in the heading of this class
+     * @param language     @return error code that has been defined in the global config or in the heading of this class
      */
-    public int detectUploadServiceParamError(String name, String description, String userId, String language){
+    public int detectUploadServiceParamError(InputStream fileInputStream, FormDataContentDisposition fileMetaData, String name, String description, String userId, String language){
         // check all string parameters are not blank
+        // check whether the bodypart/file content are attached
+        if(null == fileInputStream || null == fileMetaData){
+            return ERR_FILE_BODYPART_MISSING;
+        }
         boolean isParamsValid = StringUtils.isNoneBlank(name, description, userId, language);
         if(!isParamsValid){
             return ERR_BLANK_PARAMS;
@@ -153,6 +160,7 @@ public class AlgorithmResource {
         // or from database in the future, but it may involve compute cost for each upload/other services, so let's keep R, Python C++ and Matlab now
         boolean isLangSupported = supportDevLanguageList.stream().anyMatch(lang -> lang.equals(language));
         if(!isLangSupported){
+            Logger.SaveLog(LogType.Exception,"Unsupported machine learning development language");
             return ERR_UNSUPPORTED_LANG;
         }
         return CHECK_SUCCESS;
@@ -167,16 +175,20 @@ public class AlgorithmResource {
         BaseResponse responseEntity = new BaseResponse();
         switch (errorCode){
             case(ERR_BLANK_PARAMS):
-                responseEntity.failed("Some parameters you input is empty or blank");
+                responseEntity.failed(ERR_BLANK_PARAMS,"Some parameters you input is empty or blank");
                 break;
             case(ERR_UNSUPPORTED_LANG):
-                responseEntity.failed("unsupported language");
+                responseEntity.failed(ERR_UNSUPPORTED_LANG, "unsupported language");
+                break;
+            case(ERR_FILE_BODYPART_MISSING):
+                responseEntity.failed(ERR_FILE_BODYPART_MISSING,"the file bodypart is missing in the form");
                 break;
             default:
-                responseEntity.failed("unknowns error");
+                responseEntity.failed(ERR_UNKNOWN, "unknowns error");
         }
+
         Response response = Response.status(Response.Status.BAD_REQUEST)
-                .entity(Entity.entity(responseEntity,MediaType.APPLICATION_JSON))
+                .entity(responseEntity)
                 .build();
         return response;
     }
@@ -189,7 +201,7 @@ public class AlgorithmResource {
         responseEntity.successful("algorithm upload successfully");
 
         Response response = Response.ok()
-                                    .entity(Entity.entity(responseEntity,MediaType.APPLICATION_JSON))
+                                    .entity(responseEntity)
                                     .build();
         return response;
     }

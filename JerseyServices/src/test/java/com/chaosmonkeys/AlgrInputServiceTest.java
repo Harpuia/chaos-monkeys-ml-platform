@@ -1,8 +1,10 @@
 package com.chaosmonkeys;
 
+import com.chaosmonkeys.DTO.BaseResponse;
 import com.chaosmonkeys.algrinputservice.AlgorithmResource;
 import com.chaosmonkeys.inputservice.InputService;
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.*;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -38,6 +40,7 @@ public class AlgrInputServiceTest extends JerseyTest{
         enable(TestProperties.LOG_TRAFFIC);
         enable(TestProperties.DUMP_ENTITY);
         ResourceConfig config = new ResourceConfig(AlgorithmResource.class);
+        config.register(JacksonFeature.class);
         config.register(MultiPartFeature.class); // IMPORTANT: if you want to test multipart feature, remember to add this
         return config;
     }
@@ -78,7 +81,7 @@ public class AlgrInputServiceTest extends JerseyTest{
      * Test with wrong parameter type (project id)
      */
     @Test
-    public void testLackOfFormBodyPart(){
+    public void testBlankParameters(){
         MediaType contentType = MediaType.MULTIPART_FORM_DATA_TYPE;
         contentType = Boundary.addBoundary(contentType);
         // declare a file as part of the form data
@@ -92,19 +95,90 @@ public class AlgrInputServiceTest extends JerseyTest{
             // construct the entire form with all required parameters
             MultiPart multipartEntity = new FormDataMultiPart()
                     .field("language","R")
-                    .field("description","TEST DATA-SET DESCRIPTION")
-                    .field("user_id", "test_u_id")
-                    .field("name", "testname");
+                    .field("description","")
+                    .field("user_id", "")
+                    .field("name", "testname")
+                    .bodyPart(filePart);
             // request the response Jersey 2.25 will not recognize multipartEntity.getMediaType()
-            Response response = target("services/upload").request().post(Entity.entity(multipartEntity, contentType));
+            Response response = target(SERVICE_PATH).request().accept(MediaType.APPLICATION_JSON).post(Entity.entity(multipartEntity, contentType));
+            BaseResponse resEntity = (BaseResponse) response.readEntity(BaseResponse.class);
+           // BaseResponse resEntity = (BaseResponse)response.getEntity();
 
-            assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+            assertEquals(AlgorithmResource.ERR_BLANK_PARAMS, resEntity.getCode());
             response.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Test with unsupported machine learning language
+     * should refuse the request
+     */
+    @Test
+    public void testUnsupportedDevLanguage(){
+        MediaType contentType = MediaType.MULTIPART_FORM_DATA_TYPE;
+        contentType = Boundary.addBoundary(contentType);
+        // declare a file as part of the form data
+        FormDataBodyPart filePart;
+        try {
+            // create test file
+            final File testFile = folder.newFile("test.txt");
+
+            filePart = new FileDataBodyPart("file", testFile);   // pom.xml
+
+            // construct the entire form with all required parameters
+            MultiPart multipartEntity = new FormDataMultiPart()
+                    .field("language","Rust")
+                    .field("description","test descritpion")
+                    .field("user_id", "gogogo")
+                    .field("name", "testname")
+                    .bodyPart(filePart);
+            // request the response Jersey 2.25 will not recognize multipartEntity.getMediaType()
+            Response response = target(SERVICE_PATH).request().accept(MediaType.APPLICATION_JSON).post(Entity.entity(multipartEntity, contentType));
+            BaseResponse resEntity = response.readEntity(BaseResponse.class);
+
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+            assertEquals(AlgorithmResource.ERR_UNSUPPORTED_LANG, resEntity.getCode());
+            response.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Test with normal operation
+     */
+    @Test
+    public void testLackOfFormBodyPart() {
+        MediaType contentType = MediaType.MULTIPART_FORM_DATA_TYPE;
+        contentType = Boundary.addBoundary(contentType);
+        // declare a file as part of the form data
+        FormDataBodyPart filePart;
+        try {
+            // create test file
+            final File testFile = folder.newFile("test.txt");
+            filePart = new FileDataBodyPart("file", testFile);   // pom.xml
+
+            // construct the entire form with all required parameters
+            MultiPart multipartEntity = new FormDataMultiPart()
+                    .field("language","R")
+                    .field("description","TEST ALGORITHMT DESCRIPTION")
+                    .field("user_id", "test_u_id")
+                    .field("name", "testname");
+            // request the response Jersey 2.25 will not recognize multipartEntity.getMediaType()
+            Response response = target(SERVICE_PATH).request().post(Entity.entity(multipartEntity, contentType));
+            BaseResponse resEntity =  response.readEntity(BaseResponse.class);
+
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+            assertEquals(AlgorithmResource.ERR_FILE_BODYPART_MISSING, resEntity.getCode());
+
+            response.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * Test with normal operation
      */
@@ -121,14 +195,18 @@ public class AlgrInputServiceTest extends JerseyTest{
 
             // construct the entire form with all required parameters
             MultiPart multipartEntity = new FormDataMultiPart()
-                    .field("project_id", "123")
+                    .field("language","R")
+                    .field("description","TEST ALGORITHMT DESCRIPTION")
                     .field("user_id", "test_u_id")
-                    .field("name", "testname")
+                    .field("name", "tesdfdtname")
                     .bodyPart(filePart);
             // request the response Jersey 2.25 will not recognize multipartEntity.getMediaType()
-            Response response = target("services/upload").request().post(Entity.entity(multipartEntity, contentType));
+            Response response = target(SERVICE_PATH).request().post(Entity.entity(multipartEntity, contentType));
+            BaseResponse resEntity = response.readEntity(BaseResponse.class);
+
 
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+            assertEquals(AlgorithmResource.CHECK_SUCCESS, resEntity.getCode());
             response.close();
         } catch (IOException e) {
             e.printStackTrace();
