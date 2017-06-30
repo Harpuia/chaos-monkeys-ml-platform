@@ -13,6 +13,7 @@ var datasets = require('./routes/datasets');
 var tasks = require('./routes/tasks');
 var users = require('./routes/users');
 var experiments = require('./routes/experiments');
+var models = require('./routes/models');
 
 var app = express();
 
@@ -35,6 +36,7 @@ app.use('/datasets', datasets);
 app.use('/tasks', tasks);
 app.use('/users', users);
 app.use('/experiments', experiments);
+app.use('/models', models);
 app.use('/public', express.static(__dirname + '/public'));
 app.use('/views', express.static(__dirname + '/views'));
 

@@ -59,33 +59,107 @@
     </header>
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
-            <h2 class="sub-header">Results</h2>
+            <!-- Header title -->
+            <h2 class="sub-header">Tasks</h2>
+
+            <!-- Create task button -->
             <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createTaskModal">Create task</button></p>
+
+            <!-- Tasks table -->
             <div class="table-responsive">
                 <table class="table table-striped">
                     <tbody id='tasksTableBody'>
                     </tbody>
                 </table>
             </div>
+
+            <!-- Details modal -->
+            <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <i class="fa fa-database" aria-hidden="true" fa-3x></i>
+                            <h4 class="modal-title" id="myModalLabel">Task Details</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-danger alert-dismissible" id="formAlert" style="display: none;" role="alert">
+                                <a class="close" onclick="$('#formAlert').hide()">×</a>
+                                <strong>Error!</strong>
+                                <div id='formAlertText'></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-md-offset-1">
+                                    <!--Popup content-->
+                                    <p>
+                                        <h4>Task Name:</h4>
+                                        <span id='taskName'></span></p>
+                                    <p>
+                                        <h4>Task Type:</h4>
+                                        <span id='taskType'></span>
+                                    </p>
+                                    <p>
+                                        <h4>Task Description:</h4>
+                                        <span id='taskDescription'></span>
+                                    </p>
+                                    <p>
+                                        <h4>Task Parent Project Name:</h4>
+                                        <span id='taskProject'></span>
+                                    </p>
+                                    <p>
+                                        <h4>Task Algorithm Name:</h4>
+                                        <span id='taskAlgorithm'></span>
+                                    </p>
+                                    <p>
+                                        <h4>Task Dataset Name:</h4>
+                                        <span id='taskDataset'></span>
+                                    </p>
+
+                                    <!--Submit button-->
+                                    <div>
+                                        <button id="submitButton" class="btn btn-primary" onclick="alert('Submit')">Action</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script type="text/javascript">
+        //All task data
         var tasksData;
+
         //Initialization
         $(document).ready(function () {
             //Showing the loading text
             $('#tasksTableBody').text('Loading...');
             //Load upload types
             $.get("tasks/list", function (data) {
-                tasksData = data;
+                tasksData = data['tasks'];
                 var tasksList = '';
                 for (i = 0; i < data['tasks'].length; i++) {
-                    tasksList += '<tr><td><i class="fa fa-database" aria-hidden="true"></i>' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '<br><span class="label label-success">' + data['tasks'][i]['project_id'] + '</span><span class="label label-success">' + data['tasks'][i]['dataset_id'] + '</span><span class="label label-success">' + data['tasks'][i]['algorithm_id'] + '</span><span class="label label-success">' + data['tasks'][i]['type'] + '</span></td><td><button type="button" onclick="alert(' + data['tasks'][i]['id'] + ')" class="btn btn-primary">Details</button></td></tr>';
+                    tasksList += '<tr><td><i class="fa fa-database" aria-hidden="true"></i>' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '<br><span class="label label-success">' + data['tasks'][i]['project_name'] + '</span><span class="label label-success">' + data['tasks'][i]['dataset_name'] + '</span><span class="label label-success">' + data['tasks'][i]['algorithm_name'] + '</span><span class="label label-success">' + data['tasks'][i]['type'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td></tr>';
                 }
                 $('#tasksTableBody').html(tasksList);
             });
         });
+
+        //Displays details for a selected task
+        function displayDetails(taskId) {
+            $('#taskName').text(tasksData[taskId]['name']);
+            $('#taskDescription').text(tasksData[taskId]['description']);
+            $('#taskType').text(tasksData[taskId]['type']);
+            $('#taskProject').text(tasksData[taskId]['project_name']);
+            $('#taskAlgorithm').text(tasksData[taskId]['algorithm_name']);
+            $('#taskDataset').text(tasksData[taskId]['dataset_name']);
+            $('#detailsModal').modal('show');;
+        }
     </script>
 </body>
 

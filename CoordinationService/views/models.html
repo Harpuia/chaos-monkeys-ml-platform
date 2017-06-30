@@ -60,9 +60,35 @@
         </div>
     </header>
 
-    <div class="container">
-        <div ng-view></div>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <p></p>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <tbody id='modelsTableBody'>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
+
+    <script type="text/javascript">
+        var modelsData;
+        //Initialization
+        $(document).ready(function () {
+            //Showing the loading text
+            $('#modelsTableBody').text('Loading...');
+            //Load upload types
+            $.get("models/list", function (data) {
+                modelsData = data;
+                var modelsList = '';
+                for (i = 0; i < data['models'].length; i++) {
+                    modelsList += '<tr><td><i class="fa fa-database" aria-hidden="true"></i>' + data['models'][i]['name'] + '</td><td>' + data['models'][i]['description'] + '<br><span class="label label-success">' + data['models'][i]['path'] + '</span><span class="label label-success">' + data['models'][i]['project_id'] + '</span><span class="label label-success">' + data['models'][i]['experiment_id'] + '</span></td><td><button type="button" onclick="alert(' + data['models'][i]['id'] + ')" class="btn btn-primary">Details</button></td></tr>';
+                }
+                $('#modelsTableBody').html(modelsList);
+            });
+        });
+    </script>
 </body>
 
 </html>
