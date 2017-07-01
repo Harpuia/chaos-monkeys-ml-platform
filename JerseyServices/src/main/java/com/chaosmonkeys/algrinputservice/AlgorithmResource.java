@@ -45,7 +45,9 @@ public class AlgorithmResource {
     public static final int ERR_UNSUPPORTED_LANG = -2;
     public static final int ERR_TRANSMISSION_FILE = -3;
     public static final int ERR_FILE_BODYPART_MISSING = -4;
-    public static final int ERR_UNKNOWN = -5;
+    public static final int ERR_UNZIP_EXCEPTION = -5;
+    public static final int ERR_REQUIRED_FILE_MISSING = -6;
+    public static final int ERR_UNKNOWN = -100;
     @POST
     @Path("/upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -76,13 +78,70 @@ public class AlgorithmResource {
         File targetFolder = FileUtils.createNewFolderUnder(targetFolderName, langFolder);
         String fileName = fileMetaData.getFileName();
         // start processing receiving
+        validCode = CHECK_SUCCESS;
         boolean succ = receiveFile(fileInputStream, targetFolder, fileName);
         if(!succ){
-            return genErrorResponse(ERR_TRANSMISSION_FILE);
+            validCode = ERR_TRANSMISSION_FILE;
+        }else{  // unzip and check folder file structure
+            //add to check list
+            checkSet.add(algrName);
+            File zipFile = new File(targetFolder, fileName);
+            boolean unzipSucc = unzipRequiredFile(zipFile, targetFolder);
+            if(!unzipSucc){
+                validCode = ERR_UNZIP_EXCEPTION;
+            }else{
+                // all required file need exist
+                if(!isAllRequiredFilesProvide(targetFolder)){
+                    validCode = ERR_REQUIRED_FILE_MISSING;
+                }
+            }
+            checkSet.remove(algrName);
         }
+        if(CHECK_SUCCESS != validCode){
+            // delete the folder
+            targetFolder.deleteOnExit();
+            return genErrorResponse(validCode);
+        }
+        //TODO: insert data sets into database.
+        //storeDataSets(userId,projectId,dataName,dataDescription,targetFolder.getAbsolutePath(),format);
         Logger.SaveLog(LogType.Information, "Algorithm received sucessfully");
         return genSuccResponse();
+    }
 
+
+    public boolean unzipRequiredFile(File zipFile, File targetFolder){
+        try {
+            ZipUtils.unzip(zipFile, targetFolder);
+        } catch (IOException e) {
+            Logger.SaveLog(LogType.Exception, "Exception happened when unzip algorithm file");
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * check if the required files and folders has been provided
+     * @param folder
+     * @return
+     */
+    public boolean isAllRequiredFilesProvide(File folder){
+        List<String> optionalFolderList = Arrays.asList("input","output");
+        for (String folderName : optionalFolderList){
+            File optionalFolder = new File(folder, folderName);
+            if(!optionalFolder.exists()){
+                optionalFolder.mkdir();
+            }
+        }
+        // check required files
+        List<String> requiredFileList = Arrays.asList("Main.R");
+        for (String fileName : requiredFileList){
+            File requiredFile = new File(folder, fileName);
+            if(!requiredFile.exists()){
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -122,10 +181,8 @@ public class AlgorithmResource {
             // remove this one from uploading list
             uploadSet.remove(fileName);
 
-            //TODO: insert data sets into database.
-            //storeDataSets(userId,projectId,dataName,dataDescription,targetFolder.getAbsolutePath(),format);
-
         } catch (IOException e) {
+            // delete error dataset
             Logger.SaveLog(LogType.Exception, "Error while uploading algorithm file.");
             targetFolder.deleteOnExit();
             Logger.SaveLog(LogType.Exception, "delete folder created");
@@ -173,20 +230,28 @@ public class AlgorithmResource {
      */
     public Response genErrorResponse(int errorCode){
         BaseResponse responseEntity = new BaseResponse();
+        String msg;
         switch (errorCode){
             case(ERR_BLANK_PARAMS):
-                responseEntity.failed(ERR_BLANK_PARAMS,"Some parameters you input is empty or blank");
+                msg = "Some parameters you input is empty or blank";
                 break;
             case(ERR_UNSUPPORTED_LANG):
-                responseEntity.failed(ERR_UNSUPPORTED_LANG, "unsupported language");
+                msg = "unsupported language";
                 break;
             case(ERR_FILE_BODYPART_MISSING):
-                responseEntity.failed(ERR_FILE_BODYPART_MISSING,"the file bodypart is missing in the form");
+                msg = "the file bodypart is missing in the form";
+                break;
+            case(ERR_REQUIRED_FILE_MISSING):
+                msg = "uploaded zip file does not include all required files/folders";
+                break;
+            case(ERR_UNZIP_EXCEPTION):
+                msg = "server unzip file throws exception, please check whether the file is corrupt or not";
                 break;
             default:
-                responseEntity.failed(ERR_UNKNOWN, "unknowns error");
+                errorCode = ERR_UNKNOWN;
+                msg = "unknown error";
         }
-
+        responseEntity.failed(errorCode,msg);
         Response response = Response.status(Response.Status.BAD_REQUEST)
                 .entity(responseEntity)
                 .build();
