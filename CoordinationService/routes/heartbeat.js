@@ -57,7 +57,6 @@ router.post('/setStatus', function handleHeartbeatMsg(req, res) {
   var connection = createDbConnection();
   connection.connect();
   serviceStatus['lastcontacted'] = toMysqlFormat(currentdate);
-  console.log(serviceStatus['status']);
   var sql = 'update connected_services set status = \'' + JSON.stringify(serviceStatus['status']) + '\', last_updated = \'' + serviceStatus['lastcontacted'] + '\' where ip_address =\'' + serviceStatus['ip'] + '\'';
   connection.query(sql, function checkUpdateOperationStatus(err, result) {
     if (err) {

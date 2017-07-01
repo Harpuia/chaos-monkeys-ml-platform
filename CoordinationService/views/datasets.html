@@ -203,14 +203,16 @@
 
         //Handles the submit action
         function submitForm() {
+            var form = new FormData($('form#dataForm')[0]);
             //Sending post request
             if (checkExtension()) {
                 $.ajax({
                     url: "http://127.0.0.1:8080/services/upload",
                     type: "POST",
-                    dataType: "json",
-                    contentType: 'application/json',
-                    data: $('form#dataForm').serialize(),
+                    dataType: 'text',
+                    data: form,
+                    processData: false,
+                    contentType: false,
                     success: function (data) {
                         console.log("Submitted");
                         console.log('Data: ' + data);
