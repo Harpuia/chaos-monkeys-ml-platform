@@ -22,5 +22,99 @@ router.get('/list', function getTaks(req, res) {
   //Closing connection
   connection.end();
 });
+/* gets the table of services */
+router.get('/type', function getTypes(req, res) {
+  //Connect to DB
+  var connection = createDbConnection();
+  connection.connect();
+
+  //Return all services
+  var results = connection.query('select type from task_types', function getAllTypes(err, rows, fields) {
+    if (err) {  // pass the err to error handler
+      err.source = 'mysql'; // add error source for tracing
+      err.status = 500;
+      next(err)
+    }
+    res.json({ types: rows });
+  });
+  //Closing connection
+  connection.end();
+});
+
+/* gets the table of services */
+router.get('/datasetsnames', function getDatasetsNames(req, res) {
+  //Connect to DB
+  var connection = createDbConnection();
+  connection.connect();
+
+  //Return all services
+  var results = connection.query('select name from datasets', function getAllDatasetsNames(err, rows, fields) {
+    if (err) {  // pass the err to error handler
+      err.source = 'mysql'; // add error source for tracing
+      err.status = 500;
+      next(err)
+    }
+    res.json({ datasetsnames: rows });
+  });
+  //Closing connection
+  connection.end();
+});
+
+/* gets the table of services */
+router.get('/algorithmsnames', function getAlgorithmsNames(req, res) {
+  //Connect to DB
+  var connection = createDbConnection();
+  connection.connect();
+
+  //Return all services
+  var results = connection.query('select name from algorithms', function getAllAlgorithmsNames(err, rows, fields) {
+    if (err) {  // pass the err to error handler
+      err.source = 'mysql'; // add error source for tracing
+      err.status = 500;
+      next(err)
+    }
+    res.json({ algorithmsnames: rows });
+  });
+  //Closing connection
+  connection.end();
+});
+
+/* gets the table of services */
+router.get('/modelsnames', function getModelsNames(req, res) {
+  //Connect to DB
+  var connection = createDbConnection();
+  connection.connect();
+
+  //Return all services
+  var results = connection.query('select name from models', function getAllModelsNames(err, rows, fields) {
+    if (err) {  // pass the err to error handler
+      err.source = 'mysql'; // add error source for tracing
+      err.status = 500;
+      next(err)
+    }
+    res.json({ modelsnames: rows });
+  });
+  //Closing connection
+  connection.end();
+});
+
+/* gets the table of services */
+router.post('/create', function insertNewTask(req, res) {
+  //Connect to DB
+  var connection = createDbConnection();
+  connection.connect();
+
+  //Return all services
+  var results = connection.query('insert into tasks ', function insertTask(err, rows, fields) {
+    if (err) {  // pass the err to error handler
+      err.source = 'mysql'; // add error source for tracing
+      err.status = 500;
+      next(err)
+    }
+    res.json({ modelsnames: rows });
+  });
+  //Closing connection
+  connection.end();
+});
 
 module.exports = router;
