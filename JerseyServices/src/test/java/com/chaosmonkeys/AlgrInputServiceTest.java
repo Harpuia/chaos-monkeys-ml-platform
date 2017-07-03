@@ -18,8 +18,9 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -179,6 +180,51 @@ public class AlgrInputServiceTest extends JerseyTest{
             e.printStackTrace();
         }
     }
+
+    /**
+     * Test with normal operation
+     */
+    @Test
+    public void testNormalUploadWithoutAllRequiredFiles() {
+        MediaType contentType = MediaType.MULTIPART_FORM_DATA_TYPE;
+        contentType = Boundary.addBoundary(contentType);
+        // declare a file as part of the form data
+        FormDataBodyPart filePart;
+        try {
+            // create test file
+            final File testFile = folder.newFile("test.zip");
+
+            ZipOutputStream zipStream;
+            OutputStream stream = new FileOutputStream(testFile);
+            stream = new BufferedOutputStream(stream);
+            zipStream = new ZipOutputStream(stream);
+            ZipEntry entry = new ZipEntry("piupiu.java");
+            zipStream.putNextEntry(entry);
+            // Missing call to 'write'
+            zipStream.closeEntry();
+            zipStream.close();
+
+            filePart = new FileDataBodyPart("file", testFile);   // pom.xml
+
+            // construct the entire form with all required parameters
+            MultiPart multipartEntity = new FormDataMultiPart()
+                    .field("language","R")
+                    .field("description","TEST ALGORITHMT DESCRIPTION")
+                    .field("user_id", "test_u_id")
+                    .field("name", "tesdfdtname")
+                    .bodyPart(filePart);
+            // request the response Jersey 2.25 will not recognize multipartEntity.getMediaType()
+            Response response = target(SERVICE_PATH).request().post(Entity.entity(multipartEntity, contentType));
+            BaseResponse resEntity = response.readEntity(BaseResponse.class);
+
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+            assertEquals(AlgorithmResource.ERR_REQUIRED_FILE_MISSING, resEntity.getCode());
+            response.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Test with normal operation
      */
@@ -189,8 +235,20 @@ public class AlgrInputServiceTest extends JerseyTest{
         // declare a file as part of the form data
         FormDataBodyPart filePart;
         try {
-            // create test file
-            final File testFile = folder.newFile("test.txt");
+            // create test zip file
+
+            final File testFile = folder.newFile("test.zip");
+
+            ZipOutputStream zipStream;
+            OutputStream stream = new FileOutputStream(testFile);
+            stream = new BufferedOutputStream(stream);
+            zipStream = new ZipOutputStream(stream);
+            ZipEntry entry = new ZipEntry("Main.R");
+            zipStream.putNextEntry(entry);
+            // Missing call to 'write'
+            zipStream.closeEntry();
+            zipStream.close();
+
             filePart = new FileDataBodyPart("file", testFile);   // pom.xml
 
             // construct the entire form with all required parameters
