@@ -352,13 +352,13 @@
         }
 
         //Displays details for a selected task
-        function displayDetails(taskId) {
-            $('#taskName').text(tasksData[taskId]['name']);
-            $('#taskDescription').text(tasksData[taskId]['description']);
-            $('#taskType').text(tasksData[taskId]['type']);
-            $('#taskProject').text(tasksData[taskId]['project_name']);
-            $('#taskAlgorithm').text(tasksData[taskId]['algorithm_name']);
-            $('#taskDataset').text(tasksData[taskId]['dataset_name']);
+        function displayDetails(taskIndex) {
+            $('#taskName').text(tasksData[taskIndex]['name']);
+            $('#taskDescription').text(tasksData[taskIndex]['description']);
+            $('#taskType').text(tasksData[taskIndex]['type']);
+            $('#taskProject').text(tasksData[taskIndex]['project_name']);
+            $('#taskAlgorithm').text(tasksData[taskIndex]['algorithm_name']);
+            $('#taskDataset').text(tasksData[taskIndex]['dataset_name']);
             $('#detailsModal').modal('show');;
         }
     </script>
