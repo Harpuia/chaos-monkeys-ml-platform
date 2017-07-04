@@ -117,4 +117,23 @@ router.post('/create', function insertNewTask(req, res) {
   connection.end();
 });
 
+/* List the tasks from dataset page */
+router.get('/listByDataset/:dataset_id', function listByDataset(req, res) {
+  var dataset_id = req.params.dataset_id;
+
+  //Connect to DB
+  var connection = createDbConnection();
+  connection.connect();
+
+  //Return all tasks
+  var results = connection.query('select name, description from tasks where dataset_id = ' + dataset_id, function listTask(err, rows, fields) {
+    if (err) {  // pass the err to error handler
+      err.source = 'mysql'; // add error source for tracing
+      err.status = 500;
+      next(err)
+    }
+    res.json({ tasks: rows });
+  });
+});
+
 module.exports = router;

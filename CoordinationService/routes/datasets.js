@@ -10,7 +10,7 @@ router.get('/list', function getDatasets(req, res) {
   connection.connect();
 
   //Return all services
-  var results = connection.query('select * from datasets', function selectAllDatasets(err, rows, fields) {
+  var results = connection.query('select datasets.id, datasets.name, datasets.description, datasets.format, datasets.path from datasets', function selectAllDatasets(err, rows, fields) {
     if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;
