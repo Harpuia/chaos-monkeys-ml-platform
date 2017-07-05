@@ -226,7 +226,7 @@
                 }
                 $('#tasksTableBody').html(tasksList);
             });
-                        //Load task types
+            //Load task types
             $.get("tasks/type", function (data) {
                 var types = '';
                 for (i = 0; i < data['types'].length; i++) {

@@ -4,7 +4,7 @@ var path = require('path');
 var utilities = require('./dbUtilities');
 
 /* gets the table of services */
-router.get('/list', function getTaks(req, res) {
+router.get('/list', function getTasks(req, res) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
@@ -14,7 +14,7 @@ router.get('/list', function getTaks(req, res) {
     if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;
-      next(err)
+      next(err);
     }
     res.json({ tasks: rows });
   });
@@ -33,7 +33,7 @@ router.get('/type', function getTypes(req, res) {
     if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;
-      next(err)
+      next(err);
     }
     res.json({ types: rows });
   });
@@ -52,7 +52,7 @@ router.get('/datasetsnames', function getDatasetsNames(req, res) {
     if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;
-      next(err)
+      next(err);
     }
     res.json({ datasetsnames: rows });
   });
@@ -71,7 +71,7 @@ router.get('/algorithmsnames', function getAlgorithmsNames(req, res) {
     if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;
-      next(err)
+      next(err);
     }
     res.json({ algorithmsnames: rows });
   });
@@ -90,7 +90,7 @@ router.get('/modelsnames', function getModelsNames(req, res) {
     if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;
-      next(err)
+      next(err);
     }
     res.json({ modelsnames: rows });
   });
@@ -109,7 +109,7 @@ router.post('/create', function insertNewTask(req, res) {
     if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;
-      next(err)
+      next(err);
     }
     res.json({ modelsnames: rows });
   });
@@ -130,7 +130,7 @@ router.get('/listByDataset/:dataset_id', function listByDataset(req, res) {
     if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;
-      next(err)
+      next(err);
     }
     res.json({ tasks: rows });
   });
