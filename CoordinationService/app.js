@@ -14,6 +14,7 @@ var tasks = require('./routes/tasks');
 var users = require('./routes/users');
 var experiments = require('./routes/experiments');
 var models = require('./routes/models');
+var algorithms = require('./routes/algorithms');
 
 var app = express();
 
@@ -37,6 +38,7 @@ app.use('/tasks', tasks);
 app.use('/users', users);
 app.use('/experiments', experiments);
 app.use('/models', models);
+app.use('/algorithms',algorithms);
 app.use('/public', express.static(__dirname + '/public'));
 app.use('/views', express.static(__dirname + '/views'));
 
