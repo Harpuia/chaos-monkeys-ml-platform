@@ -43,7 +43,7 @@ CREATE TABLE `algorithm_languages` (
 
 LOCK TABLES `algorithm_languages` WRITE;
 /*!40000 ALTER TABLE `algorithm_languages` DISABLE KEYS */;
-INSERT INTO `algorithm_languages` VALUES (0,'R'),(1,'Python');
+INSERT INTO `algorithm_languages` VALUES (1,'R'),(2,'Python');
 /*!40000 ALTER TABLE `algorithm_languages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -71,7 +71,7 @@ CREATE TABLE `algorithms` (
 
 LOCK TABLES `algorithms` WRITE;
 /*!40000 ALTER TABLE `algorithms` DISABLE KEYS */;
-INSERT INTO `algorithms` VALUES (0,'Logistic Regression','logistic-regression-ingo','This data set includes 100 msit-se students\' sleeping data......','R','ingo.weber'),(1,'Decision Tree','decision-tree-len','This data set includes 100 msit-se students\' sleeping data......','Python','len.bass');
+INSERT INTO `algorithms` VALUES (1,'Logistic Regression','logistic-regression-ingo','This data set includes 100 msit-se students\' sleeping data......','R','ingo.weber'),(2,'Decision Tree','decision-tree-len','This data set includes 100 msit-se students\' sleeping data......','Python','len.bass');
 /*!40000 ALTER TABLE `algorithms` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -129,7 +129,7 @@ CREATE TABLE `datasets` (
 
 LOCK TABLES `datasets` WRITE;
 /*!40000 ALTER TABLE `datasets` DISABLE KEYS */;
-INSERT INTO `datasets` VALUES (0,'Ingo Weber','Project Amazon','100-Sleep-Data','amazon','This data set includes 100 students\' sleeping data','JSON'),(1,'Len Bass','Project Amazon','30-Sqrill-Data','amazon','This data set includes 100 students\' sleeping data','CSV');
+INSERT INTO `datasets` VALUES (1,'Ingo Weber','Project Amazon','100-Sleep-Data','amazon','This data set includes 100 students\' sleeping data','JSON'),(2,'Len Bass','Project Amazon','30-Sqrill-Data','amazon','This data set includes 100 students\' sleeping data','CSV');
 /*!40000 ALTER TABLE `datasets` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -160,7 +160,7 @@ CREATE TABLE `experiments` (
 
 LOCK TABLES `experiments` WRITE;
 /*!40000 ALTER TABLE `experiments` DISABLE KEYS */;
-INSERT INTO `experiments` VALUES (0,0,0,'Experiment 1','2017-07-01 09:00:00','2017-07-01 11:00:00','running','2017-07-01 11:05:00','sleep-analysis'),(1,1,1,'Experiment 2','2017-07-02 09:00:00','2017-07-02 11:00:00','not responding','2017-07-02 11:05:00','feature-classification');
+INSERT INTO `experiments` VALUES (1,1,1,'Experiment 1','2017-07-01 09:00:00','2017-07-01 11:00:00','running','2017-07-01 11:05:00','sleep-analysis'),(2,2,2,'Experiment 2','2017-07-02 09:00:00','2017-07-02 11:00:00','not responding','2017-07-02 11:05:00','feature-classification');
 /*!40000 ALTER TABLE `experiments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -268,7 +268,7 @@ CREATE TABLE `projects` (
 
 LOCK TABLES `projects` WRITE;
 /*!40000 ALTER TABLE `projects` DISABLE KEYS */;
-INSERT INTO `projects` VALUES (0,'Project Amazon','Project Amazon Description',1,'ingo.weber','student'),(1,'Microsoft Friendship','Microsoft Friendship Description',1,'ingo.weber','student');
+INSERT INTO `projects` VALUES (1,'Project Amazon','Project Amazon Description',1,'ingo.weber','student'),(2,'Microsoft Friendship','Microsoft Friendship Description',2,'ingo.weber','student');
 /*!40000 ALTER TABLE `projects` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -293,7 +293,7 @@ CREATE TABLE `roles` (
 
 LOCK TABLES `roles` WRITE;
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
-INSERT INTO `roles` VALUES (0,'ingo.weber','Researcher'),(1,'len.bass','Researcher');
+INSERT INTO `roles` VALUES (1,'ingo.weber','Researcher'),(2,'len.bass','Researcher');
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -399,7 +399,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (0,'ingo.weber','123456','Ingo','Weber','Researcher','Ingo.Weber@data61.csiro.au'),(1,'len.bass','123456','Len','Bass','Researcher','lenbass@cmu.edu');
+INSERT INTO `users` VALUES (1,'ingo.weber','123456','Ingo','Weber','Researcher','Ingo.Weber@data61.csiro.au'),(2,'len.bass','123456','Len','Bass','Researcher','lenbass@cmu.edu');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
