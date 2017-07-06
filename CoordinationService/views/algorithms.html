@@ -11,13 +11,7 @@
 
   <title>ChaosMonkeys</title>
 
-<<<<<<< HEAD
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-=======
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-route.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-resource.min.js"></script>
->>>>>>> 4bac702510b77524153492316c6cf4f31d75cab0
 
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -43,7 +37,6 @@
     <div class="container">
       <!-- The justified navigation menu is meant for single line per list item.
            Multiple lines will require custom code not provided by Bootstrap. -->
-<<<<<<< HEAD
       <div class="masthead">
         <h3 class="text-muted">Project Amazon</h3>
         <nav>
@@ -125,135 +118,6 @@
                         <div class="form-group">
                           <label for="user id">User ID</label>
                           <input type="text" class="form-control" name="user_id" id="user_id" />
-=======
-            <div class="masthead">
-                <h3 class="text-muted">Project Amazon</h3>
-                <nav>
-                    <ul class="nav nav-justified">
-                        <li><a href="/experiments">Experiments</a></li>
-                        <li><a href="/tasks">Tasks</a></li>
-                        <li><a href="/datasets">Data Sets</a></li>
-                        <li class="active"><a href="/algorithms">Algorithms</a></li>
-                        <li><a href="/models">Models</a></li>
-                        <li><a href="/monitoring">Monitoring</a></li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    </header>
-
-    <div class="row">
-        <div class="col-md-6 col-md-offset-3">
-            <h2 class="sub-header">Results</h2>
-            <!-- Button trigger modal -->
-            <div class="container">
-                <!-- Button trigger modal -->
-                <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uploadModal">Upload</button></p>
-
-                <!-- Modal -->
-                <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <i class="fa fa-server" aria-hidden="true" fa-3x></i>
-                                <h3 class="modal-title" id="myModalLabel">Upload New Algorithm</h3>
-                            </div>
-                            <div class="modal-body">
-                                <div class="uploadingpopup" id="uploading" style="display:none">
-
-                                    <div style="height: 400px;">
-
-                                    </div>
-
-                                </div>
-                                <div class="alert alert-danger alert-dismissible" id="formatAlert" style="display: none;" role="alert">
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                    <strong>Warning!</strong> The selected data format doesn't match the input data format.
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 col-md-offset-1">
-
-                                        <h4>Choose Algorithm Task Type</h4>
-                                        <!-- in input label, using the name attribute to specify FormDataParam in jersey side-->
-                                        <form id="algorithmForm" action="http://127.0.0.1:8080/services/algr/upload" method="post" enctype="multipart/form-data">
-                                            <div class="description" id="contents" style="display:block">
-                                                <div class="form-group">
-                                                    <label for="algorithm name">Name</label>
-                                                    <input type="text" class="form-control" name="name" id="name" />
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="Language">Languages</label>
-                                                    <br>
-                                                    <select class="form-control" id="language">
-                                                        <option>R</option>
-                                                        <option>Python</option>
-                                                    </select>
-                                                    <a href="#" data-toggle="popover" title="Algorithms Structure" data-content="There are no instructions here......">Instructions?</a>
-                                                    <script>
-                                                        $(document).ready(function () {
-                                                            $('[data-toggle="popover"]').popover();
-                                                        });
-                                                    </script>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="description">Description</label>
-                                                    <textarea class="form-control" rows="5" id="description"> </textarea>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="file">Algorithm Files</label>
-                                                    <input type="file" name="file" id="file"/>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="user id">User ID</label>
-                                                    <input type="text" class="form-control" name="user_id" id="user_id" />
-                                                </div>
-                                                <div>
-                                                    <!--input type="submit" id="submitButton" class="btn btn-primary" value="Upload"-->
-                                                    <button id="submitButton" class="btn btn-primary" onclick="showPage()">Upload</button>
-                                                    <script>
-                                                        function showPage() {
-                                                            //document.getElementById("contents").style.display = "none";
-                                                            $(".description").css('visibility', 'hidden');
-                                                            document.getElementById("uploading").style.display = "block";
-                                                        }
-                                                    </script>
-                                                </div>
-                                            </div>
-                                        </form>
-
-                                        <script type="text/javascript">
-                                                        $(document).ready(function () {
-                                                            $("button#submitButton").click(function () {
-                                                                // TODO: Fix the bug: File uploads successfully but AJAX returns error
-                                                                $.ajax({
-                                                                    url: "http://127.0.0.1:8080/services/algr/upload",
-                                                                    type: "POST",
-                                                                    dataType: "json",
-                                                                    contentType: 'application/json',
-                                                                    data: $('form#algorithmForm').serialize(),
-                                                                    success: function (data) {
-                                                                        console.log("Submitted");
-                                                                    },
-                                                                    error: function (request, status, error) {
-                                                                        console.log(status + error);
-                                                                        alert("Oops! An error occurs when uploading the data. Please check the error log in log path for possible reasons: " + status + error);
-                                                                    },
-                                                                    complete: function () {
-                                                                        document.getElementById("contents").style.display = "none";
-                                                                    }
-                                                                });
-                                                            });
-
-                                                        });
-                                        </script>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            </div>
->>>>>>> 4bac702510b77524153492316c6cf4f31d75cab0
                         </div>
                         <div>
                           <!--input type="submit" id="submitButton" class="btn btn-primary" value="Upload"-->
@@ -307,7 +171,6 @@
         </table>
       </div>
     </div>
-<<<<<<< HEAD
   </div>
   <script type="text/javascript">
     //Initialization
@@ -359,8 +222,6 @@
       document.getElementById("uploading").style.display = "block";
     };
   </script>
-=======
->>>>>>> 4bac702510b77524153492316c6cf4f31d75cab0
 </body>
 
 </html>
