@@ -291,6 +291,7 @@
                 "project_id": $("#projectId").val(),
                 "dataset_id": $("#datasetsNames").val(),
                 "algorithm_id": $("#algorithmsNames").val(),
+                "model_id": null,
                 "name": $("#name").val(),
                 "description": $("#description").val(),
                 "type": $("#type")[0].options[$("#type")[0].selectedIndex].text
@@ -298,6 +299,7 @@
             var tasksInfoForExe = {
                 "project_id": $("#projectId").val(),
                 "dataset_id": $("#datasetsNames").val(),
+                "algorithm_id":null,
                 "model_id": $("#modelsNames").val(),
                 "name": $("#name").val(),
                 "description": $("#description").val(),
@@ -305,7 +307,7 @@
             }
             if (tasksInfoForTrain.type.toLowerCase() == "training" && checkRequiredFields()) {
                 $.ajax({
-                    url: "http://127.0.0.1:3000/tasks/create",
+                    url: "http://127.0.0.1:3000/tasks/createTrainingTask",
                     type: "POST",
                     dataType: "json",
                     contentType: 'application/json',
@@ -321,16 +323,11 @@
             }
             else if (tasksInfoForExe.type.toLowerCase() == "execution" && checkRequiredFields()) {
                 $.ajax({
-                    url: "http://127.0.0.1:3000/tasks/create",
+                    url: "http://127.0.0.1:3000/tasks/createExecutionTask",
                     type: "POST",
                     dataType: "json",
                     contentType: 'application/json',
                     data: JSON.stringify(tasksInfoForExe),
-                    success: function (data) {
-                        console.log("Submitted");
-                        console.log('Data: ' + data);
-                        alert("Success!");
-                    },
                     error: function (request, status, error) {
                         console.log(status + error);
                         alert("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error);

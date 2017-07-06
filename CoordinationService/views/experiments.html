@@ -80,11 +80,22 @@
             $.get("experiments/list", function (data) {
                 var experimentsList = '';
                 for (i = 0; i < data['experiments'].length; i++) {
-                    experimentsList += '<tr><td><i class="fa fa-database" aria-hidden="true"></i><a href="#">' + data['experiments'][i]['experiment_name'] + '</a></td><td>' + data['experiments'][i]['description'] + '<br><span class="label label-success">' + data['experiments'][i]['project_id'] + '</span><span class="label label-success">' + data['experiments'][i]['task_id'] + '</span><span class="label label-success">' + data['experiments'][i]['start'] + '</span><span class="label label-success">' + data['experiments'][i]['end'] + '</span><span class="label label-success">' + data['experiments'][i]['last_status'] + '</span><span class="label label-success">' + data['experiments'][i]['last_updated'] + '</span></td></tr>';
+                    experimentsList += '<tr><td><i class="fa fa-database" aria-hidden="true"></i><a href="#">' + data['experiments'][i]['experiment_name'] + '</a></td><td>' + data['experiments'][i]['description'] + '<br><span class="label label-success">' + data['experiments'][i]['project_id'] + '</span><span class="label label-success">' + data['experiments'][i]['task_id'] + '</span><span class="label label-success">' + data['experiments'][i]['start'] + '</span><span class="label label-success">' + data['experiments'][i]['end'] + '</span><span class="label label-success">' + data['experiments'][i]['last_status'] + '</span><span class="label label-success">' + data['experiments'][i]['last_updated'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td></tr>';
                 }
                 $('#experimentsTableBody').html(experimentsList);
             });
         });
+
+         //Displays details for a selected experiment
+        function displayDetails(experimentIndex) {
+            $('#experimentName').text(experimentsData[experimentIndex]['experiment_name']);
+            $('#experimentDescription').text(experimentsData[experimentIndex]['start']);
+            $('#experimentType').text(experimentsData[experimentIndex]['end']);
+            $('#experimentProject').text(experimentsData[experimentIndex]['last_status']);
+            $('#experimentAlgorithm').text(experimentsData[experimentIndex]['last_updated']);
+            $('#experimentDataset').text(experimentsData[experimentIndex]['description']);
+            $('#detailsModal').modal('show');;
+        }
     </script>
 </body>
 

@@ -98,8 +98,8 @@ router.get('/modelsnames', function getModelsNames(req, res) {
   connection.end();
 });
 
-/* Create a new task in either training type or exectution type */
-router.post('/create', function insertNewTask(req, res) {
+/* Create a new task in training type */
+router.post('/createTrainingTask', function insertNewTask(req, res) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
@@ -110,7 +110,28 @@ router.post('/create', function insertNewTask(req, res) {
     if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;
-      next(err);
+      //next(err);
+      
+    }
+    res.json({newtaskinfo: req.body});
+  });
+  //Closing connection
+  connection.end();
+});
+
+/* Create a new task in exectution type */
+router.post('/createExecutionTask', function insertNewTask(req, res) {
+  //Connect to DB
+  var connection = createDbConnection();
+  connection.connect();
+  console.log(req.body);
+
+  //Insert tasks information into tasks table
+  var results = connection.query('insert into tasks SET ?', req.body, function insertTask(err, result) {
+    if (err) {  // pass the err to error handler
+      err.source = 'mysql'; // add error source for tracing
+      err.status = 500;
+      //next(err);
       
     }
     res.json({newtaskinfo: req.body});
