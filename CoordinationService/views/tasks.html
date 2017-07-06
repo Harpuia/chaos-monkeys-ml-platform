@@ -64,7 +64,7 @@
 
             <!-- Create task button -->
             <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createTaskModal">Create task</button></p>
-                        <!-- Modal -->
+            <!-- Modal -->
             <div class="modal fade" id="createTaskModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -94,18 +94,18 @@
                                             <div class="form-group required">
                                                 <label for="TaskType" class="control-label">Task Type</label>
                                                 <br>
-                                                <select class="form-control" id="type" onchange="checkTaskType()">
+                                                <select class="form-control" id="type" onchange="showTaskType()">
                                                 </select>
                                             </div>
                                             <div class="form-group required">
                                                 <label for="data name" class="control-label">Task Name</label>
                                                 <input type="text" class="form-control" name="name" id="name" />
                                             </div>
-                                             <div class="form-group">
-                                                <label for="ProjectID">Project ID</label>
-                                                <textarea class="form-control" rows="1" id="projectId"> </textarea>
+                                            <div class="form-group required">
+                                                <label for="ProjectID" class="control-label">Project ID</label>
+                                                <input type="text" class="form-control" id="projectId" />
                                             </div>
-                                            
+
                                             <div class="form-group">
                                                 <label for="description">Description</label>
                                                 <textarea class="form-control" rows="5" id="description"> </textarea>
@@ -239,7 +239,7 @@
             $.get("tasks/datasetsnames", function (data) {
                 var datasetsnames = '';
                 for (i = 0; i < data['datasetsnames'].length; i++) {
-                    datasetsnames += '<option>' + data['datasetsnames'][i]['name'] + '</option>\n';
+                    datasetsnames += '<option value="' + data['datasetsnames'][i]['id'] + '">' + data['datasetsnames'][i]['name'] + '</option>\n';
                 }
                 $('#datasetsNames').html(datasetsnames);
             });
@@ -248,7 +248,7 @@
             $.get("tasks/algorithmsnames", function (data) {
                 var algorithmsnames = '';
                 for (i = 0; i < data['algorithmsnames'].length; i++) {
-                    algorithmsnames += '<option>' + data['algorithmsnames'][i]['name'] + '</option>\n';
+                    algorithmsnames += '<option value="' + data['algorithmsnames'][i]['id'] + '">' + data['algorithmsnames'][i]['name'] + '</option>\n';
                 }
                 $('#algorithmsNames').html(algorithmsnames);
             });
@@ -257,13 +257,13 @@
             $.get("tasks/modelsnames", function (data) {
                 var modelsnames = '';
                 for (i = 0; i < data['modelsnames'].length; i++) {
-                    modelsnames += '<option>' + data['modelsnames'][i]['name'] + '</option>\n';
+                    modelsnames += '<option value="' + data['modelsnames'][i]['id'] + '">' + data['modelsnames'][i]['name'] + '</option>\n';
                 }
                 $('#modelsNames').html(modelsnames);
             });
         });
 
-         function checkTaskType() {
+        function showTaskType() {
             var e = $("#type")[0];
             var selectedValue = e.options[e.selectedIndex].text;
             var modelDropdown = $("#models")[0];
@@ -287,33 +287,64 @@
         }
         //Submit the task form
         function submitForm() {
-            if (checkRequiredFields()) {
+            var tasksInfoForTrain = {
+                "project_id": $("#projectId").val(),
+                "dataset_id": $("#datasetsNames").val(),
+                "algorithm_id": $("#algorithmsNames").val(),
+                "model_id": null,
+                "name": $("#name").val(),
+                "description": $("#description").val(),
+                "type": $("#type")[0].options[$("#type")[0].selectedIndex].text
+            }
+            var tasksInfoForExe = {
+                "project_id": $("#projectId").val(),
+                "dataset_id": $("#datasetsNames").val(),
+                "algorithm_id":null,
+                "model_id": $("#modelsNames").val(),
+                "name": $("#name").val(),
+                "description": $("#description").val(),
+                "type": $("#type")[0].options[$("#type")[0].selectedIndex].text
+            }
+            if (tasksInfoForTrain.type.toLowerCase() == "training" && checkRequiredFields()) {
                 $.ajax({
-                    url: "http://127.0.0.1:3000/tasks/create",
+                    url: "http://127.0.0.1:3000/tasks/createTrainingTask",
                     type: "POST",
                     dataType: "json",
                     contentType: 'application/json',
-                    data: $('form#dataForm').serialize(),
-                    success: function (data) {
-                        console.log("Submitted");
-                        console.log('Data: ' + data);
-                        alert("Success!");
-                    },
+                    data: JSON.stringify(tasksInfoForTrain),
                     error: function (request, status, error) {
                         console.log(status + error);
                         alert("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error);
                     },
-                    complete: function () {
-                        //$('contents')[0].style.display = "none";
+                    complete: function (data) {
+                        alert("Task: " + data.responseJSON.newtaskinfo.name + " was created successfully!");
                     }
                 });
+            }
+            else if (tasksInfoForExe.type.toLowerCase() == "execution" && checkRequiredFields()) {
+                $.ajax({
+                    url: "http://127.0.0.1:3000/tasks/createExecutionTask",
+                    type: "POST",
+                    dataType: "json",
+                    contentType: 'application/json',
+                    data: JSON.stringify(tasksInfoForExe),
+                    error: function (request, status, error) {
+                        console.log(status + error);
+                        alert("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error);
+                    },
+                    complete: function (data) {
+                        alert("Task: " + data.responseJSON.newtaskinfo.name + " was created successfully!");
+                    }
+                });
+
             }
 
         }
 
         function checkRequiredFields() {
             var t = $("#type")[0];
-            var taskName = $("#name")[0];
+            var taskName = $("#name").val();
+            var projectId = $("#projectId").val();
             var d = $("#datasetsNames")[0];
             var a = $("#algorithmsNames")[0];
             var m = $("#modelsNames")[0];
@@ -321,30 +352,37 @@
             var selectedDatasetName = d.options[d.selectedIndex].text;
             var selectedAlgorithmName = a.options[a.selectedIndex].text;
             var selectedModelName = m.options[m.selectedIndex].text;
-
-            if (selectedTaskType.toLowerCase() == "training") {
-                if (taskName.length == 0)
-                    showFormError('Please input a task name.', alert, alertText);
-                else if (selectedDatasetName.length == 0)
-                    showFormError('Please select a dataset.', alert, alertText);
-                else if (selectedAlgorithmName.length == 0)
-                    showFormError('Please select an algorithm.', alert, alertText);
-                else
-                    return true;
+            var alert = $('#formAlert')[0];
+            var alertText = $('#formAlertText')[0];
+            //console.log(taskName);
+            if(selectedTaskType.length==0){
+                showFormError('Please select a task type.', alert, alertText);
+                return false;
             }
-            else if (selectedTaskType.toLowerCase() == "execution") {
-                if (taskName.length == 0)
-                    showFormError('Please input a task name.', alert, alertText);
-                else if (selectedDatasetName.length == 0)
-                    showFormError('Please select a dataset.', alert, alertText);
-                else if (selectedModelName.length == 0)
-                    showFormError('Please select a model.', alert, alertText);
-                else
-                    return true;
+            else if (taskName.length == 0) {
+                showFormError('Please input a task name.', alert, alertText);
+                return false;
             }
-            return false;
+            else if (projectId.length == 0) {
+                showFormError('Please input the Project ID.', alert, alertText);
+                return false;
+            }
+            else if (selectedDatasetName.length == 0) {
+                showFormError('Please select a dataset.', alert, alertText);
+                return false;
+            }
+            else if (selectedTaskType.toLowerCase() == "training" && selectedAlgorithmName.length == 0) {
+                showFormError('Please select an algorithm.', alert, alertText);
+                return false;
+            }
+            else if (selectedTaskType.toLowerCase() == "execution" && selectedModelName.length == 0) {
+                showFormError('Please select a model.', alert, alertText);
+                return false;
+            }
+            else
+                return true;
         }
-        
+
         //Show error
         function showFormError(message, alert, alertText) {
             alertText.innerText = message;

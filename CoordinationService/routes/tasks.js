@@ -22,13 +22,13 @@ router.get('/list', function getTasks(req, res) {
   //Closing connection
   connection.end();
 });
-/* gets the table of services */
+/* Get the tasks types */
 router.get('/type', function getTypes(req, res) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
 
-  //Return all services
+  //Get type column of task_types
   var results = connection.query('select type from task_types', function getAllTypes(err, rows, fields) {
     if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
@@ -41,14 +41,14 @@ router.get('/type', function getTypes(req, res) {
   connection.end();
 });
 
-/* gets the table of services */
+/* Get the datasets names */
 router.get('/datasetsnames', function getDatasetsNames(req, res) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
 
-  //Return all services
-  var results = connection.query('select name from datasets', function getAllDatasetsNames(err, rows, fields) {
+//Get the id and name column of datasets table
+  var results = connection.query('select id, name from datasets', function getAllDatasetsNames(err, rows, fields) {
     if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;
@@ -60,14 +60,14 @@ router.get('/datasetsnames', function getDatasetsNames(req, res) {
   connection.end();
 });
 
-/* gets the table of services */
+/* Get the algorithms names */
 router.get('/algorithmsnames', function getAlgorithmsNames(req, res) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
 
-  //Return all services
-  var results = connection.query('select name from algorithms', function getAllAlgorithmsNames(err, rows, fields) {
+  //Get the id and name column of algorithms table
+  var results = connection.query('select id, name from algorithms', function getAllAlgorithmsNames(err, rows, fields) {
     if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;
@@ -79,14 +79,14 @@ router.get('/algorithmsnames', function getAlgorithmsNames(req, res) {
   connection.end();
 });
 
-/* gets the table of services */
+/* Get the models names */
 router.get('/modelsnames', function getModelsNames(req, res) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
 
-  //Return all services
-  var results = connection.query('select name from models', function getAllModelsNames(err, rows, fields) {
+  //Get the id and name column of models table
+  var results = connection.query('select id,name from models', function getAllModelsNames(err, rows, fields) {
     if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;
@@ -98,20 +98,43 @@ router.get('/modelsnames', function getModelsNames(req, res) {
   connection.end();
 });
 
-/* gets the table of services */
-router.post('/create', function insertNewTask(req, res) {
+/* Create a new task in training type */
+router.post('/createTrainingTask', function insertNewTask(req, res) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
+  console.log(req.body);
 
-  //Return all services
-  var results = connection.query('insert into tasks ', function insertTask(err, rows, fields) {
+  //Insert tasks information into tasks table
+  var results = connection.query('insert into tasks SET ?', req.body, function insertTask(err, result) {
     if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;
-      next(err);
+      //next(err);
+      
     }
-    res.json({ modelsnames: rows });
+    res.json({newtaskinfo: req.body});
+  });
+  //Closing connection
+  connection.end();
+});
+
+/* Create a new task in exectution type */
+router.post('/createExecutionTask', function insertNewTask(req, res) {
+  //Connect to DB
+  var connection = createDbConnection();
+  connection.connect();
+  console.log(req.body);
+
+  //Insert tasks information into tasks table
+  var results = connection.query('insert into tasks SET ?', req.body, function insertTask(err, result) {
+    if (err) {  // pass the err to error handler
+      err.source = 'mysql'; // add error source for tracing
+      err.status = 500;
+      //next(err);
+      
+    }
+    res.json({newtaskinfo: req.body});
   });
   //Closing connection
   connection.end();
