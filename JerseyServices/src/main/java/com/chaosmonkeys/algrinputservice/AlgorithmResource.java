@@ -41,13 +41,13 @@ public class AlgorithmResource {
     // Success Code
     public static final int CHECK_SUCCESS = 0;
     // Error Code
-    public static final int ERR_BLANK_PARAMS = -1;
-    public static final int ERR_UNSUPPORTED_LANG = -2;
-    public static final int ERR_TRANSMISSION_FILE = -3;
-    public static final int ERR_FILE_BODYPART_MISSING = -4;
-    public static final int ERR_UNZIP_EXCEPTION = -5;
-    public static final int ERR_REQUIRED_FILE_MISSING = -6;
-    public static final int ERR_UNKNOWN = -100;
+    public static final int ERR_BLANK_PARAMS = 201;
+    public static final int ERR_UNSUPPORTED_LANG = 202;
+    public static final int ERR_TRANSMISSION_FILE = 203;
+    public static final int ERR_FILE_BODYPART_MISSING = 204;
+    public static final int ERR_UNZIP_EXCEPTION = 205;
+    public static final int ERR_REQUIRED_FILE_MISSING = 206;
+    public static final int ERR_UNKNOWN = 299;
     @POST
     @Path("/upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
