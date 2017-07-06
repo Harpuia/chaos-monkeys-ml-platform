@@ -14,7 +14,7 @@ router.get('/list', function getModels(req, res) {
     if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;
-      next(err)
+      next(err);
     }
     res.json({ models: rows });
   });

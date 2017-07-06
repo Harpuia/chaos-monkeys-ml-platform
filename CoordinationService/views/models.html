@@ -11,10 +11,6 @@
 
     <title>ChaosMonkeys</title>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-route.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-resource.min.js"></script>
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
     <!-- Latest compiled and minified CSS -->
@@ -88,6 +84,30 @@
                 $('#modelsTableBody').html(modelsList);
             });
         });
+
+        //Displays details for a selected dataset
+        function displayDetails(modelId) {
+            $('#modelName').text(datasetsData[datasetId]['name']);
+            $('#modelDescription').text(datasetsData[datasetId]['description']);
+            $('#modelFormat').text(datasetsData[datasetId]['format']);
+            $('#modelPath').text(datasetsData[datasetId]['path']);
+
+            //Load tasks types
+            $.get("tasks/listByDataset/" + datasetsData[datasetId]['id'], function (data) {
+                if (typeof data != "undefined") {
+                    var tasksList = '';
+                    for (i = 0; i < data['tasks'].length; i++) {
+                        tasksList += '<tr><td><i class="fa fa-server" aria-hidden="true"></i>' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '</td></tr>';
+                    }
+                    $('#tasksTableBody').html(tasksList);
+                }
+            });
+            // Uncomment the following two lines after the table field is filled.
+            //$('#datasetProject').text(datasetsData[datasetId]['project_name']);
+            //$('#datasetTask').text(datasetsData[datasetId]['task_name']);
+
+            $('#detailsModal').modal('show');
+        }
     </script>
 </body>
 
