@@ -11,9 +11,9 @@
 
     <title>ChaosMonkeys</title>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-route.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-resource.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-resource.min.js"></script> -->
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
@@ -94,7 +94,7 @@
 
                                         <h4>Choose Algorithm Task Type</h4>
                                         <!-- in input label, using the name attribute to specify FormDataParam in jersey side-->
-                                        <form id="algorithmForm" action="http://127.0.0.1:8080/services/algr/upload" method="post" enctype="multipart/form-data">
+                                        <form id="algorithmForm" enctype="multipart/form-data">
                                             <div class="description" id="contents" style="display:block">
                                                 <div class="form-group">
                                                     <label for="algorithm name">Name</label>
@@ -128,43 +128,11 @@
                                                 </div>
                                                 <div>
                                                     <!--input type="submit" id="submitButton" class="btn btn-primary" value="Upload"-->
-                                                    <button id="submitButton" class="btn btn-primary" onclick="showPage()">Upload</button>
-                                                    <script>
-                                                        function showPage() {
-                                                            //document.getElementById("contents").style.display = "none";
-                                                            $(".description").css('visibility', 'hidden');
-                                                            document.getElementById("uploading").style.display = "block";
-                                                        }
-                                                    </script>
+                                                    <button id="submitButton" type="button" class="btn btn-primary" onclick="submitForm()">Upload</button>
                                                 </div>
                                             </div>
                                         </form>
 
-                                        <script type="text/javascript">
-                                                        $(document).ready(function () {
-                                                            $("button#submitButton").click(function () {
-                                                                // TODO: Fix the bug: File uploads successfully but AJAX returns error
-                                                                $.ajax({
-                                                                    url: "http://127.0.0.1:8080/services/algr/upload",
-                                                                    type: "POST",
-                                                                    dataType: "json",
-                                                                    contentType: 'application/json',
-                                                                    data: $('form#algorithmForm').serialize(),
-                                                                    success: function (data) {
-                                                                        console.log("Submitted");
-                                                                    },
-                                                                    error: function (request, status, error) {
-                                                                        console.log(status + error);
-                                                                        alert("Oops! An error occurs when uploading the data. Please check the error log in log path for possible reasons: " + status + error);
-                                                                    },
-                                                                    complete: function () {
-                                                                        document.getElementById("contents").style.display = "none";
-                                                                    }
-                                                                });
-                                                            });
-
-                                                        });
-                                        </script>
                                     </div>
                                 </div>
                             </div>
@@ -211,6 +179,43 @@
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+    //Ini
+      //Handles the submit action
+      function submitForm() {
+        var form = new FormData($('form#algorithmForm')[0]);
+        //Sending post request
+        showUploadingSpinner();
+        $.ajax({
+            url: "http://127.0.0.1:8080/services/algr/upload",
+            type: "POST",
+            dataType: 'text',
+            data: form,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+              console.log("Submitted");
+              console.log('Data: ' + data);
+              alert("Success!");
+            },
+            error: function (request, status, error) {
+              console.log(status + error);
+              alert("Oops! An error occurs when uploading the data. Please check the error log in log path for possible reasons: " + status + error);
+            },
+            complete: function () {
+              $("#uploading")[0].style.display = "none";
+              $(".description").css('visibility', 'visible');
+            }
+        });
+
+      }
+
+      function showUploadingSpinner() {
+        //document.getElementById("contents").style.display = "none";
+        $(".description").css('visibility', 'hidden');
+        document.getElementById("uploading").style.display = "block";
+      };
+    </script>
 </body>
 
 </html>

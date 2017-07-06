@@ -126,7 +126,7 @@
                                             </div>
                                         </form>
                                         <div>
-                                            <button id="submitButton" class="btn btn-primary" onclick="submitForm()">Upload</button>
+                                            <button id="submitButton" type="button" class="btn btn-primary" onclick="submitForm()">Upload</button>
                                         </div>
                                     </div>
                                 </div>
@@ -242,7 +242,7 @@
         //Shows upload spinner
         function showUploadingSpinner() {
             $(".description").css('visibility', 'hidden');
-            document.getElementById("uploading").style.display = "block";
+            $("#uploading")[0].style.display = "block";
         }
 
         //Checks form fields for correctness
@@ -275,6 +275,7 @@
             var form = new FormData($('form#dataForm')[0]);
             //Sending post request
             if (checkExtension()) {
+              showUploadingSpinner();
                 $.ajax({
                     url: "http://127.0.0.1:8080/services/upload",
                     type: "POST",
@@ -283,16 +284,17 @@
                     processData: false,
                     contentType: false,
                     success: function (data) {
-                        console.log("Submitted");
-                        console.log('Data: ' + data);
-                        alert("Success!");
+                      console.log("Submitted");
+                      console.log('Data: ' + data);
+                      alert("Success!");
                     },
                     error: function (request, status, error) {
-                        console.log(status + error);
-                        alert("Oops! An error occurs when uploading the data. Please check the error log in log path for possible reasons: " + status + error);
+                      console.log(status + error);
+                      alert("Oops! An error occurs when uploading the data. Please check the error log in log path for possible reasons: " + status + error);
                     },
                     complete: function () {
-                        //$('contents')[0].style.display = "none";
+                      document.getElementById("uploading").style.display = "none";
+                      $(".description").css('visibility', 'visible');
                     }
                 });
             }
