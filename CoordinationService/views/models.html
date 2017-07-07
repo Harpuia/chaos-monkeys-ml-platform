@@ -65,6 +65,62 @@
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Details modal -->
+            <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <i class="fa fa-lightbulb-o" aria-hidden="true" fa-3x></i>
+                            <h4 class="modal-title" id="myModalLabel">Model Details</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6 col-md-offset-1">
+                                    <!--Popup content-->
+                                    <p>
+                                        <h4>Model Name:</h4>
+                                        <span id='modelName'></span>
+                                    </p>
+                                    <p>
+                                        <h4>Model Description:</h4>
+                                        <span id='modelDescription'></span>
+                                    </p>
+                                    <p>
+                                        <h4>Model Path:</h4>
+                                        <span id='modelPath'></span>
+                                    </p>
+
+                                    <!-- Uncomment this block after the database table is filled -->
+                                    <!--p>
+                                        <h4>Dataset Parent Project Name:</h4>
+                                        <span id='datasetProject'></span>
+                                    </p-->
+
+                                    <p>
+                                        <h4>Associated Tasks:</h4>
+                                        <div class="table-responsive">
+                                            <table class="table table-striped">
+                                                <tbody id='tasksTableBody'>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </p>
+
+                                    <!--Submit button-->
+                                    <div>
+                                        <button id="submitButton" class="btn btn-primary" onclick="alert('Submit')">Action</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -76,24 +132,23 @@
             $('#modelsTableBody').text('Loading...');
             //Load upload types
             $.get("models/list", function (data) {
-                modelsData = data;
+                modelsData = data['models'];
                 var modelsList = '';
                 for (i = 0; i < data['models'].length; i++) {
-                    modelsList += '<tr><td><i class="fa fa-database" aria-hidden="true"></i>' + data['models'][i]['name'] + '</td><td>' + data['models'][i]['description'] + '<br><span class="label label-success">' + data['models'][i]['path'] + '</span><span class="label label-success">' + data['models'][i]['project_id'] + '</span><span class="label label-success">' + data['models'][i]['experiment_id'] + '</span></td><td><button type="button" onclick="alert(' + data['models'][i]['id'] + ')" class="btn btn-primary">Details</button></td></tr>';
+                    modelsList += '<tr><td><i class="fa fa-lightbulb-o" aria-hidden="true"></i>' + data['models'][i]['name'] + '</td><td>' + data['models'][i]['description'] + '<br><span class="label label-success">' + data['models'][i]['path'] + '</span><span class="label label-success">' + data['models'][i]['project_id'] + '</span><span class="label label-success">' + data['models'][i]['experiment_id'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td></tr>';
                 }
                 $('#modelsTableBody').html(modelsList);
             });
         });
 
         //Displays details for a selected dataset
-        function displayDetails(modelId) {
-            $('#modelName').text(datasetsData[datasetId]['name']);
-            $('#modelDescription').text(datasetsData[datasetId]['description']);
-            $('#modelFormat').text(datasetsData[datasetId]['format']);
-            $('#modelPath').text(datasetsData[datasetId]['path']);
+        function displayDetails(modelIndex) {
+            $('#modelName').text(modelsData[modelIndex]['name']);
+            $('#modelDescription').text(modelsData[modelIndex]['description']);
+            $('#modelPath').text(modelsData[modelIndex]['path']);
 
             //Load tasks types
-            $.get("tasks/listByDataset/" + datasetsData[datasetId]['id'], function (data) {
+            $.get("tasks/listByModel/" + modelsData[modelIndex]['id'], function (data) {
                 if (typeof data != "undefined") {
                     var tasksList = '';
                     for (i = 0; i < data['tasks'].length; i++) {

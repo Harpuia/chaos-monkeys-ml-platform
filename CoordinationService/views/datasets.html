@@ -312,14 +312,14 @@
         }
 
         //Displays details for a selected dataset
-        function displayDetails(datasetId) {
-            $('#datasetName').text(datasetsData[datasetId]['name']);
-            $('#datasetDescription').text(datasetsData[datasetId]['description']);
-            $('#datasetFormat').text(datasetsData[datasetId]['format']);
-            $('#datasetPath').text(datasetsData[datasetId]['path']);
+        function displayDetails(datasetIndex) {
+            $('#datasetName').text(datasetsData[datasetIndex]['name']);
+            $('#datasetDescription').text(datasetsData[datasetIndex]['description']);
+            $('#datasetFormat').text(datasetsData[datasetIndex]['format']);
+            $('#datasetPath').text(datasetsData[datasetIndex]['path']);
 
             //Load tasks types
-            $.get("tasks/listByDataset/" + datasetsData[datasetId]['id'], function (data) {
+            $.get("tasks/listByDataset/" + datasetsData[datasetIndex]['id'], function (data) {
                 if (typeof data != "undefined") {
                     var tasksList = '';
                     for (i = 0; i < data['tasks'].length; i++) {
@@ -329,8 +329,8 @@
                 }
             });
             // Uncomment the following two lines after the table field is filled.
-            //$('#datasetProject').text(datasetsData[datasetId]['project_name']);
-            //$('#datasetTask').text(datasetsData[datasetId]['task_name']);
+            //$('#datasetProject').text(datasetsData[datasetIndex]['project_name']);
+            //$('#datasetTask').text(datasetsData[datasetIndex]['task_name']);
 
             $('#detailsModal').modal('show');
         }
