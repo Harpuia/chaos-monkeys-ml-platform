@@ -14,9 +14,29 @@ router.get("/list", function getExperiments(req, res) {
       err.status = 500;
       next(err)
     }
-    res.json({ experiments: rows });
+    res.json({ experimentsData: rows });
   });
 
+  //Closing connection
+  connection.end();
+});
+
+/* Create a new experiment */
+router.post('/createNewExperiment', function insertNewExperiment(req, res) {
+  //Connect to DB
+  var connection = createDbConnection();
+  connection.connect();
+
+  //Insert tasks information into tasks table
+  var results = connection.query('insert into experiments SET ?', req.body, function insertExperiment(err, result) {
+    if (err) {  // pass the err to error handler
+      err.source = 'mysql'; // add error source for tracing
+      err.status = 500;
+      //next(err);
+      
+    }
+    res.json({newexperimentinfo: req.body});
+  });
   //Closing connection
   connection.end();
 });

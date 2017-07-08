@@ -59,10 +59,73 @@
             </div>
         </div>
     </header>
- <div class="row">
+    <div class="row">
         <div class="col-md-6 col-md-offset-3">
             <h2 class="sub-header">Results</h2>
+
+            <!-- Create task button -->
             <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createExperimentModal">Create experiment</button></p>
+            <!-- Modal -->
+            <div class="modal fade" id="createExperimentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <i class="fa fa-database" aria-hidden="true" fa-3x></i>
+                            <h4 class="modal-title" id="myModalLabel">Create an experiment</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="uploadingpopup" id="uploading" style="display:none">
+
+                                <div style="height: 400px;">
+
+                                </div>
+
+                            </div>
+                            <div class="alert alert-danger alert-dismissible" id="formAlert" style="display: none;" role="alert">
+                                <a class="close" onclick="$('#formAlert').hide()">×</a>
+                                <strong>Error!</strong>
+                                <div id='formAlertText'></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-md-offset-1">
+                                    <!-- in input label, using the name attribute to specify FormDataParam in jersey side-->
+                                    <form id="dataForm" enctype="multipart/form-data">
+                                        <div class="description" id="contents" style="display:block">
+
+                                            <div class="form-group required">
+                                                <label for="ExperimentsNames" class="control-label">Experiment Name</label>
+                                                <input type="text" class="form-control" name="name" id="experimentName" />
+                                            </div>
+                                            <div class="form-group required">
+                                                <label for="ProjectID" class="control-label">Project ID</label>
+                                                <input type="text" class="form-control" id="projectId" />
+                                            </div>
+                                            <div class="form-group required">
+                                                <label for="TasksNames" class="control-label">Task Name</label>
+                                                <br>
+                                                <select class="form-control" id="tasksNames">
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="description">Description</label>
+                                                <textarea class="form-control" rows="5" id="description"> </textarea>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div>
+                                        <button id="submitButton" class="btn btn-primary" onclick="submitForm()">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Experiments table -->
             <div class="table-responsive">
                 <table class="table table-striped">
                     <tbody id='experimentsTableBody'>
@@ -70,21 +133,162 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Details modal -->
+            <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <i class="fa fa-database" aria-hidden="true" fa-3x></i>
+                            <h4 class="modal-title" id="myModalLabel">Experiments Details</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-danger alert-dismissible" id="formAlert" style="display: none;" role="alert">
+                                <a class="close" onclick="$('#formAlert').hide()">×</a>
+                                <strong>Error!</strong>
+                                <div id='formAlertText'></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-md-offset-1">
+                                    <!--Popup content-->
+                                    <p>
+                                        <h4>Experiment Name:</h4>
+                                        <span id='experimentName'></span></p>
+                                    <p>
+                                        <h4>Experiment Start Time:</h4>
+                                        <span id='experimentStartTime'></span>
+                                    </p>
+                                    <p>
+                                        <h4>Experiment End Time:</h4>
+                                        <span id='experimentEndTime'></span>
+                                    </p>
+                                    <p>
+                                        <h4>Experiment Last Status:</h4>
+                                        <span id='experimentLastStatus'></span>
+                                    </p>
+                                    <p>
+                                        <h4>Experiment Last Updated Time:</h4>
+                                        <span id='experimentLastUpdated'></span>
+                                    </p>
+                                    <p>
+                                        <h4>Experiment Description:</h4>
+                                        <span id='experimentDescription'></span>
+                                    </p>
+
+                                    <!--Submit button-->
+                                    <div>
+                                        <button id="submitButton" class="btn btn-primary" onclick="alert('Submit')">Action</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script type="text/javascript">
+        //All experiments data
+        var experimentsData;
         //Initialization
         $(document).ready(function () {
             //Load upload types
             $.get("experiments/list", function (data) {
                 var experimentsList = '';
-                for (i = 0; i < data['experiments'].length; i++) {
-                    experimentsList += '<tr><td><i class="fa fa-database" aria-hidden="true"></i><a href="#">' + data['experiments'][i]['experiment_name'] + '</a></td><td>' + data['experiments'][i]['description'] + '<br><span class="label label-success">' + data['experiments'][i]['project_id'] + '</span><span class="label label-success">' + data['experiments'][i]['task_id'] + '</span><span class="label label-success">' + data['experiments'][i]['start'] + '</span><span class="label label-success">' + data['experiments'][i]['end'] + '</span><span class="label label-success">' + data['experiments'][i]['last_status'] + '</span><span class="label label-success">' + data['experiments'][i]['last_updated'] + '</span></td></tr>';
+                experimentsData = data['experimentsData'];
+                for (i = 0; i < data['experimentsData'].length; i++) {
+                    //experimentsList += '<tr><td><i class="fa fa-database" aria-hidden="true"></i><a href="#">' + data['experiments'][i]['experiment_name'] + '</a></td><td>' + data['experiments'][i]['description'] + '<br><span class="label label-success">' + data['experiments'][i]['project_id'] + '</span><span class="label label-success">' + data['experiments'][i]['task_id'] + '</span><span class="label label-success">' + data['experiments'][i]['start'] + '</span><span class="label label-success">' + data['experiments'][i]['end'] + '</span><span class="label label-success">' + data['experiments'][i]['last_status'] + '</span><span class="label label-success">' + data['experiments'][i]['last_updated'] + '</span></td></tr>';
+                    experimentsList += '<tr><td><i class="fa fa-database" aria-hidden="true"></i><a href="#">' + data['experimentsData'][i]['experiment_name'] + '</a></td><td>' + data['experimentsData'][i]['description'] + '<br><span class="label label-success">' + data['experimentsData'][i]['last_status'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td></tr>';
+
                 }
                 $('#experimentsTableBody').html(experimentsList);
             });
+            //Load task names
+            $.get("tasks/names", function (data) {
+                var tasksnames = '';
+                for (i = 0; i < data['tasksnames'].length; i++) {
+                    tasksnames += '<option value="' + data['tasksnames'][i]['id'] + '">' + data['tasksnames'][i]['name'] + '</option>\n';
+                }
+                $('#tasksNames').html(tasksnames);
+            });
         });
+
+        /*Submit the form to create a new experiment */
+        function submitForm() {
+            var experimentInfo = {
+                "project_id": $("#projectId").val(),
+                "task_id": $("#tasksNames").val(),
+                "experiment_name": $("#experimentName").val(),
+                "start": null,
+                "end": null,
+                "last_status": null,
+                "last_updated": null,
+                "description": $("#description").val()
+            }
+            console.log(experimentInfo.task_id);
+            if (checkRequiredFields()) {
+                $.ajax({
+                    url: "http://127.0.0.1:3000/experiments/createNewExperiment",
+                    type: "POST",
+                    dataType: "json",
+                    contentType: 'application/json',
+                    data: JSON.stringify(experimentInfo),
+                    error: function (request, status, error) {
+                        console.log(status + error);
+                        alert("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error);
+                    },
+                    complete: function (data) {
+                        alert("Experiment: " + data.responseJSON.newexperimentinfo.experiment_name + " was created successfully!");
+                    }
+                });
+            }
+        }
+
+        /*Check if the required field are filled */
+        function checkRequiredFields() {
+            var experimentName = $("#experimentName").val();
+            var t = $("#tasksNames")[0];
+            var selectedTaskName = t.options[t.selectedIndex].text;
+            var projectId = $("#projectId").val();
+            var alert = $('#formAlert')[0];
+            var alertText = $('#formAlertText')[0];
+            if (experimentName.length == 0) {
+                showFormError('Please input an experiment name.', alert, alertText);
+                return false;
+            }
+            else if (projectId.length == 0) {
+                showFormError('Please input the Project ID.', alert, alertText);
+                return false;
+            }
+            else if (selectedTaskName.length == 0) {
+                showFormError('Please select a task.', alert, alertText);
+                return false;
+            }
+            else
+                return true;
+
+        }
+
+        //Show error
+        function showFormError(message, alert, alertText) {
+            alertText.innerText = message;
+            alert.style.display = "block";
+        }
+        /*Displays details for a selected experiment */
+        function displayDetails(experimentIndex) {
+            $('#experimentName').text(experimentsData[experimentIndex]['experiment_name']);
+            $('#experimentStartTime').text(experimentsData[experimentIndex]['start']);
+            $('#experimentEndTime').text(experimentsData[experimentIndex]['end']);
+            $('#experimentLastStatus').text(experimentsData[experimentIndex]['last_status']);
+            $('#experimentLastUpdated').text(experimentsData[experimentIndex]['last_updated']);
+            $('#experimentDescription').text(experimentsData[experimentIndex]['description']);
+            $('#detailsModal').modal('show');;
+        }
     </script>
 </body>
 
