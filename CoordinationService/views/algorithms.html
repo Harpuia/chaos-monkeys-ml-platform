@@ -78,9 +78,11 @@
                   </div>
 
                 </div>
-                <div class="alert alert-danger alert-dismissible" id="formatAlert" style="display: none;" role="alert">
-                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                  <strong>Warning!</strong> The selected data format doesn't match the input data format.
+                <!-- Show Alert when upload error happened -->
+                <div class="alert alert-danger alert-dismissible" id="formAlert" style="display: none;" role="alert">
+                    <a class="close" onclick="$('#formAlert').hide()">×</a>
+                    <strong>Error!</strong>
+                    <div id='formAlertText'></div>
                 </div>
                 <div class="row">
                   <div class="col-md-6 col-md-offset-1">
@@ -96,7 +98,7 @@
                         <div class="form-group">
                           <label for="Language">Languages</label>
                           <br>
-                          <select class="form-control" id="language">
+                          <select class="form-control" name="language" id="language">
                                                         <option>R</option>
                                                         <option>Python</option>
                                                     </select>
@@ -109,7 +111,7 @@
                         </div>
                         <div class="form-group">
                           <label for="description">Description</label>
-                          <textarea class="form-control" rows="5" id="description"> </textarea>
+                          <textarea class="form-control" rows="5" name="description" id="description"> </textarea>
                         </div>
                         <div class="form-group">
                           <label for="file">Algorithm Files</label>
@@ -195,7 +197,7 @@
       $.ajax({
         url: "http://127.0.0.1:8080/services/algr/upload",
         type: "POST",
-        dataType: 'text',
+        dataType: 'json',
         data: form,
         processData: false,
         contentType: false,
@@ -204,9 +206,16 @@
           console.log('Data: ' + data);
           alert("Success!");
         },
-        error: function(request, status, error) {
-          console.log(status + error);
-          alert("Oops! An error occurs when uploading the data. Please check the error log in log path for possible reasons: " + status + error);
+        error: function(jqXHR, status, error) {
+          if(jqXHR.responseJSON){
+            var resObject = jqXHR.responseJSON;
+            displayAlertByType(resObject);
+          }else{
+            var alert = $('#formAlert')[0];
+            var alertText = $('#formAlertText')[0];
+            var networkErr = "Upload request failed, please check your network connection";
+            showFormError(networkErr, alert, alertText);
+          }
         },
         complete: function() {
           $("#uploading")[0].style.display = "none";
@@ -216,11 +225,27 @@
 
     }
 
+
+
     function showUploadingSpinner() {
       //document.getElementById("contents").style.display = "none";
       $(".description").css('visibility', 'hidden');
       document.getElementById("uploading").style.display = "block";
     };
+    // response is object which contains code: int, msg: string, and success: boolean
+    function displayAlertByType(response){
+      var errorCode = response.code;
+      var errorMsg = response.msg;
+      var alert = $('#formAlert')[0];
+      var alertText = $('#formAlertText')[0];
+      showFormError(errorMsg, alert, alertText);
+    }
+
+    //Show upload form alert
+    function showFormError(message, alert, alertText) {
+      alertText.innerText = message;
+      alert.style.display = "block";
+    }
   </script>
 </body>
 
