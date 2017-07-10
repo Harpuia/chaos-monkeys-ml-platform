@@ -154,7 +154,7 @@
                                     <!--Popup content-->
                                     <p>
                                         <h4>Experiment Name:</h4>
-                                        <span id='experimentName'></span></p>
+                                        <span id='experimentNameDetail'></span></p>
                                     <p>
                                         <h4>Experiment Start Time:</h4>
                                         <span id='experimentStartTime'></span>
@@ -203,7 +203,7 @@
                 experimentsData = data['experimentsData'];
                 for (i = 0; i < data['experimentsData'].length; i++) {
                     //experimentsList += '<tr><td><i class="fa fa-database" aria-hidden="true"></i><a href="#">' + data['experiments'][i]['experiment_name'] + '</a></td><td>' + data['experiments'][i]['description'] + '<br><span class="label label-success">' + data['experiments'][i]['project_id'] + '</span><span class="label label-success">' + data['experiments'][i]['task_id'] + '</span><span class="label label-success">' + data['experiments'][i]['start'] + '</span><span class="label label-success">' + data['experiments'][i]['end'] + '</span><span class="label label-success">' + data['experiments'][i]['last_status'] + '</span><span class="label label-success">' + data['experiments'][i]['last_updated'] + '</span></td></tr>';
-                    experimentsList += '<tr><td><i class="fa fa-database" aria-hidden="true"></i><a href="#">' + data['experimentsData'][i]['experiment_name'] + '</a></td><td>' + data['experimentsData'][i]['description'] + '<br><span class="label label-success">' + data['experimentsData'][i]['last_status'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td></tr>';
+                    experimentsList += '<tr><td><i class="fa fa-database" aria-hidden="true"></i>' + data['experimentsData'][i]['experiment_name'] + '</td><td>' + data['experimentsData'][i]['description'] + '<br><span class="label label-success">' + data['experimentsData'][i]['last_status'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td></tr>';
 
                 }
                 $('#experimentsTableBody').html(experimentsList);
@@ -281,7 +281,7 @@
         }
         /*Displays details for a selected experiment */
         function displayDetails(experimentIndex) {
-            $('#experimentName').text(experimentsData[experimentIndex]['experiment_name']);
+            $('#experimentNameDetail').text(experimentsData[experimentIndex]['experiment_name']);
             $('#experimentStartTime').text(experimentsData[experimentIndex]['start']);
             $('#experimentEndTime').text(experimentsData[experimentIndex]['end']);
             $('#experimentLastStatus').text(experimentsData[experimentIndex]['last_status']);
