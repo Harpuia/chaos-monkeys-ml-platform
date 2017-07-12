@@ -16,6 +16,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-resource.min.js"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="/public/common.js"></script>
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
@@ -63,7 +64,7 @@
         <div class="col-md-6 col-md-offset-3">
             <h2 class="sub-header">Results</h2>
 
-            <!-- Create task button -->
+            <!-- Create experiment button -->
             <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createExperimentModal">Create experiment</button></p>
             <!-- Modal -->
             <div class="modal fade" id="createExperimentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -184,7 +185,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-default" id="mod_cls" data-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
@@ -197,6 +198,8 @@
         var experimentsData;
         //Initialization
         $(document).ready(function () {
+            //Reset a specific modal 
+            resetModal('createExperimentModal');
             //Load upload types
             $.get("experiments/list", function (data) {
                 var experimentsList = '';
@@ -244,6 +247,7 @@
                     },
                     complete: function (data) {
                         alert("Experiment: " + data.responseJSON.newexperimentinfo.experiment_name + " was created successfully!");
+                       
                     }
                 });
             }
