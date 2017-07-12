@@ -92,11 +92,11 @@
                                         <!-- in input label, using the name attribute to specify FormDataParam in jersey side-->
                                         <form id="dataForm" enctype="multipart/form-data">
                                             <div class="description" id="contents" style="display:block">
-                                                <div class="form-group">
+                                                <div class="form-group required">
                                                     <label for="file">Data Files</label>
                                                     <input type="file" name="file" id="file" onchange="checkExtension()" />
                                                 </div>
-                                                <div class="form-group">
+                                                <div class="form-group required">
                                                     <label for="data name">Name</label>
                                                     <input type="text" class="form-control" name="name" id="name" />
                                                 </div>
@@ -106,16 +106,16 @@
                                                     <textarea class="form-control" rows="5" id="description"> </textarea>
                                                 </div>
 
-                                                <div class="form-group">
+                                                <div class="form-group required">
                                                     <label for="user id">User ID</label>
                                                     <input type="text" class="form-control" name="user_id" id="user_id" />
                                                 </div>
-                                                <div class="form-group">
+                                                <div class="form-group required">
                                                     <label for="project id">Project ID</label>
                                                     <input type="text" class="form-control" name="project_id" id="project_id" />
                                                 </div>
 
-                                                <div class="form-group">
+                                                <div class="form-group required">
                                                     <label for="DataFormat">Data Format</label>
                                                     <br>
                                                     <select class="form-control" id="format" onchange="checkExtension()">
