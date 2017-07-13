@@ -24,4 +24,24 @@ router.get('/languages', function getFormats(req, res) {
   connection.end();
 });
 
+/* gets the list of algorithms from the database */
+router.get('/list', function getAlgorithms(req, res) {
+  //Connect to DB
+  var connection = createDbConnection();
+  connection.connect();
+
+  //Return all services
+  var results = connection.query('select * from algorithms', function selectAllAlgorithms(err, rows, fields) {
+    if (err) {  // pass the err to error handler
+      err.source = 'mysql'; // add error source for tracing
+      err.status = 500;
+      next(err);
+    }
+    res.json({ algorithms: rows });
+  });
+
+  //Closing connection
+  connection.end();
+});
+
 module.exports = router;

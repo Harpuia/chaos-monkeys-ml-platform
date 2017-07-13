@@ -26,6 +26,12 @@
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-grizzly2-http</artifactId>
         </dependency>
+        <!-- ActiveJDBC ORM -->
+        <dependency>
+            <groupId>org.javalite</groupId>
+            <artifactId>activejdbc</artifactId>
+            <version>${activejdbc.version}</version>
+        </dependency>
         <!-- Dependency for supporting multipart -->
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
@@ -119,6 +125,19 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.javalite</groupId>
+                <artifactId>activejdbc-instrumentation</artifactId>
+                <version>${activejdbc.version}</version>
+                <executions>
+                    <execution>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>instrument</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>2.4.3</version>
@@ -173,6 +192,7 @@
     <properties>
         <jersey.version>2.25.1</jersey.version>
         <jaxrs.version>2.1-m07</jaxrs.version>
+        <activejdbc.version>1.4.13</activejdbc.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 </project>

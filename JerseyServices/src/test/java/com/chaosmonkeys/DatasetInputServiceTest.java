@@ -1,7 +1,7 @@
 package com.chaosmonkeys;
 
 
-import com.chaosmonkeys.inputservice.InputService;
+import com.chaosmonkeys.datasetinputservice.DatasetInputService;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.media.multipart.*;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
@@ -22,7 +22,7 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
-public class InputServiceTest extends JerseyTest {
+public class DatasetInputServiceTest extends JerseyTest {
     @Rule
     public TemporaryFolder folder= new TemporaryFolder();
 
@@ -35,7 +35,7 @@ public class InputServiceTest extends JerseyTest {
     protected Application configure() {
         enable(TestProperties.LOG_TRAFFIC);
         enable(TestProperties.DUMP_ENTITY);
-        ResourceConfig config = new ResourceConfig(InputService.class);
+        ResourceConfig config = new ResourceConfig(DatasetInputService.class);
         config.register(MultiPartFeature.class); // IMPORTANT: if you want to test multipart feature, remember to add this
         return config;
     }

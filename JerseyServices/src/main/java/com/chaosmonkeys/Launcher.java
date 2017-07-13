@@ -7,7 +7,7 @@ import com.chaosmonkeys.Utilities.ConfigurationHelper;
 import com.chaosmonkeys.Utilities.LogType;
 import com.chaosmonkeys.Utilities.Logger;
 import com.chaosmonkeys.Utilities.MachineIPHelper;
-import com.chaosmonkeys.inputservice.InputServiceHeartBeatsClient;
+import com.chaosmonkeys.datasetinputservice.DatasetInputServiceHeartBeatsClient;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
@@ -141,8 +141,8 @@ public class Launcher {
 //            HeartBeatsClient hbClient = new HeartBeatsClient();
 //            hbClient.startSendHeartBeat(coordinationIP);
             // input service heartbeats clients
-            InputServiceHeartBeatsClient inputServiceHeartBeatsClient = new InputServiceHeartBeatsClient();
-            inputServiceHeartBeatsClient.startSendHeartBeat(coordinationIP);
+            DatasetInputServiceHeartBeatsClient datasetInputServiceHeartBeatsClient = new DatasetInputServiceHeartBeatsClient();
+            datasetInputServiceHeartBeatsClient.startSendHeartBeat(coordinationIP);
         } else {
             Logger.SaveLog(LogType.Error, "ERROR: Failed to register on coordination service! Please contact administrator.");
         }

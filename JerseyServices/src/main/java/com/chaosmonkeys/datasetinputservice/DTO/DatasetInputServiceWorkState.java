@@ -1,14 +1,14 @@
-package com.chaosmonkeys.inputservice.DTO;
+package com.chaosmonkeys.datasetinputservice.DTO;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 /**
- * Class that represents the working states of InputService
+ * Class that represents the working states of DatasetInputService
  * including: datasets is under checking, datasets is under uploading
  */
-public class InputServiceWorkState {
+public class DatasetInputServiceWorkState {
     public String getStatus() {
         return status;
     }
@@ -28,17 +28,17 @@ public class InputServiceWorkState {
 
     // Constructors
 
-    public InputServiceWorkState() {
+    public DatasetInputServiceWorkState() {
 
     }
 
-    public InputServiceWorkState(List<String> checking, List<String> uploading, String status) {
+    public DatasetInputServiceWorkState(List<String> checking, List<String> uploading, String status) {
         this.status = status;
         this.checking = checking;
         this.uploading = uploading;
     }
 
-    public InputServiceWorkState(Set<String> checking, Set<String> uploading, String status) {
+    public DatasetInputServiceWorkState(Set<String> checking, Set<String> uploading, String status) {
         this.status = status;
         this.checking = new ArrayList<>(checking);
         this.uploading = new ArrayList<>(uploading);

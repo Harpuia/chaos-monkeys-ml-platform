@@ -1,4 +1,4 @@
-package com.chaosmonkeys.inputservice;
+package com.chaosmonkeys.datasetinputservice;
 
 import com.chaosmonkeys.DTO.DbConfigInfo;
 import com.chaosmonkeys.Utilities.DbConfigurationHelper;
@@ -12,9 +12,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.sql.DriverManager;
 import java.sql.Connection;
@@ -23,7 +21,7 @@ import java.sql.Connection;
  * Class containing all possible service calls (API methods)
  */
 @Path("/services")
-public class InputService {
+public class DatasetInputService {
 
     // Constants operating with service status
     private static final String STATUS_RUN = "RUNNING";
