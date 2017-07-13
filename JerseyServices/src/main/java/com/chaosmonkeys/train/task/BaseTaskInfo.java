@@ -25,6 +25,9 @@ public class BaseTaskInfo {
     protected File algorithmFolder;
     protected File workspaceFolder;
 
+    /**
+     * Make sure subclass invoke this super() constructor
+     */
     public BaseTaskInfo(){
         this.TASK_ID = StringUtils.getUUID();
     }
@@ -37,5 +40,51 @@ public class BaseTaskInfo {
         return this.TASK_ID;
     }
 
+    public String getDatasetPath() {
+        return datasetPath;
+    }
 
+    public void setDatasetPath(String datasetPath) {
+        this.datasetPath = datasetPath;
+    }
+
+    public String getAlgorithmPath() {
+        return algorithmPath;
+    }
+
+    public void setAlgorithmPath(String algorithmPath) {
+        this.algorithmPath = algorithmPath;
+    }
+
+    public String getWorkspacePath() {
+        return workspacePath;
+    }
+
+    public void setWorkspacePath(String workspacePath) {
+        this.workspacePath = workspacePath;
+    }
+
+    public File getDatasetFolder() {
+        return datasetFolder;
+    }
+
+    public void setDatasetFolder(File datasetFolder) {
+        this.datasetFolder = datasetFolder;
+    }
+
+    public File getAlgorithmFolder() {
+        return algorithmFolder;
+    }
+
+    public void setAlgorithmFolder(File algorithmFolder) {
+        this.algorithmFolder = algorithmFolder;
+    }
+
+    public File getWorkspaceFolder() {
+        return workspaceFolder;
+    }
+
+    public void setWorkspaceFolder(File workspaceFolder) {
+        this.workspaceFolder = workspaceFolder;
+    }
 }

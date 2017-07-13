@@ -7,5 +7,7 @@ public final class Constants {
 
     private Constants(){}   // restrict initialization
 
-//    public static final String TASK_TYPE = "";
+    // task type columns in task table
+    public static final String TYPE_TRAIN = "Training";
+    public static final String TYPE_EXECUTION = "Execution";
 }
