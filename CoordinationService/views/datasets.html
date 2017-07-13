@@ -66,13 +66,13 @@
                 <!-- Button trigger modal -->
                 <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uploadModal">Upload</button></p>
 
-                <div class="modal fade" id="createTaskModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal fade" id="createTaskModal" tabindex="-1" role="dialog" aria-labelledby="taskModalLabel">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                 <i class="fa fa-database" aria-hidden="true" fa-3x></i>
-                                <h4 class="modal-title" id="myModalLabel">Create a task</h4>
+                                <h4 class="modal-title" id="taskModalLabel">Create a task from dataset</h4>
                             </div>
                             <div class="modal-body">
                                 <div class="uploadingpopup" id="uploading" style="display:none">
@@ -114,7 +114,7 @@
                                                 <div class="form-group required">
                                                     <label for="DatasetsNames" class="control-label">Select Dataset</label>
                                                     <br>
-                                                    <input type="text" class="form-control" id="datasetName" disabled/>
+                                                    <input type="text" class="form-control" id="taskDatasetName" disabled/>
                                                     </select>
                                                 </div>
                                                 <div class="form-group required" id="algorithms">
@@ -132,7 +132,7 @@
                                             </div>
                                         </form>
                                         <div>
-                                            <button id="submitButton" class="btn btn-primary" onclick="submitForm()">Submit</button>
+                                            <button id="submitButton" class="btn btn-primary" onclick="submitTaskForm()">Submit</button>
                                         </div>
                                     </div>
                                 </div>
@@ -145,13 +145,13 @@
                 </div>
 
                 <!-- Upload Form Modal -->
-                <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                 <i class="fa fa-database" aria-hidden="true" fa-3x></i>
-                                <h4 class="modal-title" id="myModalLabel">Upload Datasets</h4>
+                                <h4 class="modal-title" id="uploadModalLabel">Upload Datasets</h4>
                             </div>
                             <div class="modal-body">
                                 <div class="uploadingpopup" id="uploading" style="display:none">
@@ -227,13 +227,13 @@
             </div>
 
             <!-- Details modal -->
-            <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             <i class="fa fa-database" aria-hidden="true" fa-3x></i>
-                            <h4 class="modal-title" id="myModalLabel">Dataset Details</h4>
+                            <h4 class="modal-title" id="detailsModalLabel">Dataset Details</h4>
                         </div>
                         <div class="modal-body">
                             <div class="row">
@@ -292,8 +292,12 @@
 
         //Initialization
         $(document).ready(function () {
-            //Reset a specific modal 
+            //Reset a specific modal
             resetModal('uploadModal');
+
+            //Reset the create task modal
+            resetModal('createTaskModal');
+
             //Showing the loading text
             $('#datasetsTableBody').text('Loading...');
 
@@ -317,6 +321,33 @@
                     formats += '<option>' + data['formats'][i]['format'] + '</option>\n';
                 }
                 $('#format').html(formats);
+            });
+
+            //Load task types
+            $.get("tasks/type", function (data) {
+                var types = '';
+                for (i = 0; i < data['types'].length; i++) {
+                    types += '<option>' + data['types'][i]['type'] + '</option>\n';
+                }
+                $('#type').html(types);
+            });
+
+            //Load algorithms names
+            $.get("tasks/algorithmsnames", function (data) {
+                var algorithmsnames = '';
+                for (i = 0; i < data['algorithmsnames'].length; i++) {
+                    algorithmsnames += '<option value="' + data['algorithmsnames'][i]['id'] + '">' + data['algorithmsnames'][i]['name'] + '</option>\n';
+                }
+                $('#algorithmsNames').html(algorithmsnames);
+            });
+
+            //Load models names
+            $.get("tasks/modelsnames", function (data) {
+                var modelsnames = '';
+                for (i = 0; i < data['modelsnames'].length; i++) {
+                    modelsnames += '<option value="' + data['modelsnames'][i]['id'] + '">' + data['modelsnames'][i]['name'] + '</option>\n';
+                }
+                $('#modelsNames').html(modelsnames);
             });
         });
 
@@ -416,10 +447,98 @@
             $('#detailsModal').modal('show');
         }
 
+        //Selected Dataset ID (when creating task from Dataset)
+        var selectedDatasetId;
+
         //Creates a task definition from a dataset
         function createTaskFromDataset(index) {
-            $('#datasetName').val(datasetsData[index]['name']);
+            selectedDatasetId = index;
+            $('#taskDatasetName').val(datasetsData[index]['name']);
             $('#createTaskModal').modal('show');
+        }
+
+        //Submit the task form
+        function submitTaskForm() {
+            var tasksInfoForTrain = {
+                "project_id": $("#projectId").val(),
+                "dataset_id": selectedDatasetId,
+                "algorithm_id": $("#algorithmsNames").val(),
+                "model_id": null,
+                "name": $("#name").val(),
+                "description": $("#description").val(),
+                "type": $("#type")[0].options[$("#type")[0].selectedIndex].text
+            }
+            var tasksInfoForExe = {
+                "project_id": $("#projectId").val(),
+                "dataset_id": selectedDatasetId,
+                "algorithm_id": null,
+                "model_id": $("#modelsNames").val(),
+                "name": $("#name").val(),
+                "description": $("#description").val(),
+                "type": $("#type")[0].options[$("#type")[0].selectedIndex].text
+            }
+            var objectToSend;
+            var url;
+            if (tasksInfoForTrain.type.toLowerCase() == "training" && checkRequiredTaskFields()) {
+                console.log(tasksInfoForExe);
+                objectToSend = tasksInfoForTrain;
+                url = 'http://127.0.0.1:3000/tasks/createTrainingTask';
+            }
+            else if (tasksInfoForExe.type.toLowerCase() == "execution" && checkRequiredTaskFields()) {
+                console.log(tasksInfoForExe);
+                objectToSend = tasksInfoForTrain;
+                url = 'http://127.0.0.1:3000/tasks/createExecutionTask';
+            }
+            $.ajax({
+                    url: url,
+                    type: "POST",
+                    dataType: "json",
+                    contentType: 'application/json',
+                    data: JSON.stringify(objectToSend),
+                    error: function (request, status, error) {
+                        console.log(status + error);
+                        alert("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error);
+                    },
+                    complete: function (data) {
+                        alert("Task: " + data.responseJSON.newtaskinfo.name + " was created successfully!");
+                    }
+                });
+        }
+
+        function checkRequiredTaskFields() {
+            var t = $("#type")[0];
+            var taskName = $("#name").val();
+            var projectId = $("#projectId").val();
+            var a = $("#algorithmsNames")[0];
+            var m = $("#modelsNames")[0];
+            var selectedTaskType = t.options[t.selectedIndex].text;
+            var selectedAlgorithmName = a.options[a.selectedIndex].text;
+            var selectedModelName = m.options[m.selectedIndex].text;
+            var alert = $('#formAlert')[0];
+            var alertText = $('#formAlertText')[0];
+            //console.log(taskName);
+            if (selectedTaskType.length == 0) {
+                showFormError('Please select a task type.', alert, alertText);
+                return false;
+            }
+            else if (taskName.length == 0) {
+                showFormError('Please input a task name.', alert, alertText);
+                return false;
+            }
+            else if (projectId.length == 0) {
+                showFormError('Please input the Project ID.', alert, alertText);
+                return false;
+            }
+            else if (selectedTaskType.toLowerCase() == "training" && selectedAlgorithmName.length == 0) {
+                showFormError('Please select an algorithm.', alert, alertText);
+                return false;
+            }
+            else if (selectedTaskType.toLowerCase() == "execution" && selectedModelName.length == 0) {
+                showFormError('Please select a model.', alert, alertText);
+                return false;
+            }
+            else
+                return true;
         }
     </script>
 </body>
