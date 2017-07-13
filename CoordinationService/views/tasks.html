@@ -299,7 +299,7 @@
             var tasksInfoForExe = {
                 "project_id": $("#projectId").val(),
                 "dataset_id": $("#datasetsNames").val(),
-                "algorithm_id":null,
+                "algorithm_id": null,
                 "model_id": $("#modelsNames").val(),
                 "name": $("#name").val(),
                 "description": $("#description").val(),
@@ -355,7 +355,7 @@
             var alert = $('#formAlert')[0];
             var alertText = $('#formAlertText')[0];
             //console.log(taskName);
-            if(selectedTaskType.length==0){
+            if (selectedTaskType.length == 0) {
                 showFormError('Please select a task type.', alert, alertText);
                 return false;
             }
