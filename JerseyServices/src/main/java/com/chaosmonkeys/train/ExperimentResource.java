@@ -2,7 +2,11 @@ package com.chaosmonkeys.train;
 
 import com.chaosmonkeys.DTO.BaseResponse;
 import com.chaosmonkeys.Utilities.StringUtils;
+import com.chaosmonkeys.Utilities.db.DbUtils;
+import com.chaosmonkeys.dao.Algorithm;
+import com.chaosmonkeys.dao.Dataset;
 import com.chaosmonkeys.dao.Experiment;
+import com.chaosmonkeys.dao.Task;
 import com.chaosmonkeys.train.dto.ExperimentDto;
 import com.chaosmonkeys.train.task.TrainingTaskManager;
 
@@ -27,7 +31,7 @@ public class ExperimentResource {
     public static final int ERR_BLANK_PARAMS = 301;
     public static final int ERR_DUPLICATE_EXP_RECORD = 302; // found duplicated experiment records in database
     public static final int ERR_EXP_RECORD_NOT_FOUND = 303;
-    public static final int ERR_FILE_BODYPART_MISSING = 304;
+    public static final int ERR_WRONG_TASK_TYPE = 304;
     public static final int ERR_UNZIP_EXCEPTION = 305;
     public static final int ERR_REQUIRED_FILE_MISSING = 306;
     public static final int ERR_UNKNOWN = 399;
@@ -48,6 +52,7 @@ public class ExperimentResource {
             validCode = ERR_BLANK_PARAMS;
             return genErrorResponse(validCode);
         }
+        DbUtils.openConnection();
         // query from database to get experiment information
         List<Experiment> experiments = Experiment.where("experiment_name = ?", expName);
         if(experiments.size() != 1){
@@ -58,10 +63,22 @@ public class ExperimentResource {
             }
             return genErrorResponse(validCode);
         }
-        // find the related task
+        // find the related task (1-n relationship)
+        Experiment experiment = experiments.get(0);
+        Task task = experiment.parent(Task.class);
+        // type
+        String taskType = task.getTaskType();
+        if(!taskType.equals(Constants.TYPE_TRAIN)){
+            validCode = ERR_WRONG_TASK_TYPE;
+            return genErrorResponse(validCode);
+        }
+        // find the related algorithm
+        Algorithm algr = task.parent(Algorithm.class);
+        Dataset dataset = task.parent(Dataset.class);
+        // construct TaskInfo
         
 
-
+        DbUtils.closeConnection();
 
 
         return null;
