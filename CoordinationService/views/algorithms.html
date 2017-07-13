@@ -142,20 +142,81 @@
           </div>
         </div>
       </div>
+
+      <!-- Algorithms table -->
       <div class="table-responsive">
         <table class="table table-striped">
           <tbody id='algorithmsTableBody'>
           </tbody>
         </table>
       </div>
+
+      <!-- Details modal -->
+      <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <i class="fa fa-lightbulb-o" aria-hidden="true" fa-3x></i>
+              <h4 class="modal-title" id="myModalLabel">Algorithm Details</h4>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-md-6 col-md-offset-1">
+                  <!--Popup content-->
+                  <p>
+                    <h4>Algorithm Name:</h4>
+                    <span id='algorithmName'></span></p>
+                  <p>
+                    <h4>Algorithm Description:</h4>
+                    <span id='algorithmDescription'></span>
+                  </p>
+                  <p>
+                    <h4>Algorithm Language:</h4>
+                    <span id='algorithmLanguage'></span>
+                  </p>
+                  <p>
+                    <h4>Algorithm Path:</h4>
+                    <span id='algorithmPath'></span>
+                  </p>
+
+                  <!-- Uncomment this block after the database table is filled -->
+                  <!--p>
+                    <h4>Algorithm Parent Project Name:</h4>
+                    <span id='algorithmProject'></span>
+                  </p-->
+
+                  <p>
+                    <h4>Associated Tasks:</h4>
+                    <div class="table-responsive">
+                      <table class="table table-striped">
+                        <tbody id='tasksTableBody'>
+                        </tbody>
+                      </table>
+                    </div>
+                  </p>
+
+                  <!--Submit button-->
+                  <div>
+                    <button id="submitButton" class="btn btn-primary" onclick="alert('Submit')">Action</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <script type="text/javascript">
     //All algorithm data
     var algorithmsData;
-    
+
     //Initialization
-    $(document).ready(function() {
+    $(document).ready(function () {
       //Reset a specific modal 
       resetModal('uploadModal');
       //Activate the popover in the upload modal
@@ -163,9 +224,9 @@
 
       //Showing the loading text
       $('#algorithmsTableBody').text('Loading...');
-      
+
       //Load upload types
-      
+
       $.get("algorithms/list", function (data) {
         algorithmsData = data['algorithms'];
         var algorithmsList = '';
@@ -174,7 +235,7 @@
         }
         $('#algorithmsTableBody').html(algorithmsList);
       });
-      
+
       //fulfill #language select
       $.get("algorithms/languages", function (data) {
         var languages = '';
@@ -242,6 +303,30 @@
       alertText.innerText = message;
       alert.style.display = "block";
     }
+
+    //Displays details for a selected algorithm
+        function displayDetails(algorithmIndex) {
+            $('#algorithmName').text(algorithmsData[algorithmIndex]['name']);
+            $('#algorithmDescription').text(algorithmsData[algorithmIndex]['description']);
+            $('#algorithmLanguage').text(algorithmsData[algorithmIndex]['language']);
+            $('#algorithmPath').text(algorithmsData[algorithmIndex]['path']);
+
+            //Load algorithms types
+            $.get("tasks/listByAlgorithm/" + algorithmsData[algorithmIndex]['id'], function (data) {
+                if (typeof data != "undefined") {
+                    var tasksList = '';
+                    for (i = 0; i < data['tasks'].length; i++) {
+                        tasksList += '<tr><td><i class="fa fa-server" aria-hidden="true"></i>' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '</td></tr>';
+                    }
+                    $('#tasksTableBody').html(tasksList);
+                }
+            });
+            // Uncomment the following two lines after the table field is filled.
+            //$('#datasetProject').text(algorithmsData[algorithmIndex]['project_name']);
+            //$('#datasetTask').text(algorithmsData[algorithmIndex]['task_name']);
+
+            $('#detailsModal').modal('show');
+        }
   </script>
 </body>
 
