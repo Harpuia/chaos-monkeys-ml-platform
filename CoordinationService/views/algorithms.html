@@ -65,7 +65,7 @@
         <!-- Button trigger modal -->
         <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uploadModal">Upload</button></p>
 
-        <!-- Modal -->
+        <!-- Upload Modal -->
         <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -132,6 +132,85 @@
                       </div>
                     </form>
 
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Create Task Modal -->
+        <div class="modal fade" id="createTaskModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <i class="fa fa-database" aria-hidden="true" fa-3x></i>
+                <h4 class="modal-title" id="myModalLabel">Create a task</h4>
+              </div>
+              <div class="modal-body">
+                <div class="uploadingpopup" id="uploading" style="display:none">
+
+                  <div style="height: 400px;">
+
+                  </div>
+
+                </div>
+                <div class="alert alert-danger alert-dismissible" id="formAlert" style="display: none;" role="alert">
+                  <a class="close" onclick="$('#formAlert').hide()">×</a>
+                  <strong>Error!</strong>
+                  <div id='formAlertText'></div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-md-offset-1">
+                    <!-- in input label, using the name attribute to specify FormDataParam in jersey side-->
+                    <form id="dataForm" enctype="multipart/form-data">
+                      <div class="description" id="contents" style="display:block">
+                        <div class="form-group required">
+                          <label for="TaskType" class="control-label">Task Type</label>
+                          <br>
+                          <select class="form-control" id="type" onchange="showTaskType()">
+                          </select>
+                        </div>
+                        <div class="form-group required">
+                          <label for="data name" class="control-label">Task Name</label>
+                          <input type="text" class="form-control" name="name" id="name" />
+                        </div>
+                        <div class="form-group required">
+                          <label for="ProjectID" class="control-label">Project ID</label>
+                          <input type="text" class="form-control" id="projectId" />
+                        </div>
+
+                        <div class="form-group">
+                          <label for="description">Description</label>
+                          <textarea class="form-control" rows="5" id="description"> </textarea>
+                        </div>
+                        <div class="form-group required">
+                          <label for="DatasetsNames" class="control-label">Select Dataset</label>
+                          <br>
+                          <input type="text" class="form-control" id="datasetName"/>
+                          </select>
+                        </div>
+                        <div class="form-group required" id="algorithms">
+                          <label for="AlgorithmsNames" class="control-label">Select Algorithm</label>
+                          <br>
+                          <select class="form-control" id="algorithmNameInTaskModal" disabled>
+                          </select>
+                        </div>
+                        <div class="form-group required" id="models" style="display:none">
+                          <label for="ModelsNames" class="control-label">Select Model</label>
+                          <br>
+                          <select class="form-control" id="modelsNames">
+                          </select>
+                        </div>
+                      </div>
+                    </form>
+                    <div>
+                      <button id="submitButton" class="btn btn-primary" onclick="submitForm()">Submit</button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -231,7 +310,7 @@
         algorithmsData = data['algorithms'];
         var algorithmsList = '';
         for (i = 0; i < data['algorithms'].length; i++) {
-          algorithmsList += '<tr><td><i class="fa fa-lightbulb-o" aria-hidden="true"></i>' + data['algorithms'][i]['name'] + '</td><td>' + data['algorithms'][i]['description'] + '<br><span class="label label-success">' + data['algorithms'][i]['language'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td></tr>';
+          algorithmsList += '<tr><td><i class="fa fa-lightbulb-o" aria-hidden="true"></i>' + data['algorithms'][i]['name'] + '</td><td>' + data['algorithms'][i]['description'] + '<br><span class="label label-success">' + data['algorithms'][i]['language'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createTaskFromAlgorithm(' + i + ')" class="btn btn-primary">Create Task</button></td></tr>';
         }
         $('#algorithmsTableBody').html(algorithmsList);
       });
@@ -305,28 +384,34 @@
     }
 
     //Displays details for a selected algorithm
-        function displayDetails(algorithmIndex) {
-            $('#algorithmName').text(algorithmsData[algorithmIndex]['name']);
-            $('#algorithmDescription').text(algorithmsData[algorithmIndex]['description']);
-            $('#algorithmLanguage').text(algorithmsData[algorithmIndex]['language']);
-            $('#algorithmPath').text(algorithmsData[algorithmIndex]['path']);
+    function displayDetails(algorithmIndex) {
+      $('#algorithmName').text(algorithmsData[algorithmIndex]['name']);
+      $('#algorithmDescription').text(algorithmsData[algorithmIndex]['description']);
+      $('#algorithmLanguage').text(algorithmsData[algorithmIndex]['language']);
+      $('#algorithmPath').text(algorithmsData[algorithmIndex]['path']);
 
-            //Load algorithms types
-            $.get("tasks/listByAlgorithm/" + algorithmsData[algorithmIndex]['id'], function (data) {
-                if (typeof data != "undefined") {
-                    var tasksList = '';
-                    for (i = 0; i < data['tasks'].length; i++) {
-                        tasksList += '<tr><td><i class="fa fa-server" aria-hidden="true"></i>' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '</td></tr>';
-                    }
-                    $('#tasksTableBody').html(tasksList);
-                }
-            });
-            // Uncomment the following two lines after the table field is filled.
-            //$('#datasetProject').text(algorithmsData[algorithmIndex]['project_name']);
-            //$('#datasetTask').text(algorithmsData[algorithmIndex]['task_name']);
-
-            $('#detailsModal').modal('show');
+      //Load algorithms types
+      $.get("tasks/listByAlgorithm/" + algorithmsData[algorithmIndex]['id'], function (data) {
+        if (typeof data != "undefined") {
+          var tasksList = '';
+          for (i = 0; i < data['tasks'].length; i++) {
+            tasksList += '<tr><td><i class="fa fa-server" aria-hidden="true"></i>' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '</td></tr>';
+          }
+          $('#tasksTableBody').html(tasksList);
         }
+      });
+      // Uncomment the following two lines after the table field is filled.
+      //$('#datasetProject').text(algorithmsData[algorithmIndex]['project_name']);
+      //$('#datasetTask').text(algorithmsData[algorithmIndex]['task_name']);
+
+      $('#detailsModal').modal('show');
+    }
+
+    //Creates a task definition from an algorithm
+    function createTaskFromAlgorithm(index) {
+      $('#algorithmNameInTaskModal').val(algorithmsData[index]['name']);
+      $('#createTaskModal').modal('show');
+    }
   </script>
 </body>
 
