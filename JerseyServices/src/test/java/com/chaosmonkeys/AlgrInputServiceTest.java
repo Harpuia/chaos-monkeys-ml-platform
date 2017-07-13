@@ -2,7 +2,6 @@ package com.chaosmonkeys;
 
 import com.chaosmonkeys.DTO.BaseResponse;
 import com.chaosmonkeys.algrinputservice.AlgorithmResource;
-import com.chaosmonkeys.inputservice.InputService;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.*;

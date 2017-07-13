@@ -1,10 +1,10 @@
-package com.chaosmonkeys.inputservice;
+package com.chaosmonkeys.datasetinputservice;
 
 import com.chaosmonkeys.Launcher;
 import com.chaosmonkeys.Utilities.LogType;
 import com.chaosmonkeys.Utilities.Logger;
-import com.chaosmonkeys.inputservice.DTO.InputServiceStatusInfo;
-import com.chaosmonkeys.inputservice.DTO.InputServiceWorkState;
+import com.chaosmonkeys.datasetinputservice.DTO.DatasetInputServiceStatusInfo;
+import com.chaosmonkeys.datasetinputservice.DTO.DatasetInputServiceWorkState;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
 
@@ -18,7 +18,7 @@ import java.util.concurrent.ScheduledExecutorService;
 /**
  * Class for sending input service heartbeats
  */
-public class InputServiceHeartBeatsClient {
+public class DatasetInputServiceHeartBeatsClient {
     private static String coordinationIP;
     private static boolean isStart = false;
 
@@ -32,7 +32,7 @@ public class InputServiceHeartBeatsClient {
 
 //        Client client = ClientBuilder.newBuilder().newClient(new ClientConfig().register(LoggingFilter.class));
 
-        Thread thread = new Thread(new InputServiceHeartBeatsClient.SendHeartBeatTask());
+        Thread thread = new Thread(new DatasetInputServiceHeartBeatsClient.SendHeartBeatTask());
         thread.start();
     }
 
@@ -46,8 +46,8 @@ public class InputServiceHeartBeatsClient {
             Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
             while (true) {
                 try {
-                    InputServiceWorkState workState = new InputServiceWorkState(InputService.checkSet, InputService.uploadSet, InputService.serviceStatus);
-                    InputServiceStatusInfo serviceStatusInfo = new InputServiceStatusInfo(Launcher.getHostIP(), workState);
+                    DatasetInputServiceWorkState workState = new DatasetInputServiceWorkState(DatasetInputService.checkSet, DatasetInputService.uploadSet, DatasetInputService.serviceStatus);
+                    DatasetInputServiceStatusInfo serviceStatusInfo = new DatasetInputServiceStatusInfo(Launcher.getHostIP(), workState);
 
                     Response response = invocationBuilder.post(Entity.entity(serviceStatusInfo, MediaType.APPLICATION_JSON));
                 } catch (ProcessingException e) {

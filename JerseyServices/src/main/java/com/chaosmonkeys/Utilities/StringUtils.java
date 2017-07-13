@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Pattern;
-
+import java.util.UUID;
 
 /**
  * General string manipulation utilities.
@@ -42,8 +42,18 @@ public class StringUtils {
         super();
     }
 
+    /**
+     * Obtain a UUID String
+     * @return	return a UUID code, the length of UUID is 32
+     */
+    public static String getUUID(){
+        String uuid = UUID.randomUUID().toString();
+        uuid = uuid.replaceAll("-", "");
+        return uuid;
+    }
+
     // Empty Checks
-    //-----------------------------------------------------------------------
+    //------------------------------------------------------------ -----------
     /**
      * <p>Checks if a CharSequence is empty ("") or null.</p>
      *
