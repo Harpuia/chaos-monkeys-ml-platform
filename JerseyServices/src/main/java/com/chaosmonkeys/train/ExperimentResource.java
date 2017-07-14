@@ -46,7 +46,7 @@ public class ExperimentResource {
     public Response startExperiment(ExperimentDto experimentDto){
         int validCode = 0;
         String expName = experimentDto.getExperiment_name();
-        // TODO: extract following checking logic to one single method
+        // TODO: extract following checking logic to one single method, or maybe impossible..
         // no experiment name
         if(StringUtils.isBlank(expName)){
             validCode = ERR_BLANK_PARAMS;
@@ -76,7 +76,7 @@ public class ExperimentResource {
         Algorithm algr = task.parent(Algorithm.class);
         Dataset dataset = task.parent(Dataset.class);
         // construct TaskInfo
-        
+
 
         DbUtils.closeConnection();
 
@@ -113,6 +113,34 @@ public class ExperimentResource {
         }
         responseEntity.failed(errorCode,msg);
         Response response = Response.status(Response.Status.BAD_REQUEST)
+                .entity(responseEntity)
+                .build();
+        return response;
+    }
+
+    /**
+     * Generate corrpesponding successful message
+     * @return Success Response
+     */
+    public Response genSuccResponse(){
+        BaseResponse responseEntity = new BaseResponse();
+        responseEntity.successful("algorithm upload successfully");
+
+        Response response = Response.ok()
+                .entity(responseEntity)
+                .build();
+        return response;
+    }
+
+    /**
+     * Generate corrpesponding successful message
+     * @return Success Response
+     */
+    public Response genSuccResponseWithMsg(String msg){
+        BaseResponse responseEntity = new BaseResponse();
+        responseEntity.successful("algorithm upload successfully");
+
+        Response response = Response.ok()
                 .entity(responseEntity)
                 .build();
         return response;
