@@ -188,7 +188,7 @@
                         </div>
                         <div class="form-group required">
                           <label for="data name" class="control-label">Task Name</label>
-                          <input type="text" class="form-control" name="name" id="name" />
+                          <input type="text" class="form-control" name="taskName" id="taskName" />
                         </div>
                         <div class="form-group required">
                           <label for="ProjectID" class="control-label">Project ID</label>
@@ -437,7 +437,7 @@
         "dataset_id": $("#taskDatasetName").val(),
         "algorithm_id": $("#taskAlgorithmsNames").val(),
         "model_id": null,
-        "name": $("#name").val(),
+        "name": $("#taskName").val(),
         "description": $("#description").val(),
         "type": $("#taskType").val()
       }
@@ -467,7 +467,7 @@
     }
 
     function checkRequiredTaskFields() {
-      var taskName = $("#name").val();
+      var taskName = $("#taskName").val();
       var projectId = $("#projectId").val();
       var selectedTaskType = $("#taskType").val();
       var selectedAlgorithmName = $("#taskAlgorithmsNames").val();
