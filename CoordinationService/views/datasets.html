@@ -499,7 +499,7 @@
                     console.log(status + error);
                     alert("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error);
                 },
-                complete: function (data) {
+                success: function (data) {
                     alert("Task: " + data.responseJSON.newtaskinfo.name + " was created successfully!");
                 }
             });
