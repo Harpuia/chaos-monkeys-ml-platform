@@ -8,4 +8,16 @@ import org.javalite.activejdbc.annotations.DbName;
  */
 @DbName("ConfigurationDatabase")
 public class Algorithm extends Model {
+    private volatile String algorithmPath;
+
+    /**
+     * Query once and return algorithm folder  path
+     * @return
+     */
+    public String getAlgorithmPath(){
+        if(null == algorithmPath){
+            algorithmPath = getString("path");
+        }
+        return algorithmPath;
+    }
 }

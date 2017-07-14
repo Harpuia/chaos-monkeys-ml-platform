@@ -1,5 +1,7 @@
 package com.chaosmonkeys.train.task;
 
+import com.chaosmonkeys.Utilities.FileUtils;
+
 import java.io.File;
 
 /**
@@ -10,9 +12,7 @@ import java.io.File;
  */
 public class ResourceInfo {
 
-    /**
-     * File Ref
-     **/
+    // Resource Folder Reference
     protected File datasetFolder;
     protected File algorithmFolder;
     protected File modelFolder;
@@ -33,6 +33,32 @@ public class ResourceInfo {
             this.modelFolder = modelFolder;
         }
     }
+
+    //** Check ---------------------------------------------------------------------------------
+
+    /**
+     * Check whether ResourceInfo are ready
+     * @param type
+     * @return
+     */
+    public boolean checkRequirement(TaskType type){
+
+        boolean modelValid = false;
+
+        boolean datasetValid = FileUtils.checkFolderValid(datasetFolder);
+        boolean algrValid = FileUtils.checkFolderValid(algorithmFolder);
+        boolean workspaceValid = FileUtils.checkFolderValid(workspaceFolder);
+
+        if(type == TaskType.TRAIN){
+            modelValid = true;
+        }else{
+            modelValid = FileUtils.checkFolderValid(modelFolder);
+        }
+        boolean valid = datasetValid && algrValid && workspaceValid && modelValid;
+        return valid;
+    }
+
+
     //** Builder -------------------------------------------------------------------------------
     public static class ResourceInfoBuilder {
         private File datasetFolder;

@@ -19,6 +19,7 @@ public class BaseTaskInfo {
 
     public final TaskType taskType;
 
+    private ResourceInfo resourceInfo;
     /**
      * Make sure subclass invoke this super() constructor
      */
@@ -29,6 +30,7 @@ public class BaseTaskInfo {
 
     public BaseTaskInfo(TaskType type, ResourceInfo resInfo){
         this(type); // assign an UUID as identifier
+        this.resourceInfo = resInfo;
     }
 
 
@@ -40,4 +42,11 @@ public class BaseTaskInfo {
         return this.TASK_ID;
     }
 
+    public ResourceInfo getResourceInfo() {
+        return resourceInfo;
+    }
+
+    public void setResourceInfo(ResourceInfo resourceInfo) {
+        this.resourceInfo = resourceInfo;
+    }
 }

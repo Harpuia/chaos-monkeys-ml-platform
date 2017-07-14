@@ -51,8 +51,6 @@ public class FileUtils {
 
     /**
      * The number of bytes in a kilobyte.
-     *
-     * @since 2.4
      */
     public static final BigInteger ONE_KB_BI = BigInteger.valueOf(ONE_KB);
 
@@ -61,17 +59,6 @@ public class FileUtils {
      */
     public static final long ONE_MB = ONE_KB * ONE_KB;
 
-    /**
-     * The number of bytes in a megabyte.
-     *
-     * @since 2.4
-     */
-    public static final BigInteger ONE_MB_BI = ONE_KB_BI.multiply(ONE_KB_BI);
-
-    /**
-     * The number of bytes in a gigabyte.
-     */
-    public static final long ONE_GB = ONE_KB * ONE_MB;
     /**
      * The file copy buffer size (30 MB)
      */
@@ -102,6 +89,19 @@ public class FileUtils {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    /**
+     * Check if a File object is a folder and existed
+     * @param folder
+     * @return
+     */
+    public static boolean checkFolderValid(File folder){
+        boolean succ = false;
+        if(null != folder && folder.exists() && folder.isDirectory()){
+            succ = true;
+        }
+        return succ;
     }
 
     /**

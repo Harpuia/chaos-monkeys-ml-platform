@@ -22,6 +22,17 @@ public enum TrainingTaskManager implements TaskManager{
         return TrainingTaskManager.INSTANCE;
     }
 
+
+    public boolean submitTask(BaseTaskInfo taskInfo){
+        return false;
+    };
+    public boolean cancelTask(String taskId){
+        return false;
+    };
+    public boolean cancelTaskByExperimentName(String experimentName){
+        return false;
+    }
+
     OnTaskUpdateListener mOnTaskUpdateListener = new OnTaskUpdateListener() {
 
         @Override
@@ -54,26 +65,5 @@ public enum TrainingTaskManager implements TaskManager{
 
         }
     };
-
-    /**
-     * Create a new training task based on experiment infomation
-     * @param experiment
-     */
-    public void submitTask(Experiment experiment){
-
-    }
-
-    public boolean submitTask(BaseTaskInfo taskInfo){
-        return false;
-    };
-    public boolean cancelTask(String taskId){
-        return false;
-    };
-    public boolean cancelTaskByExperimentName(String experimentName){
-        return false;
-    }
-    public boolean cancelTaskByExperimentId(String experimentName){
-        return false;
-    }
 
 }

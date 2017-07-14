@@ -1,6 +1,7 @@
 package com.chaosmonkeys.train;
 
 import com.chaosmonkeys.DTO.BaseResponse;
+import com.chaosmonkeys.Utilities.FileUtils;
 import com.chaosmonkeys.Utilities.StringUtils;
 import com.chaosmonkeys.Utilities.db.DbUtils;
 import com.chaosmonkeys.dao.Algorithm;
@@ -8,6 +9,9 @@ import com.chaosmonkeys.dao.Dataset;
 import com.chaosmonkeys.dao.Experiment;
 import com.chaosmonkeys.dao.Task;
 import com.chaosmonkeys.train.dto.ExperimentDto;
+import com.chaosmonkeys.train.task.ResourceInfo;
+import com.chaosmonkeys.train.task.TaskType;
+import com.chaosmonkeys.train.task.TrainingTaskInfo;
 import com.chaosmonkeys.train.task.TrainingTaskManager;
 
 import javax.ws.rs.Consumes;
@@ -16,6 +20,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -32,7 +38,7 @@ public class ExperimentResource {
     public static final int ERR_DUPLICATE_EXP_RECORD = 302; // found duplicated experiment records in database
     public static final int ERR_EXP_RECORD_NOT_FOUND = 303;
     public static final int ERR_WRONG_TASK_TYPE = 304;
-    public static final int ERR_UNZIP_EXCEPTION = 305;
+    public static final int ERR_INVALID_RES_PATH = 305;
     public static final int ERR_REQUIRED_FILE_MISSING = 306;
     public static final int ERR_UNKNOWN = 399;
 
@@ -75,7 +81,24 @@ public class ExperimentResource {
         // find the related algorithm
         Algorithm algr = task.parent(Algorithm.class);
         Dataset dataset = task.parent(Dataset.class);
+        // construct ResourceInfo
+        String datasetPath = dataset.getDatasetPath();
+        String algrPath = algr.getAlgorithmPath();
+        File datasetFolder = new File(datasetPath);
+        File algrFolder = new File(algrPath);
+        File workspaceFolder = FileUtils.createTempDir();
+        ResourceInfo resInfo = new ResourceInfo.ResourceInfoBuilder().
+                setDatasetFolder(datasetFolder).
+                setAlgorithmFolder(algrFolder).
+                setWorkspaceFolder(workspaceFolder).build();
+        if(! resInfo.checkRequirement(TaskType.TRAIN)){
+            //TODO: delete temp folder, clean up
+            validCode = ERR_INVALID_RES_PATH;
+            return genErrorResponse(validCode);
+        }
         // construct TaskInfo
+        TrainingTaskInfo trainingTaskInfo= new TrainingTaskInfo(expName, resInfo);
+        // get task manager instance and submit the task
 
 
         DbUtils.closeConnection();
@@ -107,6 +130,8 @@ public class ExperimentResource {
             case(ERR_BLANK_PARAMS):
                 msg = "Experiment name is not provided in your request";
                 break;
+            case(ERR_INVALID_RES_PATH):
+                msg = "Resources path stored in system is invalid";
             default:
                 errorCode = ERR_UNKNOWN;
                 msg = "unknown error";

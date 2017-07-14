@@ -12,7 +12,7 @@ public abstract class AbsTask {
     private volatile boolean isCancelled = false;
     private TaskState state = TaskState.IDLE;
 
-    private OnTaskUpdateListener taskUpdateListener = null;
+    protected OnTaskUpdateListener taskUpdateListener = null;
     //private ResultType result;
 
     public AbsTask(){}
@@ -23,7 +23,7 @@ public abstract class AbsTask {
 
     protected abstract void cleanUp();
 
-    public ExecutorService getExcutorService(){
+    protected ExecutorService getExecutorService(){
         return null;
     }
 
