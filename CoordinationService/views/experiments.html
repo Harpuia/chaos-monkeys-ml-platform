@@ -14,7 +14,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-route.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-resource.min.js"></script>
-
+    <script src="/public/common.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="/public/common.js"></script>
 
@@ -296,10 +296,10 @@
         /*Displays details for a selected experiment */
         function displayDetails(experimentIndex) {
             $('#experimentNameDetail').text(experimentsData[experimentIndex]['experiment_name']);
-            $('#experimentStartTime').text(experimentsData[experimentIndex]['start']);
-            $('#experimentEndTime').text(experimentsData[experimentIndex]['end']);
+            $('#experimentStartTime').text(displayDateTime(experimentsData[experimentIndex]['start']));
+            $('#experimentEndTime').text(displayDateTime(experimentsData[experimentIndex]['end']));
             $('#experimentLastStatus').text(experimentsData[experimentIndex]['last_status']);
-            $('#experimentLastUpdated').text(experimentsData[experimentIndex]['last_updated']);
+            $('#experimentLastUpdated').text(displayDateTime(experimentsData[experimentIndex]['last_updated']));
             $('#experimentDescription').text(experimentsData[experimentIndex]['description']);
             $('#detailsModal').modal('show');;
         }

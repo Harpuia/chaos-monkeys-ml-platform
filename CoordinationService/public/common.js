@@ -22,3 +22,8 @@ function resetModal(modalId) {
             formtasksuccess.style.display = "none";
     });
 }
+
+//Formats time for display
+function displayDateTime(time) {
+    return time.replace('T', ' ').replace('.000Z', '');
+}
