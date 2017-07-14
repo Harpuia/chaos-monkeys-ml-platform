@@ -143,13 +143,13 @@
         </div>
 
         <!-- Create Task Modal -->
-        <div class="modal fade" id="createTaskModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal fade" id="createTaskModal" tabindex="-1" role="dialog" aria-labelledby="taskModalLabel">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <i class="fa fa-database" aria-hidden="true" fa-3x></i>
-                <h4 class="modal-title" id="myModalLabel">Create a task</h4>
+                <h4 class="modal-title" id="taskModalLabel">Create a task from algorithm</h4>
               </div>
               <div class="modal-body">
                 <div class="uploadingpopup" id="uploading" style="display:none">
@@ -171,9 +171,10 @@
                       <div class="description" id="contents" style="display:block">
                         <div class="form-group required">
                           <label for="TaskType" class="control-label">Task Type</label>
-                          <br>
+                          <!--br>
                           <select class="form-control" id="type" onchange="showTaskType()">
-                          </select>
+                          </select-->
+                          <input type="text" class="form-control" name="type" id="taskType" value="Training" disabled/>
                         </div>
                         <div class="form-group required">
                           <label for="data name" class="control-label">Task Name</label>
@@ -191,25 +192,18 @@
                         <div class="form-group required">
                           <label for="DatasetsNames" class="control-label">Select Dataset</label>
                           <br>
-                          <input type="text" class="form-control" id="datasetName"/>
+                          <input type="text" class="form-control" id="taskDatasetName" />
                           </select>
                         </div>
                         <div class="form-group required" id="algorithms">
                           <label for="AlgorithmsNames" class="control-label">Select Algorithm</label>
                           <br>
-                          <select class="form-control" id="algorithmNameInTaskModal" disabled>
-                          </select>
-                        </div>
-                        <div class="form-group required" id="models" style="display:none">
-                          <label for="ModelsNames" class="control-label">Select Model</label>
-                          <br>
-                          <select class="form-control" id="modelsNames">
-                          </select>
+                          <input type="text" class="form-control" id="taskAlgorithmsNames" disabled/>
                         </div>
                       </div>
                     </form>
                     <div>
-                      <button id="submitButton" class="btn btn-primary" onclick="submitForm()">Submit</button>
+                      <button id="submitButton" class="btn btn-primary" onclick="submitTaskForm()">Submit</button>
                     </div>
                   </div>
                 </div>
@@ -294,10 +288,17 @@
     //All algorithm data
     var algorithmsData;
 
+    //Selected algorithm id
+    var selectedAlgorithmId;
+
     //Initialization
     $(document).ready(function () {
-      //Reset a specific modal 
+      //Reset upload modal 
       resetModal('uploadModal');
+
+      //Reset task modal
+      resetModal('createTaskModal');
+
       //Activate the popover in the upload modal
       $('[data-toggle="popover"]').popover();
 
@@ -360,14 +361,12 @@
       });
 
     }
-
-
-
+    
     function showUploadingSpinner() {
-      //document.getElementById("contents").style.display = "none";
       $(".description").css('visibility', 'hidden');
       document.getElementById("uploading").style.display = "block";
     };
+
     // response is object which contains code: int, msg: string, and success: boolean
     function displayAlertByType(response) {
       var errorCode = response.code;
@@ -409,8 +408,94 @@
 
     //Creates a task definition from an algorithm
     function createTaskFromAlgorithm(index) {
-      $('#algorithmNameInTaskModal').val(algorithmsData[index]['name']);
+      selectedAlgorithmId = index;
+      $('#taskAlgorithmsNames').val(algorithmsData[index]['name']);
       $('#createTaskModal').modal('show');
+    }
+
+    //Submit the task form
+    function submitTaskForm() {
+      var tasksInfoForTrain = {
+        "project_id": $("#projectId").val(),
+        "dataset_id": $("#taskDatasetName").val(),
+        "algorithm_id": $("#taskAlgorithmsNames").val(),
+        "model_id": null,
+        "name": $("#name").val(),
+        "description": $("#description").val(),
+        "type": $("#taskType").val()
+      }
+
+      var objectToSend;
+      var url;
+      if (checkRequiredTaskFields()) {
+        console.log(tasksInfoForTrain);
+        objectToSend = tasksInfoForTrain;
+        url = 'http://127.0.0.1:3000/tasks/createTrainingTask';
+      }
+      
+      $.ajax({
+        url: url,
+        type: "POST",
+        dataType: "json",
+        contentType: 'application/json',
+        data: JSON.stringify(objectToSend),
+        error: function (request, status, error) {
+          console.log(status + error);
+          alert("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error);
+        },
+        success: function (data) {
+          alert("Task: " + data.newtaskinfo.name + " was created successfully!");
+        }
+      });
+    }
+
+    function checkRequiredTaskFields() {
+      var t = $("#taskType")[0];
+      var taskName = $("#name").val();
+      var projectId = $("#projectId").val();
+      var a = $("#taskAlgorithmsNames")[0];
+      var selectedTaskType = t.options[t.selectedIndex].text;
+      var selectedAlgorithmName = a.options[a.selectedIndex].text;
+      var alert = $('#formAlert')[0];
+      var alertText = $('#formAlertText')[0];
+      //console.log(taskName);
+      if (selectedTaskType.length == 0) {
+        showFormError('Please select a task type.', alert, alertText);
+        return false;
+      }
+      else if (taskName.length == 0) {
+        showFormError('Please input a task name.', alert, alertText);
+        return false;
+      }
+      else if (projectId.length == 0) {
+        showFormError('Please input the Project ID.', alert, alertText);
+        return false;
+      }
+      else if (selectedAlgorithmName.length == 0) {
+        showFormError('Please select an algorithm.', alert, alertText);
+        return false;
+      }
+      else {
+        return true;
+      }
+    }
+
+    //Shows task type
+    function showTaskType() {
+      var e = $("#type")[0];
+      var selectedValue = e.options[e.selectedIndex].text;
+      var algorithmDropdown = $("#algorithms")[0];
+      showDropdown(algorithmDropdown);
+    }
+
+    //Hide dropdown list and the associated label
+    function hideDropdown(dropdown) {
+      dropdown.style.display = "none";
+    }
+
+    //Show dropdown list and the associated label
+    function showDropdown(dropdown) {
+      dropdown.style.display = "block";
     }
   </script>
 </body>
