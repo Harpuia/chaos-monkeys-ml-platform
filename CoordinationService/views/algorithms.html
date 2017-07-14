@@ -82,11 +82,16 @@
                   </div>
 
                 </div>
-                <!-- Show Alert when upload error happened -->
-                <div class="alert alert-danger alert-dismissible" id="formAlert" style="display: none;" role="alert">
-                  <a class="close" onclick="$('#formAlert').hide()">×</a>
+                <!-- Show result indicating if the upload is successful -->
+                <div class="alert alert-danger alert-dismissible" id="formUploadError" style="display: none;" role="alert">
+                  <a class="close" onclick="$('#formUploadError').hide()">×</a>
                   <strong>Error!</strong>
-                  <div id='formAlertText'></div>
+                  <div id='formUploadErrorText'></div>
+                </div>
+                <div class="alert alert-success alert-dismissible" id="formUploadSuccess" style="display: none;" role="alert">
+                  <a class="close" onclick="$('#formUploadSuccess').hide()">×</a>
+                  <strong>Success!</strong>
+                  <div id='formUploadSuccessText'></div>
                 </div>
                 <div class="row">
                   <div class="col-md-6 col-md-offset-1">
@@ -159,10 +164,15 @@
                   </div>
 
                 </div>
-                <div class="alert alert-danger alert-dismissible" id="formAlert" style="display: none;" role="alert">
-                  <a class="close" onclick="$('#formAlert').hide()">×</a>
+                <div class="alert alert-danger alert-dismissible" id="formTaskError" style="display: none;" role="alert">
+                  <a class="close" onclick="$('#formTaskError').hide()">×</a>
                   <strong>Error!</strong>
-                  <div id='formAlertText'></div>
+                  <div id='formTaskErrorText'></div>
+                </div>
+                <div class="alert alert-success alert-dismissible" id="formTaskSuccess" style="display: none;" role="alert">
+                  <a class="close" onclick="$('#formTaskSuccess').hide()">×</a>
+                  <strong>Success!</strong>
+                  <div id='formTaskSuccessText'></div>
                 </div>
                 <div class="row">
                   <div class="col-md-6 col-md-offset-1">
@@ -328,6 +338,8 @@
 
     //Handles the submit action
     function submitForm() {
+      var success = $('#formUploadSuccess')[0];
+      var successText = $('#formUploadSuccessText')[0];
       var form = new FormData($('form#algorithmForm')[0]);
       //Sending post request
       showUploadingSpinner();
@@ -341,17 +353,18 @@
         success: function (data) {
           console.log("Submitted");
           console.log('Data: ' + data);
-          alert("Success!");
+          //alert("Success!");
+          showSubmissionResult("Success!", success, successText);
         },
         error: function (jqXHR, status, error) {
           if (jqXHR.responseJSON) {
             var resObject = jqXHR.responseJSON;
             displayAlertByType(resObject);
           } else {
-            var alert = $('#formAlert')[0];
-            var alertText = $('#formAlertText')[0];
+            var alert = $('#formUploadError')[0];
+            var alertText = $('#formUploadErrorText')[0];
             var networkErr = "Upload request failed, please check your network connection";
-            showFormError(networkErr, alert, alertText);
+            showSubmissionResult(networkErr, alert, alertText);
           }
         },
         complete: function () {
@@ -361,7 +374,7 @@
       });
 
     }
-    
+
     function showUploadingSpinner() {
       $(".description").css('visibility', 'hidden');
       document.getElementById("uploading").style.display = "block";
@@ -371,13 +384,13 @@
     function displayAlertByType(response) {
       var errorCode = response.code;
       var errorMsg = response.msg;
-      var alert = $('#formAlert')[0];
-      var alertText = $('#formAlertText')[0];
-      showFormError(errorMsg, alert, alertText);
+      var alert = $('#formUploadError')[0];
+      var alertText = $('#formUploadErrorText')[0];
+      showSubmissionResult(errorMsg, alert, alertText);
     }
 
-    //Show upload form alert
-    function showFormError(message, alert, alertText) {
+    //Show submission result after clicking Submit button
+    function showSubmissionResult(message, alert, alertText) {
       alertText.innerText = message;
       alert.style.display = "block";
     }
@@ -415,6 +428,10 @@
 
     //Submit the task form
     function submitTaskForm() {
+      var success = $('#formTaskSuccess')[0];
+      var successText = $('#formTaskSuccessText')[0];
+      var alert = $('#formTaskError')[0];
+      var alertText = $('#formTaskErrorText')[0];
       var tasksInfoForTrain = {
         "project_id": $("#projectId").val(),
         "dataset_id": $("#taskDatasetName").val(),
@@ -432,7 +449,7 @@
         objectToSend = tasksInfoForTrain;
         url = 'http://127.0.0.1:3000/tasks/createTrainingTask';
       }
-      
+
       $.ajax({
         url: url,
         type: "POST",
@@ -441,10 +458,10 @@
         data: JSON.stringify(objectToSend),
         error: function (request, status, error) {
           console.log(status + error);
-          alert("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error);
+          showSubmissionResult("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
         },
         success: function (data) {
-          alert("Task: " + data.newtaskinfo.name + " was created successfully!");
+          showSubmissionResult("Task: " + data.newtaskinfo.name + " has been created successfully!", success, successText);
         }
       });
     }
@@ -454,23 +471,23 @@
       var projectId = $("#projectId").val();
       var selectedTaskType = $("#taskType").val();
       var selectedAlgorithmName = $("#taskAlgorithmsNames").val();
-      var alert = $('#formAlert')[0];
-      var alertText = $('#formAlertText')[0];
+      var alert = $('#formTaskError')[0];
+      var alertText = $('#formTaskErrorText')[0];
       //console.log(taskName);
       if (selectedTaskType.length == 0) {
-        showFormError('Please select a task type.', alert, alertText);
+        showSubmissionResult('Please select a task type.', alert, alertText);
         return false;
       }
       else if (taskName.length == 0) {
-        showFormError('Please input a task name.', alert, alertText);
+        showSubmissionResult('Please input a task name.', alert, alertText);
         return false;
       }
       else if (projectId.length == 0) {
-        showFormError('Please input the Project ID.', alert, alertText);
+        showSubmissionResult('Please input the Project ID.', alert, alertText);
         return false;
       }
       else if (selectedAlgorithmName.length == 0) {
-        showFormError('Please select an algorithm.', alert, alertText);
+        showSubmissionResult('Please select an algorithm.', alert, alertText);
         return false;
       }
       else {
