@@ -13,6 +13,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -99,7 +100,7 @@ public class AlgorithmResource {
         }
         if(CHECK_SUCCESS != validCode){
             // delete the folder
-            targetFolder.deleteOnExit();
+            FileUtils.deleteQuietly(targetFolder);
             return genErrorResponse(validCode);
         }
         //TODO: insert data sets into database.
@@ -184,7 +185,7 @@ public class AlgorithmResource {
         } catch (IOException e) {
             // delete error dataset
             Logger.SaveLog(LogType.Exception, "Error while uploading algorithm file.");
-            targetFolder.deleteOnExit();
+            FileUtils.deleteQuietly(targetFolder);
             Logger.SaveLog(LogType.Exception, "delete folder created");
             e.printStackTrace();
             return false;
