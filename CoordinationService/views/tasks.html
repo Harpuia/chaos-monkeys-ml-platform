@@ -82,10 +82,15 @@
                                 </div>
 
                             </div>
-                            <div class="alert alert-danger alert-dismissible" id="formAlert" style="display: none;" role="alert">
-                                <a class="close" onclick="$('#formAlert').hide()">×</a>
+                            <div class="alert alert-danger alert-dismissible" id="formError" style="display: none;" role="alert">
+                                <a class="close" onclick="$('#formError').hide()">×</a>
                                 <strong>Error!</strong>
-                                <div id='formAlertText'></div>
+                                <div id='formErrorText'></div>
+                            </div>
+                            <div class="alert alert-success alert-dismissible" id="formSuccess" style="display: none;" role="alert">
+                                <a class="close" onclick="$('#formSuccess').hide()">×</a>
+                                <strong>Success!</strong>
+                                <div id='formSuccessText'></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 col-md-offset-1">
@@ -162,10 +167,10 @@
                             <h4 class="modal-title" id="myModalLabel">Task Details</h4>
                         </div>
                         <div class="modal-body">
-                            <div class="alert alert-danger alert-dismissible" id="formAlert" style="display: none;" role="alert">
-                                <a class="close" onclick="$('#formAlert').hide()">×</a>
+                            <div class="alert alert-danger alert-dismissible" id="formError" style="display: none;" role="alert">
+                                <a class="close" onclick="$('#formError').hide()">×</a>
                                 <strong>Error!</strong>
-                                <div id='formAlertText'></div>
+                                <div id='formErrorText'></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 col-md-offset-1">
@@ -290,6 +295,10 @@
         }
         //Submit the task form
         function submitForm() {
+            var success = $('#formSuccess')[0];
+            var successText = $('#formSuccessText')[0];
+            var alert = $('#formError')[0];
+            var alertText = $('#formErrorText')[0];
             var tasksInfoForTrain = {
                 "project_id": $("#projectId").val(),
                 "dataset_id": $("#datasetsNames").val(),
@@ -316,11 +325,10 @@
                     contentType: 'application/json',
                     data: JSON.stringify(tasksInfoForTrain),
                     error: function (request, status, error) {
-                        console.log(status + error);
-                        alert("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error);
+                        showSubmissionResult("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
                     },
-                    complete: function (data) {
-                        alert("Task: " + data.responseJSON.newtaskinfo.name + " was created successfully!");
+                    success: function (data) {
+                        showSubmissionResult("Task: " + data.newtaskinfo.name + " has been created successfully!", success, successText);
                     }
                 });
             }
@@ -332,11 +340,10 @@
                     contentType: 'application/json',
                     data: JSON.stringify(tasksInfoForExe),
                     error: function (request, status, error) {
-                        console.log(status + error);
-                        alert("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error);
+                        showSubmissionResult("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
                     },
-                    complete: function (data) {
-                        alert("Task: " + data.responseJSON.newtaskinfo.name + " was created successfully!");
+                    success: function (data) {
+                        showSubmissionResult("Task: " + data.newtaskinfo.name + " has been created successfully!", success, successText);
                     }
                 });
 
@@ -355,39 +362,39 @@
             var selectedDatasetName = d.options[d.selectedIndex].text;
             var selectedAlgorithmName = a.options[a.selectedIndex].text;
             var selectedModelName = m.options[m.selectedIndex].text;
-            var alert = $('#formAlert')[0];
-            var alertText = $('#formAlertText')[0];
+            var alert = $('#formError')[0];
+            var alertText = $('#formErrorText')[0];
             //console.log(taskName);
             if (selectedTaskType.length == 0) {
-                showFormError('Please select a task type.', alert, alertText);
+                showSubmissionResult('Please select a task type.', alert, alertText);
                 return false;
             }
             else if (taskName.length == 0) {
-                showFormError('Please input a task name.', alert, alertText);
+                showSubmissionResult('Please input a task name.', alert, alertText);
                 return false;
             }
             else if (projectId.length == 0) {
-                showFormError('Please input the Project ID.', alert, alertText);
+                showSubmissionResult('Please input the Project ID.', alert, alertText);
                 return false;
             }
             else if (selectedDatasetName.length == 0) {
-                showFormError('Please select a dataset.', alert, alertText);
+                showSubmissionResult('Please select a dataset.', alert, alertText);
                 return false;
             }
             else if (selectedTaskType.toLowerCase() == "training" && selectedAlgorithmName.length == 0) {
-                showFormError('Please select an algorithm.', alert, alertText);
+                showSubmissionResult('Please select an algorithm.', alert, alertText);
                 return false;
             }
             else if (selectedTaskType.toLowerCase() == "execution" && selectedModelName.length == 0) {
-                showFormError('Please select a model.', alert, alertText);
+                showSubmissionResult('Please select a model.', alert, alertText);
                 return false;
             }
             else
                 return true;
         }
 
-        //Show error
-        function showFormError(message, alert, alertText) {
+        //Show submission result after clicking Submit button
+        function showSubmissionResult(message, alert, alertText) {
             alertText.innerText = message;
             alert.style.display = "block";
         }

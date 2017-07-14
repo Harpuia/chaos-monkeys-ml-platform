@@ -83,10 +83,15 @@
                                 </div>
 
                             </div>
-                            <div class="alert alert-danger alert-dismissible" id="formAlert" style="display: none;" role="alert">
-                                <a class="close" onclick="$('#formAlert').hide()">×</a>
+                            <div class="alert alert-danger alert-dismissible" id="formError" style="display: none;" role="alert">
+                                <a class="close" onclick="$('#formError').hide()">×</a>
                                 <strong>Error!</strong>
-                                <div id='formAlertText'></div>
+                                <div id='formErrorText'></div>
+                            </div>
+                            <div class="alert alert-success alert-dismissible" id="formSuccess" style="display: none;" role="alert">
+                                <a class="close" onclick="$('#formSuccess').hide()">×</a>
+                                <strong>Success!</strong>
+                                <div id='formSuccessText'></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 col-md-offset-1">
@@ -114,6 +119,7 @@
                                             </div>
                                         </div>
                                     </form>
+
                                     <div>
                                         <button id="submitButton" class="btn btn-primary" onclick="submitForm()">Submit</button>
                                     </div>
@@ -145,10 +151,10 @@
                             <h4 class="modal-title" id="myModalLabel">Experiments Details</h4>
                         </div>
                         <div class="modal-body">
-                            <div class="alert alert-danger alert-dismissible" id="formAlert" style="display: none;" role="alert">
-                                <a class="close" onclick="$('#formAlert').hide()">×</a>
+                            <div class="alert alert-danger alert-dismissible" id="formError" style="display: none;" role="alert">
+                                <a class="close" onclick="$('#formError').hide()">×</a>
                                 <strong>Error!</strong>
-                                <div id='formAlertText'></div>
+                                <div id='formErrorText'></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 col-md-offset-1">
@@ -223,6 +229,10 @@
 
         /*Submit the form to create a new experiment */
         function submitForm() {
+            var success = $('#formSuccess')[0];
+            var successText = $('#formSuccessText')[0];
+            var alert = $('#formError')[0];
+            var alertText = $('#formErrorText')[0];
             var experimentInfo = {
                 "project_id": $("#projectId").val(),
                 "task_id": $("#tasksNames").val(),
@@ -241,13 +251,12 @@
                     dataType: "json",
                     contentType: 'application/json',
                     data: JSON.stringify(experimentInfo),
+                    success: function (data) {
+                        showSubmissionResult("The experiment " + experimentInfo.experiment_name + " has been created successfully.", success, successText);
+                    },
                     error: function (request, status, error) {
                         console.log(status + error);
-                        alert("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error);
-                    },
-                    complete: function (data) {
-                        alert("Experiment: " + data.responseJSON.newexperimentinfo.experiment_name + " was created successfully!");
-                       
+                        showSubmissionResult("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
                     }
                 });
             }
@@ -259,18 +268,18 @@
             var t = $("#tasksNames")[0];
             var selectedTaskName = t.options[t.selectedIndex].text;
             var projectId = $("#projectId").val();
-            var alert = $('#formAlert')[0];
-            var alertText = $('#formAlertText')[0];
+            var alert = $('#formError')[0];
+            var alertText = $('#formErrorText')[0];
             if (experimentName.length == 0) {
-                showFormError('Please input an experiment name.', alert, alertText);
+                showSubmissionResult('Please input an experiment name.', alert, alertText);
                 return false;
             }
             else if (projectId.length == 0) {
-                showFormError('Please input the Project ID.', alert, alertText);
+                showSubmissionResult('Please input the Project ID.', alert, alertText);
                 return false;
             }
             else if (selectedTaskName.length == 0) {
-                showFormError('Please select a task.', alert, alertText);
+                showSubmissionResult('Please select a task.', alert, alertText);
                 return false;
             }
             else
@@ -278,11 +287,12 @@
 
         }
 
-        //Show error
-        function showFormError(message, alert, alertText) {
+        //Show submission result after clicking Submit button
+        function showSubmissionResult(message, alert, alertText) {
             alertText.innerText = message;
             alert.style.display = "block";
         }
+
         /*Displays details for a selected experiment */
         function displayDetails(experimentIndex) {
             $('#experimentNameDetail').text(experimentsData[experimentIndex]['experiment_name']);
