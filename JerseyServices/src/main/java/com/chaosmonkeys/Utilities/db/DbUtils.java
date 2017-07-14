@@ -1,9 +1,11 @@
 package com.chaosmonkeys.Utilities.db;
 
 
+import com.chaosmonkeys.dao.Experiment;
 import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.DB;
 
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class DbUtils {
@@ -45,6 +47,18 @@ public class DbUtils {
      */
     public static void closeConnection(){
         Base.close();
+    }
+
+    /**
+     * This method would provide the experiment dao model
+     * notice you should only use it when you can ensure the model existed in database
+     * @param experimentName
+     * @return Experiment DAO model with the specific experiment name
+     */
+    public static Experiment getExperimentModelByName(String experimentName){
+        List<Experiment> expList = Experiment.where("experiment_name = ?", experimentName);
+        Experiment exp = expList.get(0);
+        return exp;
     }
 
 }

@@ -19,6 +19,8 @@ public class BaseTaskInfo {
 
     public final TaskType taskType;
 
+    protected String experimentName;
+
     private ResourceInfo resourceInfo;
     /**
      * Make sure subclass invoke this super() constructor
@@ -28,8 +30,9 @@ public class BaseTaskInfo {
         this.taskType = type;
     }
 
-    public BaseTaskInfo(TaskType type, ResourceInfo resInfo){
+    public BaseTaskInfo(TaskType type, String experimentName,ResourceInfo resInfo){
         this(type); // assign an UUID as identifier
+        this.experimentName = experimentName;
         this.resourceInfo = resInfo;
     }
 
@@ -48,5 +51,9 @@ public class BaseTaskInfo {
 
     public void setResourceInfo(ResourceInfo resourceInfo) {
         this.resourceInfo = resourceInfo;
+    }
+
+    public String getExperimentName(){
+        return experimentName;
     }
 }

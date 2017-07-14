@@ -99,12 +99,11 @@ public class ExperimentResource {
         // construct TaskInfo
         TrainingTaskInfo trainingTaskInfo= new TrainingTaskInfo(expName, resInfo);
         // get task manager instance and submit the task
-
+        TrainingTaskManager.INSTANCE.submitTask(trainingTaskInfo);
 
         DbUtils.closeConnection();
 
-
-        return null;
+        return genSuccResponse();
     }
 
     /**
@@ -149,7 +148,7 @@ public class ExperimentResource {
      */
     public Response genSuccResponse(){
         BaseResponse responseEntity = new BaseResponse();
-        responseEntity.successful("algorithm upload successfully");
+        responseEntity.successful("Your experiment has been submitted to run");
 
         Response response = Response.ok()
                 .entity(responseEntity)
@@ -163,7 +162,7 @@ public class ExperimentResource {
      */
     public Response genSuccResponseWithMsg(String msg){
         BaseResponse responseEntity = new BaseResponse();
-        responseEntity.successful("algorithm upload successfully");
+        responseEntity.successful(msg);
 
         Response response = Response.ok()
                 .entity(responseEntity)

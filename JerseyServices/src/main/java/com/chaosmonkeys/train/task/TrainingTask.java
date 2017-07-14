@@ -22,7 +22,7 @@ public class TrainingTask extends AbsTask{
     protected ExecutorService getExecutorService() {
         return super.getExecutorService();
     }
-    
+
     @Override
     protected void initialize() {
 

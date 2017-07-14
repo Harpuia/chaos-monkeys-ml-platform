@@ -1,8 +1,12 @@
 package com.chaosmonkeys.train.task;
 
 
+import com.chaosmonkeys.Utilities.db.DbUtils;
 import com.chaosmonkeys.dao.Experiment;
 import com.chaosmonkeys.train.task.interfaces.OnTaskUpdateListener;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Traning task manager used for handling task callback
@@ -14,18 +18,22 @@ public enum TrainingTaskManager implements TaskManager{
     // singleton
     INSTANCE;
 
-    /***
-     * using common pattern to obtain an instance
-     * @return
-     */
-    public TrainingTaskManager getInstance() {
-        return TrainingTaskManager.INSTANCE;
-    }
-
+    private Map<String, TrainingTask> taskMap = new ConcurrentHashMap<>();
 
     public boolean submitTask(BaseTaskInfo taskInfo){
-        return false;
-    };
+        TrainingTaskInfo trainTaskInfo = (TrainingTaskInfo) taskInfo;
+        TrainingTask trainingTask = new TrainingTask(trainTaskInfo, mOnTaskUpdateListener);
+        taskMap.put(trainTaskInfo.getExperimentName(), trainingTask);
+        // set initializing status and update database record
+        DbUtils.openConnection();
+        trainingTask.setState(TaskState.INITIALIZING);
+        trainingTask.initialize();
+        Experiment exp = DbUtils.getExperimentModelByName(trainTaskInfo.getExperimentName());
+        exp.set("last_status","initializing");
+        //TODO: set datetime
+        DbUtils.closeConnection();
+        return true;
+    }
     public boolean cancelTask(String taskId){
         return false;
     };

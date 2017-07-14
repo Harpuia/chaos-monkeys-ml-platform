@@ -5,8 +5,6 @@ package com.chaosmonkeys.train.task;
  */
 public class TrainingTaskInfo extends BaseTaskInfo {
 
-    private String experimentName;
-
     /**
      * Input workspace and other path information
      * make sure they are valid before constructing
@@ -17,8 +15,7 @@ public class TrainingTaskInfo extends BaseTaskInfo {
     }
 
     public TrainingTaskInfo(String name, ResourceInfo resInfo){
-        super(TaskType.TRAIN, resInfo);
-        this.experimentName = name;
+        super(TaskType.TRAIN, name, resInfo);
     }
 
 }
