@@ -450,12 +450,10 @@
     }
 
     function checkRequiredTaskFields() {
-      var t = $("#taskType")[0];
       var taskName = $("#name").val();
       var projectId = $("#projectId").val();
-      var a = $("#taskAlgorithmsNames")[0];
-      var selectedTaskType = t.options[t.selectedIndex].text;
-      var selectedAlgorithmName = a.options[a.selectedIndex].text;
+      var selectedTaskType = $("#taskType").val();
+      var selectedAlgorithmName = $("#taskAlgorithmsNames").val();
       var alert = $('#formAlert')[0];
       var alertText = $('#formAlertText')[0];
       //console.log(taskName);
@@ -481,12 +479,14 @@
     }
 
     //Shows task type
+    /*
     function showTaskType() {
       var e = $("#type")[0];
       var selectedValue = e.options[e.selectedIndex].text;
       var algorithmDropdown = $("#algorithms")[0];
       showDropdown(algorithmDropdown);
     }
+    */
 
     //Hide dropdown list and the associated label
     function hideDropdown(dropdown) {
