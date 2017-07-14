@@ -500,7 +500,7 @@
                     alert("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error);
                 },
                 success: function (data) {
-                    alert("Task: " + data.responseJSON.newtaskinfo.name + " was created successfully!");
+                    alert("Task: " + data.newtaskinfo.name + " was created successfully!");
                 }
             });
         }
