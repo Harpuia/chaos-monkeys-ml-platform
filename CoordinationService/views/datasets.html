@@ -490,19 +490,19 @@
                 url = 'http://127.0.0.1:3000/tasks/createExecutionTask';
             }
             $.ajax({
-                    url: url,
-                    type: "POST",
-                    dataType: "json",
-                    contentType: 'application/json',
-                    data: JSON.stringify(objectToSend),
-                    error: function (request, status, error) {
-                        console.log(status + error);
-                        alert("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error);
-                    },
-                    complete: function (data) {
-                        alert("Task: " + data.responseJSON.newtaskinfo.name + " was created successfully!");
-                    }
-                });
+                url: url,
+                type: "POST",
+                dataType: "json",
+                contentType: 'application/json',
+                data: JSON.stringify(objectToSend),
+                error: function (request, status, error) {
+                    console.log(status + error);
+                    alert("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error);
+                },
+                complete: function (data) {
+                    alert("Task: " + data.responseJSON.newtaskinfo.name + " was created successfully!");
+                }
+            });
         }
 
         function checkRequiredTaskFields() {
@@ -539,6 +539,32 @@
             }
             else
                 return true;
+        }
+
+        //Shows task type
+        function showTaskType() {
+            var e = $("#type")[0];
+            var selectedValue = e.options[e.selectedIndex].text;
+            var modelDropdown = $("#models")[0];
+            var algorithmDropdown = $("#algorithms")[0];
+            if (selectedValue.toLowerCase() == "training") {
+                hideDropdown(modelDropdown);
+                showDropdown(algorithmDropdown);
+            }
+            else if (selectedValue.toLowerCase() == "execution") {
+                hideDropdown(algorithmDropdown);
+                showDropdown(modelDropdown);
+            }
+        }
+
+        //Hide dropdown list and the associated label
+        function hideDropdown(dropdown) {
+            dropdown.style.display = "none";
+        }
+
+        //Show dropdown list and the associated label
+        function showDropdown(dropdown) {
+            dropdown.style.display = "block";
         }
     </script>
 </body>
