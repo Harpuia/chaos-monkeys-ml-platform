@@ -12,6 +12,7 @@
     <title>ChaosMonkeys</title>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="/public/common.js"></script>
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
@@ -67,13 +68,13 @@
             </div>
 
             <!-- Details modal -->
-            <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             <i class="fa fa-lightbulb-o" aria-hidden="true" fa-3x></i>
-                            <h4 class="modal-title" id="myModalLabel">Model Details</h4>
+                            <h4 class="modal-title" id="detailsModalLabel">Model Details</h4>
                         </div>
                         <div class="modal-body">
                             <div class="row">
@@ -123,13 +124,13 @@
             </div>
 
             <!-- Create Task Modal -->
-            <div class="modal fade" id="createTaskModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal fade" id="createTaskModal" tabindex="-1" role="dialog" aria-labelledby="taskModalLabel">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             <i class="fa fa-database" aria-hidden="true" fa-3x></i>
-                            <h4 class="modal-title" id="myModalLabel">Create a task</h4>
+                            <h4 class="modal-title" id="taskModalLabel">Create a task</h4>
                         </div>
                         <div class="modal-body">
                             <div class="uploadingpopup" id="uploading" style="display:none">
@@ -152,44 +153,44 @@
                                             <div class="form-group required">
                                                 <label for="TaskType" class="control-label">Task Type</label>
                                                 <br>
-                                                <select class="form-control" id="type" onchange="showTaskType()">
-                                                </select>
+                                                <input type="text" class="form-control" name="taskType" id="taskType" value="Execution" disabled/>
                                             </div>
                                             <div class="form-group required">
                                                 <label for="data name" class="control-label">Task Name</label>
-                                                <input type="text" class="form-control" name="name" id="name" />
+                                                <input type="text" class="form-control" name="taskName" id="taskName" />
                                             </div>
                                             <div class="form-group required">
                                                 <label for="ProjectID" class="control-label">Project ID</label>
-                                                <input type="text" class="form-control" id="projectId" />
+                                                <input type="text" class="form-control" id="taskProjectId" />
                                             </div>
 
                                             <div class="form-group">
                                                 <label for="description">Description</label>
-                                                <textarea class="form-control" rows="5" id="description"> </textarea>
+                                                <textarea class="form-control" rows="5" id="taskDescription"> </textarea>
                                             </div>
                                             <div class="form-group required">
                                                 <label for="DatasetsNames" class="control-label">Select Dataset</label>
                                                 <br>
-                                                <input type="text" class="form-control" id="datasetName" />
+                                                <select class="form-control" id="taskDatasetsNames">
                                                 </select>
                                             </div>
-                                            <div class="form-group required" id="algorithms">
+
+                                            <!-- Uncomment this div block if algorithms being added to the form. -->
+                                            <!--div class="form-group required" id="algorithms">
                                                 <label for="AlgorithmsNames" class="control-label">Select Algorithm</label>
                                                 <br>
                                                 <select class="form-control" id="algorithmNameInTaskModal">
                                                 </select>
-                                            </div>
-                                            <div class="form-group required" id="models" style="display:none">
+                                            </div-->
+
+                                            <div class="form-group required" id="models">
                                                 <label for="ModelsNames" class="control-label">Select Model</label>
-                                                <br>
-                                                <select class="form-control" id="modelsNamesInTaskModal" disabled>
-                                                </select>
+                                                <input type="text" class="form-control" id="taskModel" disabled>
                                             </div>
                                         </div>
                                     </form>
                                     <div>
-                                        <button id="submitButton" class="btn btn-primary" onclick="submitForm()">Submit</button>
+                                        <button id="submitButton" class="btn btn-primary" onclick="submitTaskForm()">Submit</button>
                                     </div>
                                 </div>
                             </div>
@@ -204,11 +205,20 @@
     </div>
 
     <script type="text/javascript">
+        //All model data
         var modelsData;
+
+        //Selected model id
+        var selectedModelId;
+
         //Initialization
         $(document).ready(function () {
+            //Reset task modal
+            resetModal('createTaskModal');
+
             //Showing the loading text
             $('#modelsTableBody').text('Loading...');
+
             //Load upload types
             $.get("models/list", function (data) {
                 modelsData = data['models'];
@@ -217,6 +227,15 @@
                     modelsList += '<tr><td><i class="fa fa-lightbulb-o" aria-hidden="true"></i>' + data['models'][i]['name'] + '</td><td>' + data['models'][i]['description'] + '<br><span class="label label-success">' + data['models'][i]['path'] + '</span><span class="label label-success">' + data['models'][i]['project_id'] + '</span><span class="label label-success">' + data['models'][i]['experiment_id'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createTaskFromModel(' + i + ')" class="btn btn-primary">Create Task</button></td></tr>';
                 }
                 $('#modelsTableBody').html(modelsList);
+            });
+
+            //Load datasets names
+            $.get("tasks/datasetsnames", function (data) {
+                var datasetsnames = '';
+                for (i = 0; i < data['datasetsnames'].length; i++) {
+                    datasetsnames += '<option value="' + data['datasetsnames'][i]['id'] + '">' + data['datasetsnames'][i]['name'] + '</option>\n';
+                }
+                $('#taskDatasetsNames').html(datasetsnames);
             });
         });
 
@@ -245,8 +264,85 @@
 
         //Creates a task definition from a model
         function createTaskFromModel(index) {
-            $('#modelsNamesInTaskModal').val(modelsData[index]['name']);
+            selectedModelId = index;
+            $('#taskModel').val(modelsData[index]['name']);
             $('#createTaskModal').modal('show');
+        }
+
+        //Submit the task form
+        function submitTaskForm() {
+            var success = $('#formTaskSuccess')[0];
+            var successText = $('#formTaskSuccessText')[0];
+            var alert = $('#formTaskError')[0];
+            var alertText = $('#formTaskErrorText')[0];
+            var tasksInfoForExecution = {
+                "project_id": $("#taskProjectId").val(),
+                "dataset_id": $("#taskDatasetName").val(),
+                // TODO: Add algorithm id in the future if needed
+                "algorithm_id": null,
+                "model_id": $("#taskModel").val(),
+                "name": $("#taskName").val(),
+                "description": $("#taskDescription").val(),
+                "type": $("#taskType").val()
+            }
+
+            var objectToSend;
+            var url;
+            if (checkRequiredTaskFields()) {
+                console.log(tasksInfoForExecution);
+                objectToSend = tasksInfoForExecution;
+                url = 'http://127.0.0.1:3000/tasks/createExecutionTask';
+            }
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                dataType: "json",
+                contentType: 'application/json',
+                data: JSON.stringify(objectToSend),
+                error: function (request, status, error) {
+                    console.log(status + error);
+                    showSubmissionResult("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
+                },
+                success: function (data) {
+                    showSubmissionResult("Task: " + data.newtaskinfo.name + " has been created successfully!", success, successText);
+                }
+            });
+        }
+
+        function checkRequiredTaskFields() {
+            var taskName = $("#taskName").val();
+            var projectId = $("#taskProjectId").val();
+            var selectedTaskType = $("#taskType").val();
+            var selectedModelName = $("#taskModel").val();
+            var alert = $('#formTaskError')[0];
+            var alertText = $('#formTaskErrorText')[0];
+            //console.log(taskName);
+            if (selectedTaskType.length == 0) {
+                showSubmissionResult('Please select a task type.', alert, alertText);
+                return false;
+            }
+            else if (taskName.length == 0) {
+                showSubmissionResult('Please input a task name.', alert, alertText);
+                return false;
+            }
+            else if (projectId.length == 0) {
+                showSubmissionResult('Please input the Project ID.', alert, alertText);
+                return false;
+            }
+            else if (selectedModelName.length == 0) {
+                showSubmissionResult('Please select an algorithm.', alert, alertText);
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
+        //Show submission result after clicking Submit button
+        function showSubmissionResult(message, alert, alertText) {
+            alertText.innerText = message;
+            alert.style.display = "block";
         }
     </script>
 </body>

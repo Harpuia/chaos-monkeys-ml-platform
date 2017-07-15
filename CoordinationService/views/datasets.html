@@ -479,30 +479,32 @@
             }
             var objectToSend;
             var url;
-            if (tasksInfoForTrain.type.toLowerCase() == "training" && checkRequiredTaskFields()) {
-                console.log(tasksInfoForExe);
-                objectToSend = tasksInfoForTrain;
-                url = 'http://127.0.0.1:3000/tasks/createTrainingTask';
-            }
-            else if (tasksInfoForExe.type.toLowerCase() == "execution" && checkRequiredTaskFields()) {
-                console.log(tasksInfoForExe);
-                objectToSend = tasksInfoForTrain;
-                url = 'http://127.0.0.1:3000/tasks/createExecutionTask';
-            }
-            $.ajax({
-                url: url,
-                type: "POST",
-                dataType: "json",
-                contentType: 'application/json',
-                data: JSON.stringify(objectToSend),
-                error: function (request, status, error) {
-                    console.log(status + error);
-                    alert("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error);
-                },
-                success: function (data) {
-                    alert("Task: " + data.newtaskinfo.name + " was created successfully!");
+            if (checkRequiredTaskFields()) {
+                if (tasksInfoForTrain.type.toLowerCase() == "training") {
+                    console.log(tasksInfoForExe);
+                    objectToSend = tasksInfoForTrain;
+                    url = 'http://127.0.0.1:3000/tasks/createTrainingTask';
                 }
-            });
+                else if (tasksInfoForExe.type.toLowerCase() == "execution") {
+                    console.log(tasksInfoForExe);
+                    objectToSend = tasksInfoForTrain;
+                    url = 'http://127.0.0.1:3000/tasks/createExecutionTask';
+                }
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    dataType: "json",
+                    contentType: 'application/json',
+                    data: JSON.stringify(objectToSend),
+                    error: function (request, status, error) {
+                        console.log(status + error);
+                        alert("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error);
+                    },
+                    success: function (data) {
+                        alert("Task: " + data.newtaskinfo.name + " was created successfully!");
+                    }
+                });
+            }
         }
 
         function checkRequiredTaskFields() {
