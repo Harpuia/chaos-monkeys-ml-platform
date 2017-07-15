@@ -25,5 +25,8 @@ function resetModal(modalId) {
 
 //Formats time for display
 function displayDateTime(time) {
-    return time.replace('T', ' ').replace('.000Z', '');
+    if (time)
+        return time.replace('T', ' ').replace('.000Z', '');
+    else
+        return time;
 }
