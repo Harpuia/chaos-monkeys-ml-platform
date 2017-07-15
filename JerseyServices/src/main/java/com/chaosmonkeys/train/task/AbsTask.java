@@ -54,6 +54,10 @@ public abstract class AbsTask {
         return this.state.value() == TaskState.IDLE.value();
     }
 
+    public final boolean isInitialized(){
+        return this.state.value() >= TaskState.INITIALIZED.value();
+    }
+
     public final boolean isFinished() {
         return this.state.value() > TaskState.STARTED.value();
     }
