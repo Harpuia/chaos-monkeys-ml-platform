@@ -8,4 +8,10 @@ public class Logger {
         //TODO: Implement logic here
         System.out.println(message);
     }
+    public static void Error(String message){
+        SaveLog(LogType.Error, message);
+    }
+    public static void Info(String message){
+        SaveLog(LogType.Information, message);
+    }
 }
