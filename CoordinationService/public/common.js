@@ -1,4 +1,4 @@
-
+/* Reset the datasets/algorithms upload and tasks/experiments creation modals. */
 function resetModal(modalId) {
     $('#' + modalId).on('hidden.bs.modal', function () {
         $('form').get(0).reset();

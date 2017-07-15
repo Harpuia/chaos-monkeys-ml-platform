@@ -149,59 +149,52 @@
                 </div>
             </div>
 
-            <!-- Tasks table -->
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <tbody id='tasksTableBody'>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Details modal -->
-            <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <!-- Create a new experiment Modal -->
+            <div class="modal fade" id="createNewExperimentModal" tabindex="-1" role="dialog" aria-labelledby="experimentModalLabel">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             <i class="fa fa-database" aria-hidden="true" fa-3x></i>
-                            <h4 class="modal-title" id="myModalLabel">Task Details</h4>
+                            <h4 class="modal-title" id="taskModalLabel">Create an experiment from task</h4>
                         </div>
                         <div class="modal-body">
-                            <div class="alert alert-danger alert-dismissible" id="formError" style="display: none;" role="alert">
-                                <a class="close" onclick="$('#formError').hide()">×</a>
+                            <div class="alert alert-danger alert-dismissible" id="formExperimentError" style="display: none;" role="alert">
+                                <a class="close" onclick="$('#formExperimentError').hide()">×</a>
                                 <strong>Error!</strong>
-                                <div id='formErrorText'></div>
+                                <div id='formExperimentErrorText'></div>
+                            </div>
+                            <div class="alert alert-success alert-dismissible" id="formExperimentSuccess" style="display: none;" role="alert">
+                                <a class="close" onclick="$('#formExperimentSuccess').hide()">×</a>
+                                <strong>Success!</strong>
+                                <div id='formExperimentSuccessText'></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 col-md-offset-1">
-                                    <!--Popup content-->
-                                    <p>
-                                        <h4>Task Name:</h4>
-                                        <span id='taskName'></span></p>
-                                    <p>
-                                        <h4>Task Type:</h4>
-                                        <span id='taskType'></span>
-                                    </p>
-                                    <p>
-                                        <h4>Task Description:</h4>
-                                        <span id='taskDescription'></span>
-                                    </p>
-                                    <p>
-                                        <h4>Task Parent Project Name:</h4>
-                                        <span id='taskProject'></span>
-                                    </p>
-                                    <p>
-                                        <h4>Task Algorithm Name:</h4>
-                                        <span id='taskAlgorithm'></span>
-                                    </p>
-                                    <p>
-                                        <h4>Task Dataset Name:</h4>
-                                        <span id='taskDataset'></span>
-                                    </p>
-
-                                    <!--Submit button-->
+                                    <!-- in input label, using the name attribute to specify FormDataParam in jersey side-->
+                                    <form id="dataForm" enctype="multipart/form-data">
+                                        <div class="description" id="contents" style="display:block">
+                                            <div class="form-group required">
+                                                <label for="ExperimentName" class="control-label">Experiment Name</label>
+                                                <input type="text" class="form-control" id="experimentName" />
+                                            </div>
+                                            <div class="form-group required">
+                                                <label for="ExperimentProjectID" class="control-label">Project ID</label>
+                                                <input type="text" class="form-control" id="experimentProjectId" />
+                                            </div>
+                                            <div class="form-group required">
+                                                <label for="ExperimentTaskName" class="control-label">Task Name</label>
+                                                <br>
+                                                <input type="text" class="form-control" id="experimentTaskName" disabled>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="ExperimentDescription">Description</label>
+                                                <textarea class="form-control" rows="5" id="experimentDescription"> </textarea>
+                                            </div>
+                                        </div>
+                                    </form>
                                     <div>
-                                        <button id="submitButton" class="btn btn-primary" onclick="alert('Submit')">Action</button>
+                                        <button id="submitButton" class="btn btn-primary" onclick="submitExperimentForm()">Submit</button>
                                     </div>
                                 </div>
                             </div>
@@ -213,6 +206,71 @@
                 </div>
             </div>
         </div>
+
+        <!-- Tasks table -->
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <tbody id='tasksTableBody'>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Details modal -->
+        <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <i class="fa fa-database" aria-hidden="true" fa-3x></i>
+                        <h4 class="modal-title" id="myModalLabel">Task Details</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger alert-dismissible" id="formError" style="display: none;" role="alert">
+                            <a class="close" onclick="$('#formError').hide()">×</a>
+                            <strong>Error!</strong>
+                            <div id='formErrorText'></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-md-offset-1">
+                                <!--Popup content-->
+                                <p>
+                                    <h4>Task Name:</h4>
+                                    <span id='taskName'></span></p>
+                                <p>
+                                    <h4>Task Type:</h4>
+                                    <span id='taskType'></span>
+                                </p>
+                                <p>
+                                    <h4>Task Description:</h4>
+                                    <span id='taskDescription'></span>
+                                </p>
+                                <p>
+                                    <h4>Task Parent Project Name:</h4>
+                                    <span id='taskProject'></span>
+                                </p>
+                                <p>
+                                    <h4>Task Algorithm Name:</h4>
+                                    <span id='taskAlgorithm'></span>
+                                </p>
+                                <p>
+                                    <h4>Task Dataset Name:</h4>
+                                    <span id='taskDataset'></span>
+                                </p>
+
+                                <!--Submit button-->
+                                <div>
+                                    <button id="submitButton" class="btn btn-primary" onclick="alert('Submit')">Action</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
 
     <script type="text/javascript">
@@ -230,7 +288,7 @@
                 tasksData = data['tasks'];
                 var tasksList = '';
                 for (i = 0; i < data['tasks'].length; i++) {
-                    tasksList += '<tr><td><i class="fa fa-database" aria-hidden="true"></i>' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '<br><span class="label label-success">' + data['tasks'][i]['project_name'] + '</span><span class="label label-success">' + data['tasks'][i]['dataset_name'] + '</span><span class="label label-success">' + data['tasks'][i]['algorithm_name'] + '</span><span class="label label-success">' + data['tasks'][i]['type'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td></tr>';
+                    tasksList += '<tr><td><i class="fa fa-database" aria-hidden="true"></i>' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '<br><span class="label label-success">' + data['tasks'][i]['project_name'] + '</span><span class="label label-success">' + data['tasks'][i]['dataset_name'] + '</span><span class="label label-success">' + data['tasks'][i]['algorithm_name'] + '</span><span class="label label-success">' + data['tasks'][i]['type'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createNewExperimentFromTask(' + i + ')" class="btn btn-primary">Run an experiment</button></td></tr>';
                 }
                 $('#tasksTableBody').html(tasksList);
             });
@@ -408,6 +466,12 @@
             $('#taskAlgorithm').text(tasksData[taskIndex]['algorithm_name']);
             $('#taskDataset').text(tasksData[taskIndex]['dataset_name']);
             $('#detailsModal').modal('show');;
+        }
+
+        //Creates an experiment from the task
+        function createNewExperimentFromTask(index) {
+            $('#experimentTaskName').val(tasksData[index]['name']);
+            $('#createNewExperimentModal').modal('show');
         }
     </script>
 </body>
