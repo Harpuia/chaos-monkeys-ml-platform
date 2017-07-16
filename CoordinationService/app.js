@@ -38,16 +38,9 @@ app.use('/tasks', tasks);
 app.use('/users', users);
 app.use('/experiments', experiments);
 app.use('/models', models);
-app.use('/algorithms',algorithms);
+app.use('/algorithms', algorithms);
 app.use('/public', express.static(__dirname + '/public'));
 app.use('/views', express.static(__dirname + '/views'));
-
-//Proxy to circumvent CORS
-/*app.use('/proxy', function(req, res) {
-  var url = req.url.replace('/?url=','');
-  console.log(url);
-  req.pipe(request(url), {end: true}).pipe(res, {end: true});
-});*/
 
 // catch 404 and forward to error handler
 app.use(function handleNotFoundError(req, res, next) {
