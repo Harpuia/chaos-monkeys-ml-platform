@@ -22,7 +22,7 @@ router.get("/list", function getExperiments(req, res) {
 });
 
 /* Create a new experiment */
-router.post('/createNewExperiment', function insertNewExperiment(req, res) {
+router.post('/create', function insertNewExperiment(req, res) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();

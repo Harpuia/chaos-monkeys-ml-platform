@@ -6,6 +6,11 @@ var selectedAlgorithmId;
 
 //Initialization
 $(document).ready(function () {
+  loadPage();
+});
+
+//Loads the page
+function loadPage(){
   //Reset upload modal 
   resetModal('uploadModal');
 
@@ -49,7 +54,7 @@ $(document).ready(function () {
     }
     $('#taskDatasetName').html(datasetsnames);
   });
-});
+}
 
 //Handles the submit action
 function submitForm() {
@@ -66,10 +71,8 @@ function submitForm() {
     processData: false,
     contentType: false,
     success: function (data) {
-      console.log("Submitted");
-      console.log('Data: ' + data);
-      //alert("Success!");
       showSubmissionResult("Success!", success, successText);
+      loadPage();
     },
     error: function (jqXHR, status, error) {
       if (jqXHR.responseJSON) {

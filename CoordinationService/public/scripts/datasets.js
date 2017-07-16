@@ -3,6 +3,11 @@ var datasetsData;
 
 //Initialization
 $(document).ready(function () {
+  loadPage();
+});
+
+//Loads the page
+function loadPage() {
   //Reset a specific modal
   resetModal('uploadModal');
 
@@ -64,7 +69,7 @@ $(document).ready(function () {
     }
     $('#modelsNames').html(modelsnames);
   });
-});
+}
 
 //Shows upload spinner
 function showUploadingSpinner() {
@@ -111,9 +116,8 @@ function submitForm() {
       processData: false,
       contentType: false,
       success: function (data) {
-        console.log("Submitted");
-        console.log('Data: ' + data);
         alert("Success!");
+        loadPage();
       },
       error: function (request, status, error) {
         console.log(status + error);

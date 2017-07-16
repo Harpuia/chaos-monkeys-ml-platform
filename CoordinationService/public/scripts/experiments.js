@@ -2,6 +2,11 @@
 var experimentsData;
 //Initialization
 $(document).ready(function () {
+  loadPage();
+});
+
+//Load the page
+function loadPage() {
   //Reset a specific modal 
   resetModal('createExperimentModal');
   //Load upload types
@@ -25,7 +30,7 @@ $(document).ready(function () {
     }
     $('#tasksNames').html(tasksnames);
   });
-});
+}
 
 /*Submit the form to create a new experiment */
 function submitForm() {
@@ -46,13 +51,14 @@ function submitForm() {
   console.log(experimentInfo.task_id);
   if (checkRequiredFields()) {
     $.ajax({
-      url: "http://127.0.0.1:3000/experiments/createNewExperiment",
+      url: "http://127.0.0.1:3000/experiments/create",
       type: "POST",
       dataType: "json",
       contentType: 'application/json',
       data: JSON.stringify(experimentInfo),
       success: function (data) {
         showSubmissionResult("The experiment " + experimentInfo.experiment_name + " has been created successfully.", success, successText);
+        loadPage();
       },
       error: function (request, status, error) {
         console.log(status + error);
