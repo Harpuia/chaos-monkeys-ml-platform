@@ -9,8 +9,13 @@
   <meta name="author" content="Chaos Monkeys @ CMU">
 
   <title>ChaosMonkeys</title>
-  <script src="/public/common.js"></script>
+
+  <!-- JQuery -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+  <!-- Local scripts -->
+  <script src="/public/scripts/common.js"></script>
+  <script src="/public/scripts/monitoring.js"></script>
 
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
@@ -78,28 +83,6 @@
           </tr>
         </table>
       </div>
-      <script>
-        //Update view with table values
-        setInterval(function () {
-          $('table').find("tr:not(:first)").remove();
-          $.getJSON('http://127.0.0.1:3000/table', function (data) {
-            $.each(data['table'], function (i, item) {
-              console.log('Works inside too!');
-              var tr = $('<tr>');
-              tr.append('<td>' + item['ip_address'] + '</td>');
-              tr.append('<td>' + item['type'] + '</td>');
-              tr.append('<td>' + item['name'] + '</td>');
-              tr.append('<td>' + item['description'] + '</td>');
-              //TODO: cleanup display later
-              tr.append('<td>' + item['status'] + '</td>');
-              tr.append('<td>' + displayDateTime(item['last_updated']) + '</td>');
-              tr.append('</tr>');
-              $('table').append(tr);
-              console.log($('table'));
-            })
-          })
-        }, 2000);
-      </script>
     </div>
   </div>
 </body>
