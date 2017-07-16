@@ -26,6 +26,21 @@
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-grizzly2-http</artifactId>
         </dependency>
+
+        <!-- using no-operation (NOP) logger implementation now, change to log4j or other in the future -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>1.7.25</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- ZT Process Executor -->
+        <dependency>
+            <groupId>org.zeroturnaround</groupId>
+            <artifactId>zt-exec</artifactId>
+            <version>1.9</version>
+        </dependency>
         <!-- ActiveJDBC ORM -->
         <dependency>
             <groupId>org.javalite</groupId>
