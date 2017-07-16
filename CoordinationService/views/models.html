@@ -248,7 +248,7 @@
                 if (typeof data != "undefined") {
                     var tasksList = '';
                     for (i = 0; i < data['tasks'].length; i++) {
-                        tasksList += '<tr><td><i class="fa fa-server" aria-hidden="true"></i>' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '</td></tr>';
+                        tasksList += '<tr><td><span class="fa fa-check-square-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '</td></tr>';
                     }
                     $('#tasksTableBody').html(tasksList);
                 }
