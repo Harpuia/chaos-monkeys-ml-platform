@@ -45,7 +45,7 @@
                     <ul class="nav nav-justified">
                         <li><a href="/experiments">Experiments</a></li>
                         <li class="active"><a href="/tasks">Tasks</a></li>
-                        <li><a href="/datasets">Data Sets</a></li>
+                        <li><a href="/datasets">Datasets</a></li>
                         <li><a href="/algorithms">Algorithms</a></li>
                         <li><a href="/models">Models</a></li>
                         <li><a href="/monitoring">Monitoring</a></li>
@@ -61,7 +61,16 @@
 
             <!-- Create task button -->
             <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createTaskModal">Create task</button></p>
-            <!-- Modal -->
+
+            <!-- Tasks table -->
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <tbody id='tasksTableBody'>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Create task modal -->
             <div class="modal fade" id="createTaskModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -203,14 +212,6 @@
             </div>
         </div>
 
-        <!-- Tasks table -->
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <tbody id='tasksTableBody'>
-                </tbody>
-            </table>
-        </div>
-
         <!-- Details modal -->
         <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
             <div class="modal-dialog" role="document">
@@ -279,7 +280,7 @@
                 tasksData = data['tasks'];
                 var tasksList = '';
                 for (i = 0; i < data['tasks'].length; i++) {
-                    tasksList += '<tr><td><i class="fa fa-database" aria-hidden="true"></i>' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '<br><span class="label label-success">' + data['tasks'][i]['project_name'] + '</span><span class="label label-success">' + data['tasks'][i]['dataset_name'] + '</span><span class="label label-success">' + data['tasks'][i]['algorithm_name'] + '</span><span class="label label-success">' + data['tasks'][i]['type'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createNewExperimentFromTask(' + i + ')" class="btn btn-primary">Run an experiment</button></td></tr>';
+                    tasksList += '<tr><td><span class="fa fa-check-square-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '<br><span class="label label-success">' + data['tasks'][i]['project_name'] + '</span>&nbsp;&nbsp;<span class="label label-success">' + data['tasks'][i]['type'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createNewExperimentFromTask(' + i + ')" class="btn btn-primary">Run an experiment</button></td></tr>';
                 }
                 $('#tasksTableBody').html(tasksList);
             });

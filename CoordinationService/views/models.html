@@ -47,7 +47,7 @@
                     <ul class="nav nav-justified">
                         <li><a href="/experiments">Experiments</a></li>
                         <li><a href="/tasks">Tasks</a></li>
-                        <li><a href="/datasets">Data Sets</a></li>
+                        <li><a href="/datasets">Datasets</a></li>
                         <li><a href="/algorithms">Algorithms</a></li>
                         <li class="active"><a href="/models">Models</a></li>
                         <li><a href="/monitoring">Monitoring</a></li>
@@ -59,7 +59,10 @@
 
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
-            <p></p>
+            <!-- Header title -->
+            <h2 class="sub-header">Models</h2>
+
+            <!-- Models table -->
             <div class="table-responsive">
                 <table class="table table-striped">
                     <tbody id='modelsTableBody'>
@@ -219,7 +222,7 @@
                 modelsData = data['models'];
                 var modelsList = '';
                 for (i = 0; i < data['models'].length; i++) {
-                    modelsList += '<tr><td><i class="fa fa-lightbulb-o" aria-hidden="true"></i>' + data['models'][i]['name'] + '</td><td>' + data['models'][i]['description'] + '<br><span class="label label-success">' + data['models'][i]['path'] + '</span><span class="label label-success">' + data['models'][i]['project_id'] + '</span><span class="label label-success">' + data['models'][i]['experiment_id'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createTaskFromModel(' + i + ')" class="btn btn-primary">Create Task</button></td></tr>';
+                    modelsList += '<tr><td><span class="fa fa-cog" aria-hidden="true"></span>&nbsp;&nbsp;' + data['models'][i]['name'] + '</td><td>' + data['models'][i]['description'] + '<br><span class="label label-success">' + data['models'][i]['path'] + '</span>&nbsp;&nbsp;<span class="label label-success">' + data['models'][i]['project_id'] + '</span>&nbsp;&nbsp;<span class="label label-success">' + data['models'][i]['experiment_id'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createTaskFromModel(' + i + ')" class="btn btn-primary">Create Task</button></td></tr>';
                 }
                 $('#modelsTableBody').html(modelsList);
             });

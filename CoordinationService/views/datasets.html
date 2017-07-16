@@ -46,7 +46,7 @@
                     <ul class="nav nav-justified">
                         <li><a href="/experiments">Experiments</a></li>
                         <li><a href="/tasks">Tasks</a></li>
-                        <li class="active"><a href="/datasets">Data Sets</a></li>
+                        <li class="active"><a href="/datasets">Datasets</a></li>
                         <li><a href="/algorithms">Algorithms</a></li>
                         <li><a href="/models">Models</a></li>
                         <li><a href="/monitoring">Monitoring</a></li>
@@ -59,164 +59,10 @@
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
             <!-- Header title -->
-            <h2 class="sub-header">Results</h2>
+            <h2 class="sub-header">Datasets</h2>
 
-            <!-- Button trigger modal -->
-            <div class="container">
-                <!-- Button trigger modal -->
-                <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uploadModal">Upload</button></p>
-
-                <div class="modal fade" id="createTaskModal" tabindex="-1" role="dialog" aria-labelledby="taskModalLabel">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <i class="fa fa-database" aria-hidden="true" fa-3x></i>
-                                <h4 class="modal-title" id="taskModalLabel">Create a task from dataset</h4>
-                            </div>
-                            <div class="modal-body">
-                                <div class="uploadingpopup" id="uploading" style="display:none">
-
-                                    <div style="height: 400px;">
-
-                                    </div>
-
-                                </div>
-                                <div class="alert alert-danger alert-dismissible" id="formAlert" style="display: none;" role="alert">
-                                    <a class="close" onclick="$('#formAlert').hide()">×</a>
-                                    <strong>Error!</strong>
-                                    <div id='formAlertText'></div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 col-md-offset-1">
-                                        <!-- in input label, using the name attribute to specify FormDataParam in jersey side-->
-                                        <form id="dataForm" enctype="multipart/form-data">
-                                            <div class="description" id="contents" style="display:block">
-                                                <div class="form-group required">
-                                                    <label for="TaskType" class="control-label">Task Type</label>
-                                                    <br>
-                                                    <select class="form-control" id="type" onchange="showTaskType()">
-                                                </select>
-                                                </div>
-                                                <div class="form-group required">
-                                                    <label for="data name" class="control-label">Task Name</label>
-                                                    <input type="text" class="form-control" name="name" id="name" />
-                                                </div>
-                                                <div class="form-group required">
-                                                    <label for="ProjectID" class="control-label">Project ID</label>
-                                                    <input type="text" class="form-control" id="projectId" />
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label for="description">Description</label>
-                                                    <textarea class="form-control" rows="5" id="description"> </textarea>
-                                                </div>
-                                                <div class="form-group required">
-                                                    <label for="DatasetsNames" class="control-label">Select Dataset</label>
-                                                    <br>
-                                                    <input type="text" class="form-control" id="taskDatasetName" disabled/>
-                                                    </select>
-                                                </div>
-                                                <div class="form-group required" id="algorithms">
-                                                    <label for="AlgorithmsNames" class="control-label">Select Algorithm</label>
-                                                    <br>
-                                                    <select class="form-control" id="algorithmsNames">
-                                                </select>
-                                                </div>
-                                                <div class="form-group required" id="models" style="display:none">
-                                                    <label for="ModelsNames" class="control-label">Select Model</label>
-                                                    <br>
-                                                    <select class="form-control" id="modelsNames">
-                                                </select>
-                                                </div>
-                                            </div>
-                                        </form>
-                                        <div>
-                                            <button id="submitButton" class="btn btn-primary" onclick="submitTaskForm()">Submit</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Upload Form Modal -->
-                <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <i class="fa fa-database" aria-hidden="true" fa-3x></i>
-                                <h4 class="modal-title" id="uploadModalLabel">Upload Datasets</h4>
-                            </div>
-                            <div class="modal-body">
-                                <div class="uploadingpopup" id="uploading" style="display:none">
-
-                                    <div style="height: 400px;">
-
-                                    </div>
-
-                                </div>
-                                <div class="alert alert-danger alert-dismissible" id="formAlert" style="display: none;" role="alert">
-                                    <a class="close" onclick="$('#formAlert').hide()">×</a>
-                                    <strong>Error!</strong>
-                                    <div id='formAlertText'></div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 col-md-offset-1">
-                                        <!-- in input label, using the name attribute to specify FormDataParam in jersey side-->
-                                        <form id="dataForm" enctype="multipart/form-data">
-                                            <div class="description" id="contents" style="display:block">
-                                                <div class="form-group required">
-                                                    <label for="file">Data Files</label>
-                                                    <input type="file" name="file" id="file" onchange="checkExtension()" />
-                                                </div>
-                                                <div class="form-group required">
-                                                    <label for="data name">Name</label>
-                                                    <input type="text" class="form-control" name="name" id="name" />
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label for="description">Description</label>
-                                                    <textarea class="form-control" rows="5" id="description"> </textarea>
-                                                </div>
-
-                                                <div class="form-group required">
-                                                    <label for="user id">User ID</label>
-                                                    <input type="text" class="form-control" name="user_id" id="user_id" />
-                                                </div>
-                                                <div class="form-group required">
-                                                    <label for="project id">Project ID</label>
-                                                    <input type="text" class="form-control" name="project_id" id="project_id" />
-                                                </div>
-
-                                                <div class="form-group required">
-                                                    <label for="DataFormat">Data Format</label>
-                                                    <br>
-                                                    <select class="form-control" id="format" onchange="checkExtension()">
-                                                </select>
-                                                    <a href="#" data-toggle="popover" title="Input Data Format" data-content="In CSV, column represents different types of attributes, and row represents one instance of data record. JSON file specifies an array of data records.
-">Instruction</a>
-                                                </div>
-                                            </div>
-                                        </form>
-                                        <div>
-                                            <button id="submitButton" type="button" class="btn btn-primary" onclick="submitForm()">Upload</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- Dataset upload button -->
+            <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uploadModal">Upload</button></p>
 
             <!-- Datasets table -->
             <div class="table-responsive">
@@ -224,6 +70,158 @@
                     <tbody id='datasetsTableBody'>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Create task modal -->
+            <div class="modal fade" id="createTaskModal" tabindex="-1" role="dialog" aria-labelledby="taskModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <i class="fa fa-database" aria-hidden="true" fa-3x></i>
+                            <h4 class="modal-title" id="taskModalLabel">Create a task from dataset</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="uploadingpopup" id="uploading" style="display:none">
+
+                                <div style="height: 400px;">
+
+                                </div>
+
+                            </div>
+                            <div class="alert alert-danger alert-dismissible" id="formAlert" style="display: none;" role="alert">
+                                <a class="close" onclick="$('#formAlert').hide()">×</a>
+                                <strong>Error!</strong>
+                                <div id='formAlertText'></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-md-offset-1">
+                                    <!-- in input label, using the name attribute to specify FormDataParam in jersey side-->
+                                    <form id="dataForm" enctype="multipart/form-data">
+                                        <div class="description" id="contents" style="display:block">
+                                            <div class="form-group required">
+                                                <label for="TaskType" class="control-label">Task Type</label>
+                                                <br>
+                                                <select class="form-control" id="type" onchange="showTaskType()">
+                                                </select>
+                                            </div>
+                                            <div class="form-group required">
+                                                <label for="data name" class="control-label">Task Name</label>
+                                                <input type="text" class="form-control" name="name" id="name" />
+                                            </div>
+                                            <div class="form-group required">
+                                                <label for="ProjectID" class="control-label">Project ID</label>
+                                                <input type="text" class="form-control" id="projectId" />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="description">Description</label>
+                                                <textarea class="form-control" rows="5" id="description"> </textarea>
+                                            </div>
+                                            <div class="form-group required">
+                                                <label for="DatasetsNames" class="control-label">Select Dataset</label>
+                                                <br>
+                                                <input type="text" class="form-control" id="taskDatasetName" disabled/>
+                                                </select>
+                                            </div>
+                                            <div class="form-group required" id="algorithms">
+                                                <label for="AlgorithmsNames" class="control-label">Select Algorithm</label>
+                                                <br>
+                                                <select class="form-control" id="algorithmsNames">
+                                                </select>
+                                            </div>
+                                            <div class="form-group required" id="models" style="display:none">
+                                                <label for="ModelsNames" class="control-label">Select Model</label>
+                                                <br>
+                                                <select class="form-control" id="modelsNames">
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div>
+                                        <button id="submitButton" class="btn btn-primary" onclick="submitTaskForm()">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload dataset modal -->
+            <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <i class="fa fa-database" aria-hidden="true" fa-3x></i>
+                            <h4 class="modal-title" id="uploadModalLabel">Upload Datasets</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="uploadingpopup" id="uploading" style="display:none">
+
+                                <div style="height: 400px;">
+
+                                </div>
+
+                            </div>
+                            <div class="alert alert-danger alert-dismissible" id="formAlert" style="display: none;" role="alert">
+                                <a class="close" onclick="$('#formAlert').hide()">×</a>
+                                <strong>Error!</strong>
+                                <div id='formAlertText'></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-md-offset-1">
+                                    <!-- in input label, using the name attribute to specify FormDataParam in jersey side-->
+                                    <form id="dataForm" enctype="multipart/form-data">
+                                        <div class="description" id="contents" style="display:block">
+                                            <div class="form-group required">
+                                                <label for="file">Data Files</label>
+                                                <input type="file" name="file" id="file" onchange="checkExtension()" />
+                                            </div>
+                                            <div class="form-group required">
+                                                <label for="data name">Name</label>
+                                                <input type="text" class="form-control" name="name" id="name" />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="description">Description</label>
+                                                <textarea class="form-control" rows="5" id="description"> </textarea>
+                                            </div>
+
+                                            <div class="form-group required">
+                                                <label for="user id">User ID</label>
+                                                <input type="text" class="form-control" name="user_id" id="user_id" />
+                                            </div>
+                                            <div class="form-group required">
+                                                <label for="project id">Project ID</label>
+                                                <input type="text" class="form-control" name="project_id" id="project_id" />
+                                            </div>
+
+                                            <div class="form-group required">
+                                                <label for="DataFormat">Data Format</label>
+                                                <br>
+                                                <select class="form-control" id="format" onchange="checkExtension()">
+                                                </select>
+                                                <a href="#" data-toggle="popover" title="Input Data Format" data-content="In CSV, column represents different types of attributes, and row represents one instance of data record. JSON file specifies an array of data records.
+">Instruction</a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div>
+                                        <button id="submitButton" type="button" class="btn btn-primary" onclick="submitForm()">Upload</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Details modal -->
@@ -270,11 +268,6 @@
                                             </table>
                                         </div>
                                     </p>
-
-                                    <!--Submit button-->
-                                    <div>
-                                        <button id="submitButton" class="btn btn-primary" onclick="alert('Submit')">Action</button>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -284,6 +277,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
     <script type="text/javascript">
@@ -309,7 +303,7 @@
                 datasetsData = data['datasets'];
                 var datasetsList = '';
                 for (i = 0; i < data['datasets'].length; i++) {
-                    datasetsList += '<tr><td><i class="fa fa-database" aria-hidden="true"></i>' + data['datasets'][i]['name'] + '</td><td>' + data['datasets'][i]['description'] + '<br><span class="label label-success">' + data['datasets'][i]['path'] + '</span><span class="label label-success">' + data['datasets'][i]['format'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createTaskFromDataset(' + i + ')" class="btn btn-primary">Create Task</button></td></tr>';
+                    datasetsList += '<tr><td><span class="fa fa-file-text-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['datasets'][i]['name'] + '</td><td>' + data['datasets'][i]['description'] + '<br><span class="label label-success">' + data['datasets'][i]['path'] + '</span>&nbsp;&nbsp;<span class="label label-success">' + data['datasets'][i]['format'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createTaskFromDataset(' + i + ')" class="btn btn-primary">Create Task</button></td></tr>';
                 }
                 $('#datasetsTableBody').html(datasetsList);
             });
@@ -435,7 +429,7 @@
                 if (typeof data != "undefined") {
                     var tasksList = '';
                     for (i = 0; i < data['tasks'].length; i++) {
-                        tasksList += '<tr><td><i class="fa fa-server" aria-hidden="true"></i>' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '</td></tr>';
+                        tasksList += '<tr><td><span class="fa fa-check-square-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '</td></tr>';
                     }
                     $('#tasksTableBody').html(tasksList);
                 }
