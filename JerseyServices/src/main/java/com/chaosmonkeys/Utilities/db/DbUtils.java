@@ -1,9 +1,12 @@
 package com.chaosmonkeys.Utilities.db;
 
 
+import com.chaosmonkeys.Utilities.Logger;
+import com.chaosmonkeys.dao.Dataset;
 import com.chaosmonkeys.dao.Experiment;
 import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.DB;
+import org.javalite.activejdbc.validation.ValidationException;
 
 import java.util.List;
 import java.util.ResourceBundle;
@@ -16,7 +19,7 @@ public class DbUtils {
     private static String password;
     private static String driver;
     private static String dbName;
-    private static ResourceBundle rb = ResourceBundle.getBundle("com.chaosmonkeys.Utilities.db.db-config");
+    private static ResourceBundle rb = ResourceBundle.getBundle("db.db-config");
 
     // initialize the driver
     static{
@@ -47,6 +50,39 @@ public class DbUtils {
      */
     public static void closeConnection(){
         Base.close();
+    }
+
+
+    /**
+     * Insert the data sets information to the ConfigurationDatabase database.
+     * @param userId the user id.
+     * @param projectId the project id.
+     * @param dataName the target database name.
+     * @param dataDescription the description regarding the input data.
+     * @param path the input data path.
+     * @param format the input data format.
+     * @return false if insert error
+     */
+    public static boolean storeDataSets(String userId, String projectId, String dataName,String dataDescription, String path,String format){
+        openConnection();
+        Dataset dataset = new Dataset()
+                .setDatasetName(dataName)
+                .setProjectId(projectId)
+                .setUserId(userId)
+                .setDescription(dataDescription)
+                .setDatasetPath(path)
+                .setFormat(format);
+        // this operation will throw exception when the mapping model is wrong with database schema
+        try {
+            dataset.saveIt();
+            closeConnection();
+            return true;
+        }catch (ValidationException validationEx){
+            String errString="\nProblem with insert dataset:: " + validationEx;
+            Logger.Error(errString);
+            closeConnection();
+            return false;
+        }
     }
 
     /**

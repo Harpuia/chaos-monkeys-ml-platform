@@ -5,6 +5,7 @@ import com.chaosmonkeys.Utilities.DbConfigurationHelper;
 import com.chaosmonkeys.Utilities.FileUtils;
 import com.chaosmonkeys.Utilities.LogType;
 import com.chaosmonkeys.Utilities.Logger;
+import com.chaosmonkeys.Utilities.db.DbUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -82,7 +83,11 @@ public class DatasetInputService {
             uploadSet.remove(fileName);
 
             //insert data sets into database.
-            storeDataSets(userId,projectId,dataName,dataDescription,targetFolder.getAbsolutePath(),format);
+            boolean inserted = DbUtils.storeDataSets(userId,projectId,dataName,dataDescription,targetFolder.getAbsolutePath(),format);
+            if(!inserted){
+                //TODO: clean target folder and return error response
+                Logger.Info("insert dataset "+ dataName +" failed");
+            }
 
         } catch (IOException e) {
             Logger.SaveLog(LogType.Exception, "Error while uploading file. Please try again !!");
@@ -92,55 +97,6 @@ public class DatasetInputService {
         return Response.ok("Data uploaded successfully").build();
     }
 
-    /**
-     * Insert the data sets information to the ConfigurationDatabase database.
-     * @param userId the user id.
-     * @param projectId the project id.
-     * @param dataName the target database name.
-     * @param dataDescription the description regarding the input data.
-     * @param path the input data path.
-     * @param format the input data format.
-     */
-    public void storeDataSets(String userId, String projectId, String dataName,String dataDescription, String path,String format){
-        Connection DBConn=null;
-        boolean connectError=false;
-        java.sql.Statement statement = null;        // SQL statement pointer
-        try {
-            //load JDBC driver class for MySQL
-            Class.forName( "com.mysql.jdbc.Driver" );
-
-            //get dbc onnection info from dbConfig.ini
-            DbConfigInfo configInfo = DbConfigurationHelper.loadBasicInfo("dbConfig.ini");
-            String userName = configInfo.getUserName();
-            String password = configInfo.getPassword();
-            String dbName=configInfo.getDbName();
-            String SQLServerIP = configInfo.getHost();
-            String port=configInfo.getPort();
-            String sourceURL = "jdbc:mysql://" + SQLServerIP + ":"+port+"/"+dbName+"";
-
-            //create a connection to the db
-            DBConn = DriverManager.getConnection(sourceURL,userName,password);
-
-        } catch (Exception e) {
-
-            String errString =  "\nProblem connecting to database:: " + e;
-            Logger.SaveLog(LogType.Exception,errString);
-            connectError = true;
-
-        }
-        if(!connectError){
-            try {
-                statement=DBConn.createStatement();
-                statement.executeUpdate("INSERT INTO datasets (user_id, project_id,path,name,description,format) "
-                        +"VALUES ('"+userId+"', '"+projectId+"', '"+path+"', '"+dataName+"', '"+dataDescription+"', '"+format+"')");
-                DBConn.close();
-            }catch(Exception ex){
-                String errString="\nProblem with insert:: " + ex;
-                Logger.SaveLog(LogType.Exception,errString);
-                connectError=true;
-            }
-        }
-    }
 
     /**
      * Refresh Service Status based on the size of checking set and uploading list

@@ -132,7 +132,9 @@ public class TrainingTask extends AbsTask{
             taskUpdateListener.onError(e, getTaskId());
         }
     };
-
+    /**
+     * Delete temp workspace folder in the background
+     */
     private Runnable cleanUpPerformer = () -> {
 
     };

@@ -18,4 +18,41 @@ public class Dataset extends Model {
         return dataSetPath;
     }
 
+    public Dataset setUserId(String userId){
+        set("user_id", userId);
+        return this;
+    }
+
+    public Dataset setUserId(int userId){
+        set("user_id", userId);
+        return this;
+    }
+
+    public Dataset setProjectId(int projectId){
+        set("project_id",projectId);
+        return this;
+    }
+    public Dataset setProjectId(String projectId){
+        set("project_id",projectId);
+        return this;
+    }
+    public Dataset setDatasetName(String name){
+        set("name",name);
+        return this;
+    }
+
+    public Dataset setDatasetPath(String path){
+        set("path", path);
+        return this;
+    }
+
+    public Dataset setDescription(String description){
+        set("description", description);
+        return this;
+    }
+    public Dataset setFormat(String format){
+        set("format", format);
+        return this;
+    }
+
 }

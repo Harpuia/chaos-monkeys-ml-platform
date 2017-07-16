@@ -11,6 +11,7 @@ public class Logger {
     public static void Error(String message){
         SaveLog(LogType.Error, message);
     }
+    public static void Exception(String message) { SaveLog(LogType.Exception, message);}
     public static void Info(String message){
         SaveLog(LogType.Information, message);
     }
