@@ -3,19 +3,31 @@ var tasksData;
 
 //Initialization
 $(document).ready(function () {
+  loadPage();
+});
+
+//Page initialization method
+function loadPage() {
   //Reset a specific modal 
   resetModal('createTaskModal');
+
   //Showing the loading text
   $('#tasksTableBody').text('Loading...');
+
   //Load upload types
   $.get("tasks/list", function (data) {
     tasksData = data['tasks'];
     var tasksList = '';
-    for (i = 0; i < data['tasks'].length; i++) {
-      tasksList += '<tr><td><span class="fa fa-check-square-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '<br><span class="label label-success">' + data['tasks'][i]['project_name'] + '</span>&nbsp;&nbsp;<span class="label label-success">' + data['tasks'][i]['type'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createNewExperimentFromTask(' + i + ')" class="btn btn-primary">Run an experiment</button></td></tr>';
+    if (!tasksData || tasksData.length === 0) {
+      $('#tasksTableBody').html('<h3>This list is empty!</h3>');
+    } else {
+      for (i = 0; i < data['tasks'].length; i++) {
+        tasksList += '<tr><td><span class="fa fa-check-square-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '<br><span class="label label-success">' + data['tasks'][i]['project_name'] + '</span>&nbsp;&nbsp;<span class="label label-success">' + data['tasks'][i]['type'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createNewExperimentFromTask(' + i + ')" class="btn btn-primary">Run an experiment</button></td></tr>';
+      }
+      $('#tasksTableBody').html(tasksList);
     }
-    $('#tasksTableBody').html(tasksList);
   });
+
   //Load task types
   $.get("tasks/type", function (data) {
     var types = '';
@@ -51,8 +63,9 @@ $(document).ready(function () {
     }
     $('#modelsNames').html(modelsnames);
   });
-});
+}
 
+//Shows task type
 function showTaskType() {
   var e = $("#type")[0];
   var selectedValue = e.options[e.selectedIndex].text;
@@ -67,16 +80,19 @@ function showTaskType() {
     showDropdown(modelDropdown);
   }
 }
+
 //Hide dropdown list and the associated label
 function hideDropdown(dropdown) {
   dropdown.style.display = "none";
 }
+
 //Show dropdown list and the associated label
 function showDropdown(dropdown) {
   dropdown.style.display = "block";
 }
+
 //Submit the task form
-function submitForm() {
+function submitTaskForm() {
   var success = $('#formSuccess')[0];
   var successText = $('#formSuccessText')[0];
   var alert = $('#formError')[0];
@@ -99,40 +115,41 @@ function submitForm() {
     "description": $("#description").val(),
     "type": $("#type")[0].options[$("#type")[0].selectedIndex].text
   }
-  if (tasksInfoForTrain.type.toLowerCase() == "training" && checkRequiredFields()) {
+  var objectToSend;
+  var serviceUrl;
+  if (checkRequiredFields()) {
+    //Choosing object to send and url
+    if (tasksInfoForTrain.type.toLowerCase() === "training") {
+      objectToSend = JSON.stringify(tasksInfoForTrain);
+      serviceUrl = 'http://127.0.0.1:3000/tasks/createTrainingTask';
+    }
+    else if (tasksInfoForExe.type.toLowerCase() === "execution") {
+      objectToSend = JSON.stringify(tasksInfoForExe);
+      serviceUrl = 'http://127.0.0.1:3000/tasks/createExecutionTask';
+    }
+
+    //Disabling submit button
+    $('#submitTaskButton').prop("disabled", true);
+
+    //Sending request
     $.ajax({
-      url: "http://127.0.0.1:3000/tasks/createTrainingTask",
+      url: serviceUrl,
       type: "POST",
       dataType: "json",
       contentType: 'application/json',
-      data: JSON.stringify(tasksInfoForTrain),
+      data: objectToSend,
       error: function (request, status, error) {
         showSubmissionResult("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
       },
       success: function (data) {
         showSubmissionResult("Task: " + data.newtaskinfo.name + " has been created successfully!", success, successText);
+        loadPage();
       }
     });
   }
-  else if (tasksInfoForExe.type.toLowerCase() == "execution" && checkRequiredFields()) {
-    $.ajax({
-      url: "http://127.0.0.1:3000/tasks/createExecutionTask",
-      type: "POST",
-      dataType: "json",
-      contentType: 'application/json',
-      data: JSON.stringify(tasksInfoForExe),
-      error: function (request, status, error) {
-        showSubmissionResult("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
-      },
-      success: function (data) {
-        showSubmissionResult("Task: " + data.newtaskinfo.name + " has been created successfully!", success, successText);
-      }
-    });
-
-  }
-
 }
 
+//Checks if all required fields are filled correctly
 function checkRequiredFields() {
   var t = $("#type")[0];
   var taskName = $("#name").val();

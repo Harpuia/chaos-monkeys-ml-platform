@@ -21,6 +21,9 @@ function resetModal(modalId) {
         if (typeof formtasksuccess != 'undefined')
             formtasksuccess.style.display = "none";
     });
+    $('#' + modalId).on('shown.bs.modal', function () {
+        enableDisabledButtons(modalId);
+    });
 }
 
 //Formats time for display
@@ -29,4 +32,9 @@ function displayDateTime(time) {
         return time.replace('T', ' ').replace('.000Z', '');
     else
         return time;
+}
+
+//Enables disabled buttons under a div
+function enableDisabledButtons(divId) {
+    $('#' + divId + ' :button').attr('disabled', false);
 }

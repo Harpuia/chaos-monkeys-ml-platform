@@ -22,10 +22,14 @@ $(document).ready(function () {
   $.get("algorithms/list", function (data) {
     algorithmsData = data['algorithms'];
     var algorithmsList = '';
-    for (i = 0; i < data['algorithms'].length; i++) {
-      algorithmsList += '<tr><td><span class="fa fa-file-code-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['algorithms'][i]['name'] + '</td><td>' + data['algorithms'][i]['description'] + '<br><span class="label label-success">' + data['algorithms'][i]['language'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createTaskFromAlgorithm(' + i + ')" class="btn btn-primary">Create Task</button></td></tr>';
+    if (!algorithmsData || algorithmsData.length === 0) {
+      $('#algorithmsTableBody').html('<h3>This list is empty!</h3>');
+    } else {
+      for (i = 0; i < data['algorithms'].length; i++) {
+        algorithmsList += '<tr><td><span class="fa fa-file-code-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['algorithms'][i]['name'] + '</td><td>' + data['algorithms'][i]['description'] + '<br><span class="label label-success">' + data['algorithms'][i]['language'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createTaskFromAlgorithm(' + i + ')" class="btn btn-primary">Create Task</button></td></tr>';
+      }
+      $('#algorithmsTableBody').html(algorithmsList);
     }
-    $('#algorithmsTableBody').html(algorithmsList);
   });
 
   //fulfill #language select
@@ -117,10 +121,14 @@ function displayDetails(algorithmIndex) {
   $.get("tasks/listByAlgorithm/" + algorithmsData[algorithmIndex]['id'], function (data) {
     if (typeof data != "undefined") {
       var tasksList = '';
-      for (i = 0; i < data['tasks'].length; i++) {
-        tasksList += '<tr><td><span class="fa fa-check-square-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '</td></tr>';
+      if (!data['tasks'] || data['tasks'].length === 0) {
+        $('#tasksTableBody').text('This list is empty!');
+      } else {
+        for (i = 0; i < data['tasks'].length; i++) {
+          tasksList += '<tr><td><span class="fa fa-check-square-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '</td></tr>';
+        }
+        $('#tasksTableBody').html(tasksList);
       }
-      $('#tasksTableBody').html(tasksList);
     }
   });
 
@@ -157,6 +165,9 @@ function submitTaskForm() {
   var objectToSend;
   var url;
   if (checkRequiredTaskFields()) {
+    //Disabling submit button
+    $('#submitTaskButton').prop("disabled", true);
+
     console.log(tasksInfoForTrain);
     objectToSend = tasksInfoForTrain;
     url = 'http://127.0.0.1:3000/tasks/createTrainingTask';

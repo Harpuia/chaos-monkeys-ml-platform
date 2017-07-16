@@ -8,10 +8,14 @@ $(document).ready(function () {
   $.get("experiments/list", function (data) {
     var experimentsList = '';
     experimentsData = data['experimentsData'];
-    for (i = 0; i < data['experimentsData'].length; i++) {
-      experimentsList += '<tr><td><span class="fa fa-flask" aria-hidden="true"></span>&nbsp;&nbsp;' + data['experimentsData'][i]['experiment_name'] + '</td><td>' + data['experimentsData'][i]['description'] + '<br><span class="label label-success">' + data['experimentsData'][i]['last_status'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td></tr>';
+    if (!experimentsData || experimentsData.length === 0) {
+      $('#experimentsTableBody').html('<h3>This list is empty!</h3>');
+    } else {
+      for (i = 0; i < data['experimentsData'].length; i++) {
+        experimentsList += '<tr><td><span class="fa fa-flask" aria-hidden="true"></span>&nbsp;&nbsp;' + data['experimentsData'][i]['experiment_name'] + '</td><td>' + data['experimentsData'][i]['description'] + '<br><span class="label label-success">' + data['experimentsData'][i]['last_status'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td></tr>';
+      }
+      $('#experimentsTableBody').html(experimentsList);
     }
-    $('#experimentsTableBody').html(experimentsList);
   });
   //Load task names
   $.get("tasks/names", function (data) {

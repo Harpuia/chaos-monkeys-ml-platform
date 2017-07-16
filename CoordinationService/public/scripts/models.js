@@ -16,10 +16,14 @@ $(document).ready(function () {
   $.get("models/list", function (data) {
     modelsData = data['models'];
     var modelsList = '';
-    for (i = 0; i < data['models'].length; i++) {
-      modelsList += '<tr><td><span class="fa fa-cog" aria-hidden="true"></span>&nbsp;&nbsp;' + data['models'][i]['name'] + '</td><td>' + data['models'][i]['description'] + '<br><span class="label label-success">' + data['models'][i]['path'] + '</span>&nbsp;&nbsp;<span class="label label-success">' + data['models'][i]['project_id'] + '</span>&nbsp;&nbsp;<span class="label label-success">' + data['models'][i]['experiment_id'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createTaskFromModel(' + i + ')" class="btn btn-primary">Create Task</button></td></tr>';
+    if (!modelsData || modelsData.length === 0) {
+      $('#modelsTableBody').html('<h3>This list is empty!</h3>');
+    } else {
+      for (i = 0; i < data['models'].length; i++) {
+        modelsList += '<tr><td><span class="fa fa-cog" aria-hidden="true"></span>&nbsp;&nbsp;' + data['models'][i]['name'] + '</td><td>' + data['models'][i]['description'] + '<br><span class="label label-success">' + data['models'][i]['path'] + '</span>&nbsp;&nbsp;<span class="label label-success">' + data['models'][i]['project_id'] + '</span>&nbsp;&nbsp;<span class="label label-success">' + data['models'][i]['experiment_id'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createTaskFromModel(' + i + ')" class="btn btn-primary">Create Task</button></td></tr>';
+      }
+      $('#modelsTableBody').html(modelsList);
     }
-    $('#modelsTableBody').html(modelsList);
   });
 
   //Load datasets names
@@ -42,10 +46,14 @@ function displayDetails(modelIndex) {
   $.get("tasks/listByModel/" + modelsData[modelIndex]['id'], function (data) {
     if (typeof data != "undefined") {
       var tasksList = '';
-      for (i = 0; i < data['tasks'].length; i++) {
-        tasksList += '<tr><td><span class="fa fa-check-square-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '</td></tr>';
+      if (!data['tasks'] || data['tasks'].length === 0) {
+        $('#tasksTableBody').text('This list is empty!');
+      } else {
+        for (i = 0; i < data['tasks'].length; i++) {
+          tasksList += '<tr><td><span class="fa fa-check-square-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '</td></tr>';
+        }
+        $('#tasksTableBody').html(tasksList);
       }
-      $('#tasksTableBody').html(tasksList);
     }
   });
   // Uncomment the following two lines after the table field is filled.
@@ -82,6 +90,9 @@ function submitTaskForm() {
   var objectToSend;
   var url;
   if (checkRequiredTaskFields()) {
+    //Disabling submit button
+    $('#submitTaskButton').prop("disabled", true);
+
     console.log(tasksInfoForExecution);
     objectToSend = tasksInfoForExecution;
     url = 'http://127.0.0.1:3000/tasks/createExecutionTask';
@@ -103,6 +114,7 @@ function submitTaskForm() {
   });
 }
 
+//Checks required fields
 function checkRequiredTaskFields() {
   var taskName = $("#taskName").val();
   var projectId = $("#taskProjectId").val();

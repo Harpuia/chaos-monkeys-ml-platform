@@ -19,10 +19,14 @@ $(document).ready(function () {
   $.get("datasets/list", function (data) {
     datasetsData = data['datasets'];
     var datasetsList = '';
-    for (i = 0; i < data['datasets'].length; i++) {
-      datasetsList += '<tr><td><span class="fa fa-file-text-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['datasets'][i]['name'] + '</td><td>' + data['datasets'][i]['description'] + '<br><span class="label label-success">' + data['datasets'][i]['path'] + '</span>&nbsp;&nbsp;<span class="label label-success">' + data['datasets'][i]['format'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createTaskFromDataset(' + i + ')" class="btn btn-primary">Create Task</button></td></tr>';
+    if (!datasetsData || datasetsData.length === 0) {
+      $('#datasetsTableBody').html('<h3>This list is empty!</h3>');
+    } else {
+      for (i = 0; i < data['datasets'].length; i++) {
+        datasetsList += '<tr><td><span class="fa fa-file-text-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['datasets'][i]['name'] + '</td><td>' + data['datasets'][i]['description'] + '<br><span class="label label-success">' + data['datasets'][i]['path'] + '</span>&nbsp;&nbsp;<span class="label label-success">' + data['datasets'][i]['format'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createTaskFromDataset(' + i + ')" class="btn btn-primary">Create Task</button></td></tr>';
+      }
+      $('#datasetsTableBody').html(datasetsList);
     }
-    $('#datasetsTableBody').html(datasetsList);
   });
 
   //Load upload types
@@ -145,10 +149,14 @@ function displayDetails(datasetIndex) {
   $.get("tasks/listByDataset/" + datasetsData[datasetIndex]['id'], function (data) {
     if (typeof data != "undefined") {
       var tasksList = '';
-      for (i = 0; i < data['tasks'].length; i++) {
-        tasksList += '<tr><td><span class="fa fa-check-square-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '</td></tr>';
+      if (!data['tasks'] || data['tasks'].length === 0) {
+        $('#tasksTableBody').text('This list is empty!');
+      } else {
+        for (i = 0; i < data['tasks'].length; i++) {
+          tasksList += '<tr><td><span class="fa fa-check-square-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '</td></tr>';
+        }
+        $('#tasksTableBody').html(tasksList);
       }
-      $('#tasksTableBody').html(tasksList);
     }
   });
   // Uncomment the following two lines after the table field is filled.
@@ -191,6 +199,9 @@ function submitTaskForm() {
   var objectToSend;
   var url;
   if (checkRequiredTaskFields()) {
+    //Disabling submit button
+    $('#submitTaskButton').prop("disabled", true);
+
     if (tasksInfoForTrain.type.toLowerCase() == "training") {
       console.log(tasksInfoForExe);
       objectToSend = tasksInfoForTrain;
