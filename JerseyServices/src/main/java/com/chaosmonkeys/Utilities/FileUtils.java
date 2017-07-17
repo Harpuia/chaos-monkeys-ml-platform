@@ -173,14 +173,14 @@ public class FileUtils {
 
     /**
      * Create model folder if it does not exit
-     * @return Model root folder as File Object
+     * @return PredictionModel root folder as File Object
      */
     public static File createModelFolder(){
         return createFolderInPath(MODEL_PATH);
     }
     /**
      * Create model folder if it does not exit
-     * @return Model root folder as Path object
+     * @return PredictionModel root folder as Path object
      */
     public static Path createModelFolderPath(){
         return createFolderInPath(MODEL_PATH).toPath();

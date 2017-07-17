@@ -6,7 +6,7 @@ import com.chaosmonkeys.Utilities.Logger;
 import com.chaosmonkeys.Utilities.StringUtils;
 import com.chaosmonkeys.Utilities.db.DbUtils;
 import com.chaosmonkeys.dao.Experiment;
-import com.chaosmonkeys.dao.Model;
+import com.chaosmonkeys.dao.PredictionModel;
 import com.chaosmonkeys.train.task.interfaces.OnTaskUpdateListener;
 import org.zeroturnaround.exec.ProcessExecutor;
 
@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeoutException;
-import java.util.regex.Pattern;
 
 /**
  * Training task runner
@@ -152,7 +151,7 @@ public class TrainingTask extends AbsTask{
     private void moveOutputToModel(){
         //create Algorithm folder if it does not exist yet
         File modelFolder = FileUtils.createModelFolder();
-        Logger.SaveLog(LogType.Information, "Model storage root folder has been created");
+        Logger.SaveLog(LogType.Information, "PredictionModel storage root folder has been created");
         //create dev language folder if it does not exist yet
         String language = getTaskInfo().getExperimentLanguage();
         File langFolder = FileUtils.createNewFolderUnder(language, modelFolder);
@@ -176,9 +175,16 @@ public class TrainingTask extends AbsTask{
         DbUtils.openConnection();
         List<Experiment> experiments = Experiment.where("experiment_name = ?", expName);
         Experiment experiment = experiments.get(0);
-        Model model = new Model();
-        model.setModelName(expName + "-model").setDescription("sample description").setPath(targetFolder.toPath().toAbsolutePath().toString());
-        experiment.add(model);
+        int projectId = experiment.getInteger("project_id");
+        int experimentId = (Integer) experiment.getId();
+        PredictionModel model = new PredictionModel();
+        model.setModelName(expName + "-model")
+                .setDescription("sample description")
+                .setPath(targetFolder.toPath().toAbsolutePath().toString())
+                .setProjectId(projectId)
+                .setExperimentId(experimentId);
+        model.save();
+//        experiment.add(model);
         DbUtils.closeConnection();
     }
 
