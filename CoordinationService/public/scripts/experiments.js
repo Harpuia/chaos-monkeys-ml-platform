@@ -47,9 +47,12 @@ function submitForm() {
     "last_status": "IDLE",
     "last_updated": null,
     "description": $("#description").val()
-  }
+  };
 
   if (checkRequiredFields()) {
+    //Disabling submit button
+    $('#submitButton').prop("disabled", true);
+
     $.ajax({
       url: "http://127.0.0.1:3000/experiments/create",
       type: "POST",
@@ -61,11 +64,15 @@ function submitForm() {
         loadPage();
       },
       error: function (request, status, error) {
+        //Disabling submit button
+        $('#submitButton').prop("disabled", false);
         showSubmissionResult("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
       }
     });
   }
 }
+
+
 
 /*Check if the required field are filled */
 function checkRequiredFields() {
@@ -107,10 +114,14 @@ function displayDetails(experimentIndex) {
   $('#experimentLastUpdated').text(displayDateTime(experimentsData[experimentIndex]['last_updated']));
   $('#experimentDescription').text(experimentsData[experimentIndex]['description']);
   //Showing the stop experiment button dynamically
-  if (experimentsData[experimentIndex]['last_status'] !== 'SUCCESS' && experimentsData[experimentIndex]['last_status'] !== 'ERROR') {
+  if (experimentsData[experimentIndex]['last_status'] !== 'SUCCESS' && experimentsData[experimentIndex]['last_status'] !== 'ERROR' && experimentsData[experimentIndex]['last_status'] !== 'CANCELLED') {
     $('#stopExperimentButton').html('<button class="btn btn-primary" onclick="alert(\'Call Stop Service for - ' + experimentsData[experimentIndex]['experiment_name'] + '\')">Stop Experiment</button>');
   } else {
     $('#stopExperimentButton').html('');
   }
   $('#detailsModal').modal('show');
 }
+
+setInterval(function () {
+  loadPage();
+}, 2000);
