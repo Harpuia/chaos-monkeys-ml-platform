@@ -140,6 +140,9 @@ function submitTaskForm() {
       data: objectToSend,
       error: function (request, status, error) {
         showSubmissionResult("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
+        
+        //Enabling submit button
+        $('#submitTaskButton').prop("disabled", false);
       },
       success: function (data) {
         showSubmissionResult("Task: " + data.newtaskinfo.name + " has been created successfully!", success, successText);
