@@ -2,16 +2,18 @@ package com.chaosmonkeys.Utilities.db;
 
 
 import com.chaosmonkeys.Utilities.Logger;
+import com.chaosmonkeys.dao.Algorithm;
 import com.chaosmonkeys.dao.Dataset;
 import com.chaosmonkeys.dao.Experiment;
 import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.DB;
+import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.validation.ValidationException;
 
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class DbUtils {
+public final class DbUtils {
 
     // JDBC connection properties
     private static String url;
@@ -63,7 +65,7 @@ public class DbUtils {
      * @param format the input data format.
      * @return false if insert error
      */
-    public static boolean storeDataSets(String userId, String projectId, String dataName,String dataDescription, String path,String format){
+    public static boolean storeDataSet(String userId, String projectId, String dataName, String dataDescription, String path, String format){
         openConnection();
         Dataset dataset = new Dataset()
                 .setDatasetName(dataName)
@@ -73,14 +75,32 @@ public class DbUtils {
                 .setDatasetPath(path)
                 .setFormat(format);
         // this operation will throw exception when the mapping model is wrong with database schema
+        boolean inserted = insertDAO(dataset);
+        closeConnection();
+        return inserted;
+    }
+
+    public static boolean storeAlgorithm(String userName, String name, String description, String path, String language){
+        openConnection();
+        Algorithm algr= new Algorithm()
+                .setAlgorithmName(name)
+                .setAlgorithmUserName(userName)
+                .setAlgorithmDescription(description)
+                .setAlgorithmPath(path)
+                .setAlgorithmLanguage(language);
+        // this operation will throw exception when the mapping model is wrong with database schema
+        boolean inserted =  insertDAO(algr);
+        closeConnection();
+        return inserted;
+    }
+
+    private static boolean insertDAO(Model m){
         try {
-            dataset.saveIt();
-            closeConnection();
+            m.saveIt();
             return true;
         }catch (ValidationException validationEx){
-            String errString="\nProblem with insert dataset:: " + validationEx;
+            String errString="\nProblem with insert record: " + validationEx;
             Logger.Error(errString);
-            closeConnection();
             return false;
         }
     }

@@ -121,8 +121,10 @@ public class DatasetInputServiceTest extends JerseyTest {
             // construct the entire form with all required parameters
             MultiPart multipartEntity = new FormDataMultiPart()
                     .field("project_id", "123")
-                    .field("user_id", "test_u_id")
+                    .field("user_id", "321")
                     .field("name", "testname")
+                    .field("description", "memeda des")
+                    .field("format","csv")
                     .bodyPart(filePart);
             // request the response Jersey 2.25 will not recognize multipartEntity.getMediaType()
             Response response = target("services/upload").request().post(Entity.entity(multipartEntity, contentType));

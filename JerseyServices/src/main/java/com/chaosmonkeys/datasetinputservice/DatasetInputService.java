@@ -1,7 +1,5 @@
 package com.chaosmonkeys.datasetinputservice;
 
-import com.chaosmonkeys.DTO.DbConfigInfo;
-import com.chaosmonkeys.Utilities.DbConfigurationHelper;
 import com.chaosmonkeys.Utilities.FileUtils;
 import com.chaosmonkeys.Utilities.LogType;
 import com.chaosmonkeys.Utilities.Logger;
@@ -15,8 +13,6 @@ import javax.ws.rs.core.Response;
 import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
-import java.sql.DriverManager;
-import java.sql.Connection;
 
 /**
  * Class containing all possible service calls (API methods)
@@ -83,7 +79,7 @@ public class DatasetInputService {
             uploadSet.remove(fileName);
 
             //insert data sets into database.
-            boolean inserted = DbUtils.storeDataSets(userId,projectId,dataName,dataDescription,targetFolder.getAbsolutePath(),format);
+            boolean inserted = DbUtils.storeDataSet(userId,projectId,dataName,dataDescription,targetFolder.getAbsolutePath(),format);
             if(!inserted){
                 //TODO: clean target folder and return error response
                 Logger.Info("insert dataset "+ dataName +" failed");

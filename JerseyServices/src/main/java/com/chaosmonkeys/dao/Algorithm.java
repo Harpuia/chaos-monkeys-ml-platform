@@ -20,4 +20,28 @@ public class Algorithm extends Model {
         }
         return algorithmPath;
     }
+
+    public Algorithm setAlgorithmName(String name){
+        set("name",name);
+        return this;
+    }
+
+    public Algorithm setAlgorithmPath(String path){
+        set("path",path);
+        return this;
+    }
+
+    public Algorithm setAlgorithmDescription(String description){
+        set("description", description);
+        return this;
+    }
+    public Algorithm setAlgorithmLanguage(String language){
+        set("language",language);
+        return this;
+    }
+    public Algorithm setAlgorithmUserName(String userName){
+        set("username",userName);
+        return this;
+    }
+
 }

@@ -2,6 +2,7 @@ package com.chaosmonkeys.algrinputservice;
 
 import com.chaosmonkeys.DTO.BaseResponse;
 import com.chaosmonkeys.Utilities.*;
+import com.chaosmonkeys.Utilities.db.DbUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -104,8 +105,8 @@ public class AlgorithmResource {
             return genErrorResponse(validCode);
         }
         //TODO: insert data sets into database.
-        //storeDataSets(userId,projectId,dataName,dataDescription,targetFolder.getAbsolutePath(),format);
-        Logger.SaveLog(LogType.Information, "Algorithm received sucessfully");
+        DbUtils.storeAlgorithm(userId, algrName, algrDescription, targetFolder.toPath().toAbsolutePath().toString(), language);
+        Logger.SaveLog(LogType.Information, "Algorithm received successfully");
         return genSuccResponse();
     }
 
