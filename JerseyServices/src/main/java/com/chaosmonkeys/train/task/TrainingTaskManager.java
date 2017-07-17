@@ -99,7 +99,8 @@ public enum TrainingTaskManager implements TaskManager{
 
         @Override
         public void onSuccess(String taskId) {
-            updateTaskStatus(taskId, TaskState.SUCCESS);
+            TrainingTask task = updateTaskStatus(taskId, TaskState.SUCCESS);
+            task.cleanUp();
         }
 
         @Override

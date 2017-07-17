@@ -178,6 +178,7 @@ public class TrainingTask extends AbsTask{
         Experiment experiment = experiments.get(0);
         Model model = new Model();
         model.setModelName(expName + "-model").setDescription("sample description").setPath(targetFolder.toPath().toAbsolutePath().toString());
+        experiment.add(model);
         DbUtils.closeConnection();
     }
 
