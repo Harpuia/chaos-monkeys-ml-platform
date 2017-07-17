@@ -81,7 +81,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            
+
                             <h4 class="modal-title" id="taskModalLabel">Create a task from dataset</h4>
                         </div>
                         <div class="modal-body">
@@ -92,10 +92,16 @@
                                 </div>
 
                             </div>
-                            <div class="alert alert-danger alert-dismissible" id="formAlert" style="display: none;" role="alert">
-                                <a class="close" onclick="$('#formAlert').hide()">×</a>
+                            <!-- Show result indicating if the task creation is successful -->
+                            <div class="alert alert-danger alert-dismissible" id="formTaskError" style="display: none;" role="alert">
+                                <a class="close" onclick="$('#formTaskError').hide()">×</a>
                                 <strong>Error!</strong>
-                                <div id='formAlertText'></div>
+                                <div id='formTaskErrorText'></div>
+                            </div>
+                            <div class="alert alert-success alert-dismissible" id="formTaskSuccess" style="display: none;" role="alert">
+                                <a class="close" onclick="$('#formTaskSuccess').hide()">×</a>
+                                <strong>Success!</strong>
+                                <div id='formTaskSuccessText'></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 col-md-offset-1">
@@ -160,7 +166,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            
+
                             <h4 class="modal-title" id="uploadModalLabel">Upload Datasets</h4>
                         </div>
                         <div class="modal-body">
@@ -171,10 +177,16 @@
                                 </div>
 
                             </div>
-                            <div class="alert alert-danger alert-dismissible" id="formAlert" style="display: none;" role="alert">
-                                <a class="close" onclick="$('#formAlert').hide()">×</a>
+                            <!-- Show result indicating if the upload is successful -->
+                            <div class="alert alert-danger alert-dismissible" id="formUploadError" style="display: none;" role="alert">
+                                <a class="close" onclick="$('#formUploadError').hide()">×</a>
                                 <strong>Error!</strong>
-                                <div id='formAlertText'></div>
+                                <div id='formUploadErrorText'></div>
+                            </div>
+                            <div class="alert alert-success alert-dismissible" id="formUploadSuccess" style="display: none;" role="alert">
+                                <a class="close" onclick="$('#formUploadSuccess').hide()">×</a>
+                                <strong>Success!</strong>
+                                <div id='formUploadSuccessText'></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 col-md-offset-1">

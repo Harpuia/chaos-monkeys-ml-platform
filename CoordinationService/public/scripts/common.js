@@ -1,7 +1,8 @@
 /* Reset the datasets/algorithms upload and tasks/experiments creation modals. */
 function resetModal(modalId) {
     $('#' + modalId).on('hidden.bs.modal', function () {
-        $('form').get(0).reset();
+        for(i=0;i<$('form').length;i++)
+        $('form').get(i).reset();
         var formerror = $('#formError')[0];
         var formsuccess = $('#formSuccess')[0];
         var formuploaderror = $('#formUploadError')[0];

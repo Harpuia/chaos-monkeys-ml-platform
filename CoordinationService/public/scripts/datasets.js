@@ -84,14 +84,14 @@ function checkExtension() {
   var selectedValue = e.options[e.selectedIndex].text;
   var filename = $("#file")[0].value;
   var extension = filename.substring(filename.lastIndexOf('.') + 1, filename.length);
-  var alert = $('#formAlert')[0];
-  var alertText = $('#formAlertText')[0];
+  var alert = $('#formUploadError')[0];
+  var alertText = $('#formUploadErrorText')[0];
   if (filename.length == 0) {
-    showFormError('Select a file to upload.', alert, alertText);
+    showSubmissionResult('Select a file to upload.', alert, alertText);
     result = false;
   } else {
     if (selectedValue.toLowerCase() != extension.toLowerCase()) {
-      showFormError('The selected data format doesn\'t match the input data format.', alert, alertText);
+      showSubmissionResult('The selected data format doesn\'t match the input data format.', alert, alertText);
       result = false;
     }
     else {
@@ -104,6 +104,10 @@ function checkExtension() {
 
 //Handles the submit action
 function submitForm() {
+  var success = $('#formUploadSuccess')[0];
+  var successText = $('#formUploadSuccessText')[0];
+  var alert = $('#formUploadError')[0];
+  var alertText = $('#formUploadErrorText')[0];
   var form = new FormData($('form#dataForm')[0]);
   //Sending post request
   if (checkExtension()) {
@@ -116,11 +120,11 @@ function submitForm() {
       processData: false,
       contentType: false,
       success: function (data) {
-        alert("Success!");
+        showSubmissionResult("Success!", success, successText);
         loadPage();
       },
       error: function (request, status, error) {
-        alert("Oops! An error occurs when uploading the data. Please check the error log in log path for possible reasons: " + status + error);
+        showSubmissionResult("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
       },
       complete: function () {
         document.getElementById("uploading").style.display = "none";
@@ -130,8 +134,8 @@ function submitForm() {
   }
 }
 
-//Show error
-function showFormError(message, alert, alertText) {
+//Show submission result after clicking Submit button
+function showSubmissionResult(message, alert, alertText) {
   alertText.innerText = message;
   alert.style.display = "block";
 }
@@ -181,6 +185,10 @@ function createTaskFromDataset(index) {
 
 //Submit the task form
 function submitTaskForm() {
+  var success = $('#formTaskSuccess')[0];
+  var successText = $('#formTaskSuccessText')[0];
+  var alert = $('#formTaskError')[0];
+  var alertText = $('#formTaskErrorText')[0];
   var tasksInfoForTrain = {
     "project_id": $("#projectId").val(),
     "dataset_id": datasetsData[selectedDatasetId]['id'],
@@ -220,10 +228,10 @@ function submitTaskForm() {
       contentType: 'application/json',
       data: JSON.stringify(objectToSend),
       error: function (request, status, error) {
-        alert("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error);
+        showSubmissionResult("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
       },
       success: function (data) {
-        alert("Task: " + data.newtaskinfo.name + " was created successfully!");
+        showSubmissionResult("Task: " + data.newtaskinfo.name + " has been created successfully!", success, successText);
       }
     });
   }
@@ -238,27 +246,27 @@ function checkRequiredTaskFields() {
   var selectedTaskType = t.options[t.selectedIndex].text;
   var selectedAlgorithmName = a.options[a.selectedIndex].text;
   var selectedModelName = m.options[m.selectedIndex].text;
-  var alert = $('#formAlert')[0];
-  var alertText = $('#formAlertText')[0];
+  var alert = $('#formTaskError')[0];
+  var alertText = $('#formTaskErrorText')[0];
 
   if (selectedTaskType.length == 0) {
-    showFormError('Please select a task type.', alert, alertText);
+    showSubmissionResult('Please select a task type.', alert, alertText);
     return false;
   }
   else if (taskName.length == 0) {
-    showFormError('Please input a task name.', alert, alertText);
+    showSubmissionResult('Please input a task name.', alert, alertText);
     return false;
   }
   else if (projectId.length == 0) {
-    showFormError('Please input the Project ID.', alert, alertText);
+    showSubmissionResult('Please input the Project ID.', alert, alertText);
     return false;
   }
   else if (selectedTaskType.toLowerCase() == "training" && selectedAlgorithmName.length == 0) {
-    showFormError('Please select an algorithm.', alert, alertText);
+    showSubmissionResult('Please select an algorithm.', alert, alertText);
     return false;
   }
   else if (selectedTaskType.toLowerCase() == "execution" && selectedModelName.length == 0) {
-    showFormError('Please select a model.', alert, alertText);
+    showSubmissionResult('Please select a model.', alert, alertText);
     return false;
   }
   else
