@@ -20,6 +20,7 @@ public class BaseTaskInfo {
     public final TaskType taskType;
 
     protected String experimentName;
+    protected String experimentLanguage;    // Python or R
 
     private ResourceInfo resourceInfo;
     /**
@@ -30,9 +31,10 @@ public class BaseTaskInfo {
         this.taskType = type;
     }
 
-    public BaseTaskInfo(TaskType type, String experimentName,ResourceInfo resInfo){
+    public BaseTaskInfo(TaskType type, String experimentName, String experimentLanguage, ResourceInfo resInfo){
         this(type); // assign an UUID as identifier
         this.experimentName = experimentName;
+        this.experimentLanguage = experimentLanguage;
         this.resourceInfo = resInfo;
     }
 
@@ -55,5 +57,8 @@ public class BaseTaskInfo {
 
     public String getExperimentName(){
         return experimentName;
+    }
+    public String getExperimentLanguage(){
+        return experimentLanguage;
     }
 }

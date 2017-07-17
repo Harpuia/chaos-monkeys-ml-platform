@@ -9,7 +9,7 @@ import org.javalite.activejdbc.annotations.DbName;
 @DbName("ConfigurationDatabase")
 public class Algorithm extends Model {
     private volatile String algorithmPath;
-
+    private volatile String algorithmLanguage;
     /**
      * Query once and return algorithm folder  path
      * @return
@@ -19,6 +19,17 @@ public class Algorithm extends Model {
             algorithmPath = getString("path");
         }
         return algorithmPath;
+    }
+
+    /**
+     * Query once and return algorithm language
+     * @return
+     */
+    public String getAlgorithmLanguage() {
+        if(null == algorithmLanguage){
+            algorithmLanguage = getString("language");
+        }
+        return algorithmLanguage;
     }
 
     public Algorithm setAlgorithmName(String name){
@@ -43,5 +54,4 @@ public class Algorithm extends Model {
         set("username",userName);
         return this;
     }
-
 }

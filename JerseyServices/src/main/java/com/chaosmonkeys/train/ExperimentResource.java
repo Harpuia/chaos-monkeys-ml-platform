@@ -69,8 +69,8 @@ public class ExperimentResource {
             }
             return genErrorResponse(validCode);
         }
-        // find the related task (1-n relationship)
         Experiment experiment = experiments.get(0);
+        // find the related task (1-n relationship)
         Task task = experiment.parent(Task.class);
         // type
         String taskType = task.getTaskType();
@@ -84,6 +84,7 @@ public class ExperimentResource {
         // construct ResourceInfo
         String datasetPath = dataset.getDatasetPath();
         String algrPath = algr.getAlgorithmPath();
+        String algrLanguage =algr.getAlgorithmLanguage();
         // close connection
         DbUtils.closeConnection();
         File datasetFolder = new File(datasetPath);
@@ -99,7 +100,7 @@ public class ExperimentResource {
             return genErrorResponse(validCode);
         }
         // construct TaskInfo
-        TrainingTaskInfo trainingTaskInfo= new TrainingTaskInfo(expName, resInfo);
+        TrainingTaskInfo trainingTaskInfo= new TrainingTaskInfo(expName, algrLanguage, resInfo);
         // get task manager instance and submit the task
         TrainingTaskManager.INSTANCE.submitTask(trainingTaskInfo);
 

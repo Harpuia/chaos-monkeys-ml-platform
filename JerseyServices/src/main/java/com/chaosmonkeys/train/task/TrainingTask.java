@@ -1,14 +1,19 @@
 package com.chaosmonkeys.train.task;
 
 import com.chaosmonkeys.Utilities.FileUtils;
+import com.chaosmonkeys.Utilities.LogType;
 import com.chaosmonkeys.Utilities.Logger;
 import com.chaosmonkeys.Utilities.StringUtils;
+import com.chaosmonkeys.Utilities.db.DbUtils;
+import com.chaosmonkeys.dao.Experiment;
+import com.chaosmonkeys.dao.Model;
 import com.chaosmonkeys.train.task.interfaces.OnTaskUpdateListener;
 import org.zeroturnaround.exec.ProcessExecutor;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeoutException;
@@ -54,7 +59,13 @@ public class TrainingTask extends AbsTask{
 
     @Override
     protected void cleanUp() {
-
+        if(isFinished()){
+            // success
+            final ExecutorService executorService = getExecutorService();
+            executorService.submit(this::moveOutputToModel);
+            // todo: error or cancel
+            executorService.submit(cleanUpPerformer);
+        }
     }
 
     @Override
@@ -80,7 +91,6 @@ public class TrainingTask extends AbsTask{
             Logger.Error("Initializing experiment error when copying resource to temp workspace");
             e.printStackTrace();
             //TODO: trigger error and clean up
-
         }
     };
     /**
@@ -135,8 +145,41 @@ public class TrainingTask extends AbsTask{
      * Delete temp workspace folder in the background
      */
     private Runnable cleanUpPerformer = () -> {
+        // create a model folder
 
     };
+
+    private void moveOutputToModel(){
+        //create Algorithm folder if it does not exist yet
+        File modelFolder = FileUtils.createModelFolder();
+        Logger.SaveLog(LogType.Information, "Model storage root folder has been created");
+        //create dev language folder if it does not exist yet
+        String language = getTaskInfo().getExperimentLanguage();
+        File langFolder = FileUtils.createNewFolderUnder(language, modelFolder);
+        // create target folder
+        String targetFolderName = StringUtils.genModelStorageFolderName(getTaskInfo().getExperimentName());
+        File targetFolder = FileUtils.createNewFolderUnder(targetFolderName, langFolder);
+        // copy output folder content to target folder
+        final File workspaceFolder = getTaskInfo().getResourceInfo().getWorkspaceFolder();
+        final File outputFolder = new File(workspaceFolder, "output");
+
+        try {
+            FileUtils.copyDirectory(outputFolder, targetFolder);
+        } catch (IOException e) {
+            //TODO: trigger error handler and cleanup
+            e.printStackTrace();
+            Logger.Error("Error happened when moving output to model folder");
+        }
+        // store in database
+        //TODO: move to DbUtils
+        String expName = getTaskInfo().getExperimentName();
+        DbUtils.openConnection();
+        List<Experiment> experiments = Experiment.where("experiment_name = ?", expName);
+        Experiment experiment = experiments.get(0);
+        Model model = new Model();
+        model.setModelName(expName + "-model").setDescription("sample description").setPath(targetFolder.toPath().toAbsolutePath().toString());
+        DbUtils.closeConnection();
+    }
 
     //** Utils -----------------------------------------------------------------------------------
 

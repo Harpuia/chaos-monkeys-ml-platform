@@ -53,6 +53,43 @@ public class StringUtils {
     }
 
 
+
+    // Folder name
+    // --------------------------------------------------
+    /**
+     * Generate algorithm storage folder name (valid folder name in common OS)
+     * @param name which is algorithm name
+     * @param userId
+     * @return
+     */
+    public static String genAlgrStorageFolderName(String name, String userId){
+        StringBuilder strBuilder = new StringBuilder();
+        String validName = FileUtils.sanitizeFilename(name);
+        strBuilder.append(validName);
+        strBuilder.append("-");
+        String validUserId = FileUtils.sanitizeFilename(userId);
+        strBuilder.append(validUserId);
+        strBuilder.append("-");
+        strBuilder.append(System.currentTimeMillis());
+
+        return strBuilder.toString();
+    }
+
+    /**
+     * Generate algorithm storage folder name (valid folder name in common OS)
+     * @param name which is experiment name
+     * @param userId
+     * @return
+     */
+    public static String genModelStorageFolderName(String name){
+        StringBuilder strBuilder = new StringBuilder();
+        String validName = FileUtils.sanitizeFilename(name);
+        strBuilder.append(validName);
+        strBuilder.append("-");
+        strBuilder.append(System.currentTimeMillis());
+
+        return strBuilder.toString();
+    }
     // Contains
     //-------------------------------------------------------------------------
     /**

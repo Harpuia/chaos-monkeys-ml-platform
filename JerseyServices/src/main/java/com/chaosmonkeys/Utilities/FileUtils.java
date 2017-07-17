@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +34,9 @@ public class FileUtils {
 
     // Constants operating with algorithm upload and storage;
     public static final String ALGR_PATH = "/Algorithms/";
+
+    // Constants operating with model storage
+    public static final String MODEL_PATH = "/Models/";
 
     // Constants operating with temporary workspace
     public static final String WORKSPACE_PATH = "/Workspace/";
@@ -148,7 +152,6 @@ public class FileUtils {
         }
         return rootFolder;
     }
-
     //* Methods used to manage data set file and folder *//
 
     /**
@@ -160,8 +163,27 @@ public class FileUtils {
         return createFolderInPath(DATA_SET_PATH);
     }
 
+    /**
+     * Create algorithm folder if it does not exit
+     * @return Algorithm root folder as File Object
+     */
     public static File createAlgorithmFolder() {
         return createFolderInPath(ALGR_PATH);
+    }
+
+    /**
+     * Create model folder if it does not exit
+     * @return Model root folder as File Object
+     */
+    public static File createModelFolder(){
+        return createFolderInPath(MODEL_PATH);
+    }
+    /**
+     * Create model folder if it does not exit
+     * @return Model root folder as Path object
+     */
+    public static Path createModelFolderPath(){
+        return createFolderInPath(MODEL_PATH).toPath();
     }
 
     //----------------------------------------------------------------------

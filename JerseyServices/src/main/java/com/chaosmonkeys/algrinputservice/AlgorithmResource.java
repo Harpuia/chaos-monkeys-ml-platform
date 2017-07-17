@@ -76,7 +76,7 @@ public class AlgorithmResource {
         //create dev language folder if it does not exist yet
         File langFolder = FileUtils.createNewFolderUnder(language, algrFolder);
         // create target folder
-        String targetFolderName = genAlgrStorageFolderName(algrName, userId);
+        String targetFolderName = StringUtils.genAlgrStorageFolderName(algrName, userId);
         File targetFolder = FileUtils.createNewFolderUnder(targetFolderName, langFolder);
         String fileName = fileMetaData.getFileName();
         // start processing receiving
@@ -104,7 +104,6 @@ public class AlgorithmResource {
             FileUtils.deleteQuietly(targetFolder);
             return genErrorResponse(validCode);
         }
-        //TODO: insert data sets into database.
         DbUtils.storeAlgorithm(userId, algrName, algrDescription, targetFolder.toPath().toAbsolutePath().toString(), language);
         Logger.SaveLog(LogType.Information, "Algorithm received successfully");
         return genSuccResponse();
@@ -144,25 +143,6 @@ public class AlgorithmResource {
             }
         }
         return true;
-    }
-
-    /**
-     * Generate algorithm storage folder name (valid folder name in common OS)
-     * @param name
-     * @param userId
-     * @return
-     */
-    public String genAlgrStorageFolderName(String name, String userId){
-        StringBuilder strBuilder = new StringBuilder();
-        String validName = FileUtils.sanitizeFilename(name);
-        strBuilder.append(validName);
-        strBuilder.append("-");
-        String validUserId = FileUtils.sanitizeFilename(userId);
-        strBuilder.append(validUserId);
-        strBuilder.append("-");
-        strBuilder.append(System.currentTimeMillis());
-
-        return strBuilder.toString();
     }
 
     public boolean receiveFile(InputStream fileInputStream, File targetFolder, String fileName){

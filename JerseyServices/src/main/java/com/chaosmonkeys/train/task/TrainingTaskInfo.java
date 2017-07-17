@@ -14,8 +14,8 @@ public class TrainingTaskInfo extends BaseTaskInfo {
         super(TaskType.TRAIN);
     }
 
-    public TrainingTaskInfo(String name, ResourceInfo resInfo){
-        super(TaskType.TRAIN, name, resInfo);
+    public TrainingTaskInfo(String name, String language, ResourceInfo resInfo){
+        super(TaskType.TRAIN, name, language, resInfo);
     }
 
 }
