@@ -1,6 +1,9 @@
 package com.chaosmonkeys.train.dto;
 
-
+/**
+ * DTO Used for consuming json from POST request
+ * Execution Resource
+ */
 public class ExperimentDto {
     // member variables
     private int id = -1;
