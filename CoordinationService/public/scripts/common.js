@@ -1,14 +1,16 @@
 /* Reset the datasets/algorithms upload and tasks/experiments creation modals. */
 function resetModal(modalId) {
     $('#' + modalId).on('hidden.bs.modal', function () {
-        for(i=0;i<$('form').length;i++)
-        $('form').get(i).reset();
+        for (i = 0; i < $('form').length; i++)
+            $('form').get(i).reset();
         var formerror = $('#formError')[0];
         var formsuccess = $('#formSuccess')[0];
         var formuploaderror = $('#formUploadError')[0];
         var formuploadsuccess = $('#formUploadSuccess')[0];
         var formtasksuccess = $('#formTaskSuccess')[0];
         var formtaskerror = $('#formTaskError')[0];
+        var formexperimenterror = $('#formExperimentError')[0];
+        var formexperimentsuccess = $('#formExperimentSuccess')[0];
         if (typeof formerror != 'undefined')
             formerror.style.display = "none";
         if (typeof formsuccess != 'undefined')
@@ -21,6 +23,10 @@ function resetModal(modalId) {
             formtaskerror.style.display = "none";
         if (typeof formtasksuccess != 'undefined')
             formtasksuccess.style.display = "none";
+        if (typeof formexperimenterror != 'undefined')
+            formexperimenterror.style.display = "none";
+        if (typeof formexperimentsuccess != 'undefined')
+            formexperimentsuccess.style.display = "none";
     });
     $('#' + modalId).on('shown.bs.modal', function () {
         enableDisabledButtons(modalId);

@@ -8,8 +8,11 @@ $(document).ready(function () {
 
 //Page initialization method
 function loadPage() {
-  //Reset a specific modal 
+  //Reset a task modal 
   resetModal('createTaskModal');
+  
+  //Reset an experiment modal 
+  resetModal('createNewExperimentModal');
 
   //Showing the loading text
   $('#tasksTableBody').text('Loading...');
@@ -209,8 +212,70 @@ function displayDetails(taskIndex) {
   $('#detailsModal').modal('show');;
 }
 
+var selectedTaskId;
+
 //Creates an experiment from the task
 function createNewExperimentFromTask(index) {
+  selectedTaskId=tasksData[index]['id'];
   $('#experimentTaskName').val(tasksData[index]['name']);
   $('#createNewExperimentModal').modal('show');
+}
+
+/*Check if the required field are filled */
+function checkExperimentRequiredFields() {
+  var experimentName = $("#experimentName").val();
+  var taskName = $("#experimentTaskName").val();
+  var projectId = $("#experimentProjectId").val();
+  var alert = $('#formExperimentError')[0];
+  var alertText = $('#formExperimentErrorText')[0];
+  if (experimentName.length == 0) {
+    showSubmissionResult('Please input an experiment name.', alert, alertText);
+    return false;
+  }
+  else if (projectId.length == 0) {
+    showSubmissionResult('Please input the Project ID.', alert, alertText);
+    return false;
+  }
+  else if (taskName.length == 0) {
+    showSubmissionResult('Please select a task.', alert, alertText);
+    return false;
+  }
+  else
+    return true;
+
+}
+
+/*Submit the form to create a new experiment */
+function submitExperimentForm() {
+  var success = $('#formExperimentSuccess')[0];
+  var successText = $('#formExperimentSuccessText')[0];
+  var alert = $('#formExperimentError')[0];
+  var alertText = $('#formExperimentErrorText')[0];
+  var experimentInfo = {
+    "project_id": $("#experimentProjectId").val(),
+    "task_id": selectedTaskId,
+    "experiment_name": $("#experimentName").val(),
+    "start": null,
+    "end": null,
+    "last_status": "IDLE",
+    "last_updated": null,
+    "description": $("#experimentDescription").val()
+  }
+
+  if (checkExperimentRequiredFields()) {
+    $.ajax({
+      url: "http://127.0.0.1:3000/experiments/create",
+      type: "POST",
+      dataType: "json",
+      contentType: 'application/json',
+      data: JSON.stringify(experimentInfo),
+      success: function (data) {
+        showSubmissionResult("The experiment " + experimentInfo.experiment_name + " has been created successfully.", success, successText);
+        loadPage();
+      },
+      error: function (request, status, error) {
+        showSubmissionResult("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
+      }
+    });
+  }
 }
