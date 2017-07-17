@@ -12,8 +12,13 @@ import org.javalite.activejdbc.validation.ValidationException;
 
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.locks.ReentrantLock;
 
 public final class DbUtils {
+
+    // lock for managing connection
+    private static ReentrantLock connectionLock = new ReentrantLock();
+
 
     // JDBC connection properties
     private static String url;
@@ -44,6 +49,7 @@ public final class DbUtils {
      * new method
      */
     public static void openConnection(){
+        connectionLock.lock();
         new DB(dbName).open(driver, url, username, password);
     }
 
@@ -51,7 +57,9 @@ public final class DbUtils {
      * Close ActiveJDBC connection in current thread
      */
     public static void closeConnection(){
-        Base.close();
+        new DB(dbName).close();
+        //TODO: place lock to another proper code
+        connectionLock.unlock();
     }
 
 

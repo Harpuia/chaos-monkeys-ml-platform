@@ -2,6 +2,7 @@ package com.chaosmonkeys.train.task;
 
 import com.chaosmonkeys.Utilities.FileUtils;
 import com.chaosmonkeys.Utilities.Logger;
+import com.chaosmonkeys.Utilities.StringUtils;
 import com.chaosmonkeys.train.task.interfaces.OnTaskUpdateListener;
 import org.zeroturnaround.exec.ProcessExecutor;
 
@@ -100,11 +101,9 @@ public class TrainingTask extends AbsTask{
             output =  Optional.ofNullable(procExecutor.readOutput(true).destroyOnExit().execute().outputUTF8());
             // search error string in output if output is present
             if(output.isPresent()){
+                //TODO: find a right way to identify error
                 String outputStr = output.get();
-                String pattern = "error";
-                Pattern errPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-                boolean matched = errPattern.matcher(outputStr).matches();
-                //TODO: delete
+                boolean matched = StringUtils.containsIgnoreCase(outputStr, "error");
                 Logger.Info(outputStr);
                 if(matched){
                     Logger.Error("Training task terminated with error output " + outputStr);

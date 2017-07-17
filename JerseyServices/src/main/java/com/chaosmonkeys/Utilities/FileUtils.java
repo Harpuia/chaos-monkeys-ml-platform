@@ -32,7 +32,7 @@ public class FileUtils {
     public static final String TRAINING_DATA = "Predications";
 
     // Constants operating with algorithm upload and storage;
-    public static final String ALGR_PATH = "./Algorithms/";
+    public static final String ALGR_PATH = "/Algorithms/";
 
     // Constants operating with temporary workspace
     public static final String WORKSPACE_PATH = "/Workspace/";

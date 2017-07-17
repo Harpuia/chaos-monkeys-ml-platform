@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public enum TrainingTaskManager implements TaskManager{
     // singleton
     INSTANCE;
-
+    // taskId -> Task
     private Map<String, TrainingTask> taskMap = new ConcurrentHashMap<>();
     // map experiment name to task ID because the frontend would like to use experiment name as identifier
     private Map<String, String> taskNameIdMap = new ConcurrentHashMap<>();
@@ -45,43 +45,51 @@ public enum TrainingTaskManager implements TaskManager{
         return true;
     }
 
+    /**
+     * Update experiment task status in database
+     * @param taskId
+     * @param state
+     */
+    public TrainingTask updateTaskStatus(String taskId, TaskState state){
+        TrainingTask task = taskMap.get(taskId);
+        TrainingTaskInfo trainTaskInfo = task.getTaskInfo();
+        // set initializing status and update database record
+        DbUtils.openConnection();
+        task.setState(state);
+        Experiment exp = DbUtils.getExperimentModelByName(trainTaskInfo.getExperimentName());
+        exp.set("last_status",task.getState().StringValue());
+        //TODO: handle locale problem in the future
+        Timestamp nowTime = Timestamp.from(Instant.now());
+        exp.setTimestamp("last_updated",nowTime);
+        if(state == TaskState.INITIALIZING){
+            exp.setTimestamp("start",nowTime);
+        }
+        if(state.value() > TaskState.STARTED.value()){
+            exp.setTimestamp("end",nowTime);
+        }
+        //TODO: add error handler for connection error
+        exp.save();
+        DbUtils.closeConnection();
+        return task;
+    }
+
     OnTaskUpdateListener mOnTaskUpdateListener = new OnTaskUpdateListener() {
         // start initializing
         @Override
         public void onInit(String taskId) {
-            TrainingTask task = taskMap.get(taskId);
-            TrainingTaskInfo trainTaskInfo = task.getTaskInfo();
-            // set initializing status and update database record
-            DbUtils.openConnection();
-            task.setState(TaskState.INITIALIZING);
-            Experiment exp = DbUtils.getExperimentModelByName(trainTaskInfo.getExperimentName());
-            exp.set("last_status",TaskState.INITIALIZING.StringValue());
-            //TODO: handle locale problem in the future
-            Timestamp nowTime = Timestamp.from(Instant.now());
-            exp.setTimestamp("last_updated",nowTime);
-            DbUtils.closeConnection();
+            updateTaskStatus(taskId, TaskState.INITIALIZING);
         }
         // task workspace has been initialized, the manager should update record and let the task start if available
         @Override
         public void onInitialized(String taskId) {
-            TrainingTask task = taskMap.get(taskId);
-            TrainingTaskInfo trainTaskInfo = task.getTaskInfo();
-            // set initializing status and update database record
-            DbUtils.openConnection();
-            task.setState(TaskState.INITIALIZED);
-            Experiment exp = DbUtils.getExperimentModelByName(trainTaskInfo.getExperimentName());
-            exp.set("last_status",task.getState().StringValue());
-            //TODO: handle locale problem in the future
-            Timestamp nowTime = Timestamp.from(Instant.now());
-            exp.setTimestamp("last_updated",nowTime);
-            DbUtils.closeConnection();
-            // task is permitted to start
+            TrainingTask task = updateTaskStatus(taskId, TaskState.INITIALIZED);
+            // task is permitted to run
             task.performTask();
         }
 
         @Override
         public void onStarted(String taskId) {
-
+            updateTaskStatus(taskId, TaskState.STARTED);
         }
 
         @Override
@@ -91,12 +99,12 @@ public enum TrainingTaskManager implements TaskManager{
 
         @Override
         public void onSuccess(String taskId) {
-
+            updateTaskStatus(taskId, TaskState.SUCCESS);
         }
 
         @Override
         public void onError(Throwable ex, String taskId) {
-
+            updateTaskStatus(taskId, TaskState.ERROR);
         }
     };
 

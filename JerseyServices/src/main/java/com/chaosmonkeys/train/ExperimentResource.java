@@ -28,7 +28,7 @@ import java.util.List;
  * Resource for experiment
  * run/cancel
  */
-@Path("services/exp")
+@Path("/services/exp")
 public class ExperimentResource {
 
     // Success Code
@@ -84,6 +84,8 @@ public class ExperimentResource {
         // construct ResourceInfo
         String datasetPath = dataset.getDatasetPath();
         String algrPath = algr.getAlgorithmPath();
+        // close connection
+        DbUtils.closeConnection();
         File datasetFolder = new File(datasetPath);
         File algrFolder = new File(algrPath);
         File workspaceFolder = FileUtils.createTempDir();
@@ -100,8 +102,6 @@ public class ExperimentResource {
         TrainingTaskInfo trainingTaskInfo= new TrainingTaskInfo(expName, resInfo);
         // get task manager instance and submit the task
         TrainingTaskManager.INSTANCE.submitTask(trainingTaskInfo);
-
-        DbUtils.closeConnection();
 
         return genSuccResponse();
     }
