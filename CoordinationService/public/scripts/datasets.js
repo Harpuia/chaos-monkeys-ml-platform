@@ -120,7 +120,6 @@ function submitForm() {
         loadPage();
       },
       error: function (request, status, error) {
-        console.log(status + error);
         alert("Oops! An error occurs when uploading the data. Please check the error log in log path for possible reasons: " + status + error);
       },
       complete: function () {
@@ -184,11 +183,11 @@ function createTaskFromDataset(index) {
 function submitTaskForm() {
   var tasksInfoForTrain = {
     "project_id": $("#projectId").val(),
-    "dataset_id": selectedDatasetId,
+    "dataset_id": datasetsData[selectedDatasetId]['id'],
     "algorithm_id": $("#algorithmsNames").val(),
     "model_id": null,
     "name": $("#name").val(),
-    "description": $("#description").val(),
+    "description": $("#taskDescription").val(),
     "type": $("#type")[0].options[$("#type")[0].selectedIndex].text
   }
   var tasksInfoForExe = {
@@ -207,12 +206,10 @@ function submitTaskForm() {
     $('#submitTaskButton').prop("disabled", true);
 
     if (tasksInfoForTrain.type.toLowerCase() == "training") {
-      console.log(tasksInfoForExe);
       objectToSend = tasksInfoForTrain;
       url = 'http://127.0.0.1:3000/tasks/createTrainingTask';
     }
     else if (tasksInfoForExe.type.toLowerCase() == "execution") {
-      console.log(tasksInfoForExe);
       objectToSend = tasksInfoForTrain;
       url = 'http://127.0.0.1:3000/tasks/createExecutionTask';
     }
@@ -223,7 +220,6 @@ function submitTaskForm() {
       contentType: 'application/json',
       data: JSON.stringify(objectToSend),
       error: function (request, status, error) {
-        console.log(status + error);
         alert("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error);
       },
       success: function (data) {
@@ -244,7 +240,7 @@ function checkRequiredTaskFields() {
   var selectedModelName = m.options[m.selectedIndex].text;
   var alert = $('#formAlert')[0];
   var alertText = $('#formAlertText')[0];
-  //console.log(taskName);
+
   if (selectedTaskType.length == 0) {
     showFormError('Please select a task type.', alert, alertText);
     return false;

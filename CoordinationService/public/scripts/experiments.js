@@ -44,11 +44,11 @@ function submitForm() {
     "experiment_name": $("#experimentName").val(),
     "start": null,
     "end": null,
-    "last_status": null,
+    "last_status": "IDLE",
     "last_updated": null,
     "description": $("#description").val()
   }
-  console.log(experimentInfo.task_id);
+
   if (checkRequiredFields()) {
     $.ajax({
       url: "http://127.0.0.1:3000/experiments/create",
@@ -61,7 +61,6 @@ function submitForm() {
         loadPage();
       },
       error: function (request, status, error) {
-        console.log(status + error);
         showSubmissionResult("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
       }
     });

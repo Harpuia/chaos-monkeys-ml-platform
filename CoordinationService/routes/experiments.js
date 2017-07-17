@@ -12,7 +12,7 @@ router.get("/list", function getExperiments(req, res) {
     if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;
-      next(err)
+      next(err);
     }
     res.json({ experimentsData: rows });
   });
@@ -32,7 +32,7 @@ router.post('/create', function insertNewExperiment(req, res) {
     if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;
-      //next(err);
+      next(err);
       
     }
     res.json({newexperimentinfo: req.body});

@@ -163,7 +163,7 @@ function checkRequiredFields() {
   var selectedModelName = m.options[m.selectedIndex].text;
   var alert = $('#formError')[0];
   var alertText = $('#formErrorText')[0];
-  //console.log(taskName);
+  
   if (selectedTaskType.length == 0) {
     showSubmissionResult('Please select a task type.', alert, alertText);
     return false;

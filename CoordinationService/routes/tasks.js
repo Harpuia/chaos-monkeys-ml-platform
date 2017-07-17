@@ -122,15 +122,13 @@ router.post('/createTrainingTask', function insertNewTask(req, res) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
-  console.log(req.body);
 
   //Insert tasks information into tasks table
   var results = connection.query('insert into tasks SET ?', req.body, function insertTask(err, result) {
     if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;
-      //next(err);
-      
+      next(err);
     }
     res.json({newtaskinfo: req.body});
   });
@@ -143,14 +141,13 @@ router.post('/createExecutionTask', function insertNewTask(req, res) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
-  console.log(req.body);
 
   //Insert tasks information into tasks table
   var results = connection.query('insert into tasks SET ?', req.body, function insertTask(err, result) {
     if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;
-      //next(err);
+      next(err);
       
     }
     res.json({newtaskinfo: req.body});

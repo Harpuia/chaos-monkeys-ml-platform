@@ -158,10 +158,10 @@ function submitTaskForm() {
   var tasksInfoForTrain = {
     "project_id": $("#projectId").val(),
     "dataset_id": $("#taskDatasetName").val(),
-    "algorithm_id": $("#taskAlgorithmsNames").val(),
+    "algorithm_id": algorithmsData[selectedAlgorithmId]['id'],
     "model_id": null,
     "name": $("#taskName").val(),
-    "description": $("#description").val(),
+    "description": $("#taskDescription").val(),
     "type": $("#taskType").val()
   }
 
@@ -171,7 +171,6 @@ function submitTaskForm() {
     //Disabling submit button
     $('#submitTaskButton').prop("disabled", true);
 
-    console.log(tasksInfoForTrain);
     objectToSend = tasksInfoForTrain;
     url = 'http://127.0.0.1:3000/tasks/createTrainingTask';
     $.ajax({
@@ -181,7 +180,6 @@ function submitTaskForm() {
       contentType: 'application/json',
       data: JSON.stringify(objectToSend),
       error: function (request, status, error) {
-        console.log(status + error);
         showSubmissionResult("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
       },
       success: function (data) {
@@ -198,7 +196,7 @@ function checkRequiredTaskFields() {
   var selectedAlgorithmName = $("#taskAlgorithmsNames").val();
   var alert = $('#formTaskError')[0];
   var alertText = $('#formTaskErrorText')[0];
-  //console.log(taskName);
+  
   if (selectedTaskType.length == 0) {
     showSubmissionResult('Please select a task type.', alert, alertText);
     return false;

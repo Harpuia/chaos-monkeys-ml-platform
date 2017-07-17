@@ -3,7 +3,6 @@ setInterval(function () {
   $('table').find("tr:not(:first)").remove();
   $.getJSON('http://127.0.0.1:3000/table', function (data) {
     $.each(data['table'], function (i, item) {
-      console.log('Works inside too!');
       var tr = $('<tr>');
       tr.append('<td>' + item['ip_address'] + '</td>');
       tr.append('<td>' + item['type'] + '</td>');
