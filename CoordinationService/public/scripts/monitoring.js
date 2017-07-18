@@ -1,19 +1,11 @@
 //Update view with table values
 setInterval(function () {
-  $('table').find("tr:not(:first)").remove();
   $.getJSON('http://127.0.0.1:3000/table', function (data) {
-    $.each(data['table'], function (i, item) {
-      var tr = $('<tr>');
-      tr.append('<td>' + item['ip_address'] + '</td>');
-      tr.append('<td>' + item['type'] + '</td>');
-      tr.append('<td>' + item['name'] + '</td>');
-      tr.append('<td>' + item['description'] + '</td>');
-      //TODO: cleanup display later
-      tr.append('<td>' + item['status'] + '</td>');
-      tr.append('<td>' + displayDateTime(item['last_updated']) + '</td>');
-      tr.append('</tr>');
-      $('table').append(tr);
-      console.log($('table'));
-    })
+    var tr = '<tr><th>IP</th><th>Type</th><th>Name</th><th>Description</th><th>Status</th><th>Last Contacted</th></tr>';
+    for (i = 0; i < data['table'].length; i++) {
+      var item = data['table'][i];
+      tr += '<tr><td>' + item['ip_address'] + '</td><td>' + item['type'] + '</td><td>' + item['name'] + '</td><td>' + item['description'] + '</td><td>' + item['status'] + '</td><td>' + displayDateTime(item['last_updated']) + '</td></tr>';
+    }
+    $('table').html(tr);
   })
 }, 2000);
