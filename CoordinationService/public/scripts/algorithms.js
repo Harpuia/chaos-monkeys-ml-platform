@@ -10,7 +10,7 @@ $(document).ready(function () {
 });
 
 //Loads the page
-function loadPage(){
+function loadPage() {
   //Reset upload modal 
   resetModal('uploadModal');
 
@@ -55,41 +55,102 @@ function loadPage(){
     $('#taskDatasetName').html(datasetsnames);
   });
 }
+//Checks if all required fields are filled correctly in the upload form
+function checkAlgorithmUploadFormRequiredFields() {
+  var fileName = $("#algorithm_file")[0].value;
+  var algorithmName = $("#algorithm_name").val();
+  var userId = $("#user_id").val();
+  var language = $("#language")[0];
+  var selectedLanguage = language.options[language.selectedIndex].text;
+  var alert = $('#formUploadError')[0];
+  var alertText = $('#formUploadErrorText')[0];
+
+  if (algorithmName.length == 0) {
+    showSubmissionResult('Please input an algorithm name.', alert, alertText);
+    return false;
+  }
+  else if (selectedLanguage.length == 0) {
+    showSubmissionResult('Please select an algorithm language.', alert, alertText);
+    return false;
+  }
+  else if (fileName.length == 0) {
+    showSubmissionResult('Please choose an algorithm file.', alert, alertText);
+    return false;
+  }
+  else if (userId.length == 0) {
+    showSubmissionResult('Please input the User ID.', alert, alertText);
+    return false;
+  }
+  else {
+    hideFormError(alert);
+    return true;
+  }
+}
+
+//Checks form fields for correctness
+function checkAlgFileExtension() {
+  var result;
+  var fileName = $("#algorithm_file")[0].value;
+  var extension = fileName.substring(fileName.lastIndexOf('.') + 1, fileName.length);
+  var alert = $('#formUploadError')[0];
+  var alertText = $('#formUploadErrorText')[0];
+  if (fileName.length == 0) {
+    showSubmissionResult('Please choose an algorithm file.', alert, alertText);
+    result = false;
+  } else {
+    if (extension.toLowerCase() != "zip") {
+      showSubmissionResult('The choosen algorithm file must be in ZIP format.', alert, alertText);
+      result = false;
+    }
+    else {
+      hideFormError(alert);
+      result = true;
+    }
+  }
+  return (result);
+}
+
+//Hide form error
+function hideFormError(alert) {
+  alert.style.display = "none";
+}
 
 //Handles the submit action
 function submitForm() {
   var success = $('#formUploadSuccess')[0];
   var successText = $('#formUploadSuccessText')[0];
   var form = new FormData($('form#algorithmForm')[0]);
-  //Sending post request
-  showUploadingSpinner();
-  $.ajax({
-    url: "http://127.0.0.1:8080/services/algr/upload",
-    type: "POST",
-    dataType: 'json',
-    data: form,
-    processData: false,
-    contentType: false,
-    success: function (data) {
-      showSubmissionResult("Success!", success, successText);
-      loadPage();
-    },
-    error: function (jqXHR, status, error) {
-      if (jqXHR.responseJSON) {
-        var resObject = jqXHR.responseJSON;
-        displayAlertByType(resObject);
-      } else {
-        var alert = $('#formUploadError')[0];
-        var alertText = $('#formUploadErrorText')[0];
-        var networkErr = "Upload request failed, please check your network connection";
-        showSubmissionResult(networkErr, alert, alertText);
+  if (checkAlgorithmUploadFormRequiredFields()) {
+    //Sending post request
+    showUploadingSpinner();
+    $.ajax({
+      url: "http://127.0.0.1:8080/services/algr/upload",
+      type: "POST",
+      dataType: 'json',
+      data: form,
+      processData: false,
+      contentType: false,
+      success: function (data) {
+        showSubmissionResult("Success!", success, successText);
+        loadPage();
+      },
+      error: function (jqXHR, status, error) {
+        if (jqXHR.responseJSON) {
+          var resObject = jqXHR.responseJSON;
+          displayAlertByType(resObject);
+        } else {
+          var alert = $('#formUploadError')[0];
+          var alertText = $('#formUploadErrorText')[0];
+          var networkErr = "Upload request failed, please check your network connection";
+          showSubmissionResult(networkErr, alert, alertText);
+        }
+      },
+      complete: function () {
+        $("#uploading")[0].style.display = "none";
+        $(".description").css('visibility', 'visible');
       }
-    },
-    complete: function () {
-      $("#uploading")[0].style.display = "none";
-      $(".description").css('visibility', 'visible');
-    }
-  });
+    });
+  }
 
 }
 
@@ -196,7 +257,7 @@ function checkRequiredTaskFields() {
   var selectedAlgorithmName = $("#taskAlgorithmsNames").val();
   var alert = $('#formTaskError')[0];
   var alertText = $('#formTaskErrorText')[0];
-  
+
   if (selectedTaskType.length == 0) {
     showSubmissionResult('Please select a task type.', alert, alertText);
     return false;
