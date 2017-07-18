@@ -3,6 +3,7 @@ var experimentsData;
 //Initialization
 $(document).ready(function () {
   loadPage();
+  loadTaskNames();
 });
 
 //Load the page
@@ -22,6 +23,10 @@ function loadPage() {
       $('#experimentsTableBody').html(experimentsList);
     }
   });
+
+}
+
+function loadTaskNames() {
   //Load task names
   $.get("tasks/names", function (data) {
     var tasksnames = '';
@@ -62,6 +67,7 @@ function submitForm() {
       success: function (data) {
         showSubmissionResult("The experiment " + experimentInfo.experiment_name + " has been created successfully.", success, successText);
         loadPage();
+        loadTaskNames();
       },
       error: function (request, status, error) {
         //Disabling submit button
