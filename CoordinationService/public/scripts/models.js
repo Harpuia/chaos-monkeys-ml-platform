@@ -95,21 +95,20 @@ function submitTaskForm() {
 
     objectToSend = tasksInfoForExecution;
     url = 'http://127.0.0.1:3000/tasks/createExecutionTask';
+    $.ajax({
+      url: url,
+      type: "POST",
+      dataType: "json",
+      contentType: 'application/json',
+      data: JSON.stringify(objectToSend),
+      error: function (request, status, error) {
+        showSubmissionResult("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
+      },
+      success: function (data) {
+        showSubmissionResult("Task: " + data.newtaskinfo.name + " has been created successfully!", success, successText);
+      }
+    });
   }
-
-  $.ajax({
-    url: url,
-    type: "POST",
-    dataType: "json",
-    contentType: 'application/json',
-    data: JSON.stringify(objectToSend),
-    error: function (request, status, error) {
-      showSubmissionResult("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
-    },
-    success: function (data) {
-      showSubmissionResult("Task: " + data.newtaskinfo.name + " has been created successfully!", success, successText);
-    }
-  });
 }
 
 //Checks required fields

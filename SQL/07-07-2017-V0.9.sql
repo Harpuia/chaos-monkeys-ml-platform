@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.17, for osx10.12 (x86_64)
 --
--- Host: localhost    Database: ConfigurationDatabase
+-- Host: localhost    Database: configurationdatabase
 -- ------------------------------------------------------
 -- Server version	5.7.18
 
@@ -16,12 +16,12 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `ConfigurationDatabase`
+-- Current Database: `configurationdatabase`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `ConfigurationDatabase` /*!40100 DEFAULT CHARACTER SET latin1 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `configurationdatabase` /*!40100 DEFAULT CHARACTER SET latin1 */;
 
-USE `ConfigurationDatabase`;
+USE `configurationdatabase`;
 
 --
 -- Table structure for table `algorithm_languages`

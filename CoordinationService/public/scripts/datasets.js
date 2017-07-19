@@ -77,6 +77,43 @@ function showUploadingSpinner() {
   $("#uploading")[0].style.display = "block";
 }
 
+//Checks if all required fields are filled correctly in the upload form
+function checkUploadFormRequiredFields() {
+  var fileName = $("#file")[0].value;
+  var datasetName = $("#dataset_name").val();
+  var userId = $("#user_id").val();
+  var projectId = $("#project_id").val();
+  var dataFormat = $("#format")[0];
+  var selectedDataFormat = dataFormat.options[dataFormat.selectedIndex].text;
+  var alert = $('#formUploadError')[0];
+  var alertText = $('#formUploadErrorText')[0];
+
+  if (fileName.length == 0) {
+    showSubmissionResult('Please choose a file.', alert, alertText);
+    return false;
+  }
+  else if (datasetName.length == 0) {
+    showSubmissionResult('Please input a dataset name.', alert, alertText);
+    return false;
+  }
+  else if (userId.length == 0) {
+    showSubmissionResult('Please input the User ID.', alert, alertText);
+    return false;
+  }
+  else if (projectId.length == 0) {
+    showSubmissionResult('Please input the Project ID.', alert, alertText);
+    return false;
+  }
+  else if (selectedDataFormat.length == 0) {
+    showSubmissionResult('Please select a dataset format.', alert, alertText);
+    return false;
+  }
+  else {
+    hideFormError(alert);
+    return true;
+  }
+}
+
 //Checks form fields for correctness
 function checkExtension() {
   var result;
@@ -110,7 +147,7 @@ function submitForm() {
   var alertText = $('#formUploadErrorText')[0];
   var form = new FormData($('form#dataForm')[0]);
   //Sending post request
-  if (checkExtension()) {
+  if (checkUploadFormRequiredFields()) {
     showUploadingSpinner();
     $.ajax({
       url: "http://127.0.0.1:8080/services/upload",
@@ -297,4 +334,11 @@ function hideDropdown(dropdown) {
 //Show dropdown list and the associated label
 function showDropdown(dropdown) {
   dropdown.style.display = "block";
+}
+
+
+//Show submission result after clicking Submit button
+function showSubmissionResult(message, alert, alertText) {
+  alertText.innerText = message;
+  alert.style.display = "block";
 }

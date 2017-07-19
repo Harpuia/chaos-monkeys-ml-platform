@@ -194,12 +194,12 @@
                                     <form id="dataForm" enctype="multipart/form-data">
                                         <div class="description" id="contents" style="display:block">
                                             <div class="form-group required">
-                                                <label for="file">Data Files</label>
+                                                <label for="file" class="control-label">Data Files</label>
                                                 <input type="file" name="file" id="file" onchange="checkExtension()" />
                                             </div>
                                             <div class="form-group required">
-                                                <label for="data name">Name</label>
-                                                <input type="text" class="form-control" name="name" id="name" />
+                                                <label for="data name" class="control-label">Name</label>
+                                                <input type="text" class="form-control" name="name" id="dataset_name" />
                                             </div>
 
                                             <div class="form-group">
@@ -208,16 +208,16 @@
                                             </div>
 
                                             <div class="form-group required">
-                                                <label for="user id">User ID</label>
+                                                <label for="user id" class="control-label">User ID</label>
                                                 <input type="text" class="form-control" name="user_id" id="user_id" />
                                             </div>
                                             <div class="form-group required">
-                                                <label for="project id">Project ID</label>
+                                                <label for="project id" class="control-label">Project ID</label>
                                                 <input type="text" class="form-control" name="project_id" id="project_id" />
                                             </div>
 
                                             <div class="form-group required">
-                                                <label for="DataFormat">Data Format</label>
+                                                <label for="DataFormat" class="control-label">Data Format</label>
                                                 <br>
                                                 <select class="form-control" name="format" id="format" onchange="checkExtension()">
                                                 </select>
