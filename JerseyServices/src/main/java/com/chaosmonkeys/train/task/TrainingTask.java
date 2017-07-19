@@ -103,7 +103,7 @@ public class TrainingTask extends AbsTask{
         final File entryFile = new File(workspaceFolder, "Main.R");
         Path rFilePath = entryFile.toPath();
         //TODO: check kinds of OS and use different command
-        ProcessExecutor procExecutor= new ProcessExecutor().command("Rscript",rFilePath.toString());
+        ProcessExecutor procExecutor= new ProcessExecutor().directory(workspaceFolder).command("Rscript",rFilePath.toString());
         Optional<String> output;
         try {
             Logger.Info("Experiment starts at " + rFilePath);

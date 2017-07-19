@@ -104,9 +104,18 @@ public class AlgorithmResource {
             FileUtils.deleteQuietly(targetFolder);
             return genErrorResponse(validCode);
         }
-        DbUtils.storeAlgorithm(userId, algrName, algrDescription, targetFolder.toPath().toAbsolutePath().toString(), language);
-        Logger.SaveLog(LogType.Information, "Algorithm received successfully");
-        return genSuccResponse();
+        try {
+            DbUtils.storeAlgorithm(userId, algrName, algrDescription, targetFolder.toPath().toRealPath().toString(), language);
+            Logger.SaveLog(LogType.Information, "Algorithm received successfully");
+            return genSuccResponse();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Logger.Error("Algorithm folder creation failure");
+            FileUtils.deleteQuietly(targetFolder);
+            validCode = ERR_TRANSMISSION_FILE;
+            return genErrorResponse(validCode);
+        }
+
     }
 
 

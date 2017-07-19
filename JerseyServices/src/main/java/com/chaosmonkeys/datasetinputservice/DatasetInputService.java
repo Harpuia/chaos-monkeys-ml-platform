@@ -79,7 +79,7 @@ public class DatasetInputService {
             uploadSet.remove(fileName);
 
             //insert data sets into database.
-            boolean inserted = DbUtils.storeDataSet(userId,projectId,dataName,dataDescription,targetFolder.getAbsolutePath(),format);
+            boolean inserted = DbUtils.storeDataSet(userId,projectId,dataName,dataDescription,targetFolder.getCanonicalPath(),format);
             if(!inserted){
                 //TODO: clean target folder and return error response
                 Logger.Info("insert dataset "+ dataName +" failed");

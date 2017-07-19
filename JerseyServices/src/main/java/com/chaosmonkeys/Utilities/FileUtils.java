@@ -25,21 +25,23 @@ import java.util.List;
  * <p>
  */
 public class FileUtils {
+    //TODO: change these addresses after
+    public static final String ROOT_PATH = ".";
+    public static final String FILE_SEPARATOR = File.separator;
+    // Constants operating with temporary workspace
+    public static final String WORKSPACE_PATH = ROOT_PATH  ;
 
     // Constants operating with dataset upload and storage
-    public static final String DATA_SET_PATH = "/Datasets/";
+    public static final String DATA_SET_PATH = WORKSPACE_PATH + FILE_SEPARATOR +  "Datasets" + FILE_SEPARATOR;
 
     public static final String EXECUTION_DATA = "Execution";
     public static final String TRAINING_DATA = "Predications";
 
     // Constants operating with algorithm upload and storage;
-    public static final String ALGR_PATH = "/Algorithms/";
+    public static final String ALGR_PATH =  WORKSPACE_PATH + FILE_SEPARATOR + "Algorithms" + FILE_SEPARATOR;
 
     // Constants operating with model storage
-    public static final String MODEL_PATH = "/Models/";
-
-    // Constants operating with temporary workspace
-    public static final String WORKSPACE_PATH = "/Workspace/";
+    public static final String MODEL_PATH = WORKSPACE_PATH + FILE_SEPARATOR + "Models" + FILE_SEPARATOR;
     // Filename case sensitive
     private static boolean sensitive = false;
 
@@ -117,7 +119,8 @@ public class FileUtils {
      * @return
      */
     public static String sanitizeFilename(String name) {
-        return name.replaceAll("[:\\\\/*?|<>\"]", "_");
+        name = name.replaceAll("[:\\\\/*?|<>\"]", "_").replaceAll("\\s+","");
+        return name;
     }
 
 
