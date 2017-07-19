@@ -178,14 +178,22 @@ public class TrainingTask extends AbsTask{
         int projectId = experiment.getInteger("project_id");
         int experimentId = (Integer) experiment.getId();
         PredictionModel model = new PredictionModel();
-        model.setModelName(expName + "-model")
-                .setDescription("sample description")
-                .setPath(targetFolder.toPath().toAbsolutePath().toString())
-                .setProjectId(projectId)
-                .setExperimentId(experimentId);
-        model.save();
-//        experiment.add(model);
-        DbUtils.closeConnection();
+        try {
+            model.setModelName(expName + "-model")
+                    .setDescription("sample description")
+                    .setPath(targetFolder.toPath().toRealPath().toString())
+                    .setProjectId(projectId)
+                    .setExperimentId(experimentId);
+            model.save();
+            DbUtils.closeConnection();
+            Logger.Info("a new model has been created and stored in the system");
+        } catch (IOException e) {
+            e.printStackTrace();
+            Logger.Error("database error when insert a new model");
+            DbUtils.closeConnection();
+            taskUpdateListener.onError(e, getTaskId());
+        }
+
     }
 
     //** Utils -----------------------------------------------------------------------------------

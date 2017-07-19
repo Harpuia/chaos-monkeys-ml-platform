@@ -27,11 +27,13 @@ public final class DbUtils {
     private static String driver;
     private static String dbName;
     private static ResourceBundle rb = ResourceBundle.getBundle("db.db-config");
+    // using SSL for connection but turning off server verification
+    private static String options = "?verifyServerCertificate=false&useSSL=true";
 
     // initialize the driver
     static{
         dbName = rb.getString("jdbc.dbName");
-        url = rb.getString("jdbc.baseurl") + rb.getString("jdbc.dbName");
+        url = rb.getString("jdbc.baseurl") + rb.getString("jdbc.dbName") + options;
         username = rb.getString("jdbc.username");
         password = rb.getString("jdbc.password");
         driver = rb.getString("jdbc.driver");
