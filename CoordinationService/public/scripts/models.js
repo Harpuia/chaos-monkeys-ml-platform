@@ -78,10 +78,10 @@ function submitTaskForm() {
   var alertText = $('#formTaskErrorText')[0];
   var tasksInfoForExecution = {
     "project_id": $("#taskProjectId").val(),
-    "dataset_id": $("#taskDatasetName").val(),
+    "dataset_id": $("#taskDatasetsNames").val(),
     // TODO: Add algorithm id in the future if needed
     "algorithm_id": null,
-    "model_id": $("#taskModel").val(),
+    "model_id": modelsData[selectedModelId]['id'],
     "name": $("#taskName").val(),
     "description": $("#taskDescription").val(),
     "type": $("#taskType").val()
