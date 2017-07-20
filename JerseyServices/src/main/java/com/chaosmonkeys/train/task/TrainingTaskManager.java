@@ -19,6 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public enum TrainingTaskManager implements TaskManager{
     // singleton
     INSTANCE;
+
+    private java.util.concurrent.atomic.AtomicInteger runningTaskNum;
     // taskId -> Task
     private Map<String, TrainingTask> taskMap = new ConcurrentHashMap<>();
     // map experiment name to task ID because the frontend would like to use experiment name as identifier
@@ -44,6 +46,8 @@ public enum TrainingTaskManager implements TaskManager{
         trainTask.cancelWorks();
         return true;
     }
+
+
 
     /**
      * Update experiment task status in database
@@ -78,6 +82,7 @@ public enum TrainingTaskManager implements TaskManager{
         @Override
         public void onInit(String taskId) {
             updateTaskStatus(taskId, TaskState.INITIALIZING);
+            runningTaskNum.incrementAndGet();
         }
         // task workspace has been initialized, the manager should update record and let the task start if available
         @Override
@@ -94,19 +99,25 @@ public enum TrainingTaskManager implements TaskManager{
 
         @Override
         public void onCancelled(String taskId) {
-
+            runningTaskNum.decrementAndGet();
         }
 
         @Override
         public void onSuccess(String taskId) {
             TrainingTask task = updateTaskStatus(taskId, TaskState.SUCCESS);
+            runningTaskNum.decrementAndGet();
             task.cleanUp();
         }
 
         @Override
         public void onError(Throwable ex, String taskId) {
             updateTaskStatus(taskId, TaskState.ERROR);
+            runningTaskNum.decrementAndGet();
         }
     };
+
+    public int getRunningTaskNum(){
+        return runningTaskNum.get();
+    }
 
 }

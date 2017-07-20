@@ -27,4 +27,9 @@ public enum TaskState {
     public String StringValue(){
         return strValList.get(this.value);
     }
+
+    @Override
+    public String toString() {
+        return StringValue();
+    }
 }

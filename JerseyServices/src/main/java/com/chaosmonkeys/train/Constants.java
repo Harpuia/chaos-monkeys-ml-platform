@@ -6,6 +6,10 @@ package com.chaosmonkeys.train;
 public final class Constants {
 
     private Constants(){}   // restrict initialization
+    //TODO: move the status to a global shared constant class
+    // Constants operating with service status
+    public static final String STATUS_RUN = "RUNNING";
+    public static final String STATUS_IDLE = "IDLE";
 
     // task type columns in task table
     public static final String TYPE_TRAIN = "Training";
