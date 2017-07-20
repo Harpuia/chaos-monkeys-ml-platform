@@ -150,7 +150,7 @@ function submitForm() {
   if (checkUploadFormRequiredFields()) {
     showUploadingSpinner();
     $.ajax({
-      url: "http://127.0.0.1:8080/services/upload",
+      url: "http://127.0.0.1:8080/services/datasets/upload",
       type: "POST",
       dataType: 'text',
       data: form,
