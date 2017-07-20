@@ -17,7 +17,7 @@ import java.util.Set;
 /**
  * Class containing all possible service calls (API methods)
  */
-@Path("/services")
+@Path("/services/datasets")
 public class DatasetInputService {
 
     // Constants operating with service status
