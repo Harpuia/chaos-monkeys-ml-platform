@@ -18,7 +18,16 @@ function loadPage() {
       $('#experimentsTableBody').html('<h3>This list is empty!</h3>');
     } else {
       for (i = 0; i < data['experimentsData'].length; i++) {
-        experimentsList += '<tr><td><span class="fa fa-flask" aria-hidden="true"></span>&nbsp;&nbsp;' + data['experimentsData'][i]['experiment_name'] + '</td><td>' + data['experimentsData'][i]['description'] + '<br><span class="label label-success">' + data['experimentsData'][i]['last_status'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td></tr>';
+        var cssLabel;
+        if (data['experimentsData'][i]['last_status'] === 'SUCCESS' || data['experimentsData'][i]['last_status'] === 'CANCELLED')
+          cssLabel = 'label-success';
+        else if (data['experimentsData'][i]['last_status'] === 'ERROR')
+          cssLabel = 'label-danger';
+        else if(data['experimentsData'][i]['last_status'] === 'IDLE')
+          cssLabel = 'label-default';
+        else
+          cssLabel = 'label-warning';
+        experimentsList += '<tr><td><span class="fa fa-flask" aria-hidden="true"></span>&nbsp;&nbsp;' + data['experimentsData'][i]['experiment_name'] + '</td><td>' + data['experimentsData'][i]['description'] + '<br><span class="label ' + cssLabel + '">' + data['experimentsData'][i]['last_status'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td></tr>';
       }
       $('#experimentsTableBody').html(experimentsList);
     }
