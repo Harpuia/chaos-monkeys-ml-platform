@@ -119,8 +119,22 @@ function displayDetails(experimentIndex) {
   $('#experimentLastStatus').text(experimentsData[experimentIndex]['last_status']);
   $('#experimentLastUpdated').text(displayDateTime(experimentsData[experimentIndex]['last_updated']));
   $('#experimentDescription').text(experimentsData[experimentIndex]['description']);
+
+  //Show the duration for each experiment in "xx days xx hours xx minutes xx seconds" format
+  if (experimentsData[experimentIndex]['last_status'] === 'SUCCESS' || experimentsData[experimentIndex]['last_status'] === 'ERROR' || experimentsData[experimentIndex]['last_status'] === 'CANCELLED' || experimentsData[experimentIndex]['last_status'] === 'IDLE') {
+    var duration = stringToDate(displayDateTime(experimentsData[experimentIndex]['end'])) - stringToDate(displayDateTime(experimentsData[experimentIndex]['start']));
+    $('#experimentDuration').text(msToTime(duration));
+  }
+  else {
+    var currentTime = new Date();
+    var formatedCurTime = formatDate(currentTime);
+    var duration = stringToDate(formatedCurTime) - stringToDate(displayDateTime(experimentsData[experimentIndex]['start']));
+    $('#experimentDuration').text(msToTime(duration));
+  }
+
   //Showing the stop experiment button dynamically
   if (experimentsData[experimentIndex]['last_status'] !== 'SUCCESS' && experimentsData[experimentIndex]['last_status'] !== 'ERROR' && experimentsData[experimentIndex]['last_status'] !== 'CANCELLED') {
+
     $('#stopExperimentButton').html('<button class="btn btn-primary" onclick="alert(\'Call Stop Service for - ' + experimentsData[experimentIndex]['experiment_name'] + '\')">Stop Experiment</button>');
   } else {
     $('#stopExperimentButton').html('');

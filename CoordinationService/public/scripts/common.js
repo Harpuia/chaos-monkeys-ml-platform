@@ -45,3 +45,35 @@ function displayDateTime(time) {
 function enableDisabledButtons(divId) {
     $('#' + divId + ' :button').attr('disabled', false);
 }
+
+//Parse a String format date into a Date format
+function stringToDate(s) {
+    if (s != null)
+        return new Date(Date.parse(s.replace('-', '/', 'g')));
+    else
+        return new Date();
+}
+//Transform milliseconds to HH:MM:SS format 
+function msToTime(duration) {
+    var seconds = parseInt((duration / 1000) % 60)
+        , minutes = parseInt((duration / (1000 * 60)) % 60)
+        , hours = parseInt((duration / (1000 * 60 * 60)) % 24)
+        , days = parseInt((duration / (1000 * 60 * 60 * 24)));
+
+    days = (days < 10) ? "0" + days : days;
+    hours = (hours < 10) ? "0" + hours : hours;
+    minutes = (minutes < 10) ? "0" + minutes : minutes;
+    seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+    return days + " days " + hours + " hours " + minutes + " minutes " + seconds + " seconds";
+}
+//Transform a javascript date format to YYYY-MM-DD HH:MM:SS format 
+function formatDate(datetime) {
+    var year = datetime.getFullYear();
+    var month = datetime.getMonth() + 1;
+    var day = datetime.getDate();
+    var hour = datetime.getHours();
+    var minute = datetime.getMinutes();
+    var second = datetime.getSeconds();
+    return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+}
