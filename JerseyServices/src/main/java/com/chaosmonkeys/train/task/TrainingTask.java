@@ -9,14 +9,19 @@ import com.chaosmonkeys.dao.Experiment;
 import com.chaosmonkeys.dao.PredictionModel;
 import com.chaosmonkeys.train.task.interfaces.OnTaskUpdateListener;
 import org.zeroturnaround.exec.ProcessExecutor;
+import org.zeroturnaround.exec.ProcessResult;
+import org.zeroturnaround.exec.StartedProcess;
+import org.zeroturnaround.process.ProcessUtil;
+import org.zeroturnaround.process.Processes;
+import org.zeroturnaround.process.SystemProcess;
+import org.zeroturnaround.process.WindowsProcess;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 /**
  * Training task runner
@@ -24,12 +29,17 @@ import java.util.concurrent.TimeoutException;
 public class TrainingTask extends AbsTask{
 
     private TrainingTaskInfo taskInfo;
+    private Future<ProcessResult> mOnProcessingFuture;
+    private Process startedProcess;
+    // volatile used for checking cancelled status
+    private volatile boolean cancelled = false;
 
     public TrainingTask(TrainingTaskInfo trainTaskInfo, OnTaskUpdateListener listener){
         this.taskInfo = trainTaskInfo;
         this.setTaskUpdateListener(listener);
     }
 
+    //---------------------------------------
     @Override
     protected ExecutorService getExecutorService() {
         return super.getExecutorService();
@@ -69,9 +79,28 @@ public class TrainingTask extends AbsTask{
 
     @Override
     protected void cancelWorks() {
-
+        //TODO this method may have some concurrent bug in the future, when unexpected cancelling process happened, check this method
+        // set the task cancelled flag as true
+        cancelled = true;       // let runnable check the volatile variable and throw interruption
+        taskUpdateListener.onCancelled(getTaskId());
     }
+    // Thread/Runnable related inner class ------------------------------------
 
+//    /**
+//     * Custom thread factory used for controling cancellation of current runnable
+//     */
+//    private class SingleTaskThreadFactory extends ThreadFactory{
+//        // override the anonymous thread's interrupt action
+//        @Override
+//        public Thread newThread(Runnable r) {
+//            return new Thread(r) {
+//                @Override
+//                public void interrupt() {
+//                    super.interrupt();
+//                    r.cancel();
+//                };
+//        }};
+//    }
     //** Task Performers  ----------------------------------------------------------------------
     /**
      * Runnable for checking
@@ -80,18 +109,28 @@ public class TrainingTask extends AbsTask{
         final ResourceInfo res = taskInfo.getResourceInfo();
         try {
             // copy algorithm content to workspace
-            FileUtils.copyDirectory(res.getAlgorithmFolder(),res.getWorkspaceFolder());
-            File tmpInputFolder = new File(res.getWorkspaceFolder(), "input");
-            // copy data set content to workspace input folder
-            FileUtils.copyDirectory(res.getDatasetFolder(), tmpInputFolder);
-            // invoke initialized
-            taskUpdateListener.onInitialized(taskInfo.getTaskId());
+            if(!cancelled){
+                FileUtils.copyDirectory(res.getAlgorithmFolder(),res.getWorkspaceFolder());
+                if(cancelled){ throw new InterruptedException(); }
+                File tmpInputFolder = new File(res.getWorkspaceFolder(), "input");
+                // copy data set content to workspace input folder
+                FileUtils.copyDirectory(res.getDatasetFolder(), tmpInputFolder);
+                if(cancelled){ throw new InterruptedException(); }
+                // invoke initialized
+                if(!cancelled){
+                    taskUpdateListener.onInitialized(taskInfo.getTaskId());
+                }
+            }
         } catch (IOException e) {
             Logger.Error("Initializing experiment error when copying resource to temp workspace");
             e.printStackTrace();
             //TODO: trigger error and clean up
+        }catch (InterruptedException ex){   // cancelled
+            Logger.Info("Experiment cancelled during initializing");
         }
     };
+
+
     /**
      * Runnable used to run training task
      * run the application and move resulted files to a proper folder
@@ -101,44 +140,94 @@ public class TrainingTask extends AbsTask{
         // construct command
         final File workspaceFolder = getTaskInfo().getResourceInfo().getWorkspaceFolder();
         final File entryFile = new File(workspaceFolder, "Main.R");
+        Process rProcess = null;    // use for canceling R application
+        boolean processStarted = false;
+        boolean processFinished = false;
         Path rFilePath = entryFile.toPath();
         //TODO: check kinds of OS and use different command
-        ProcessExecutor procExecutor= new ProcessExecutor().directory(workspaceFolder).command("Rscript",rFilePath.toString());
-        Optional<String> output;
+        ProcessExecutor procExecutor = new ProcessExecutor().directory(workspaceFolder).command("Rscript", rFilePath.toString());
+        Optional<String> output = Optional.empty();
         try {
             Logger.Info("Experiment starts at " + rFilePath);
-            output =  Optional.ofNullable(procExecutor.readOutput(true).destroyOnExit().execute().outputUTF8());
-            // search error string in output if output is present
-            if(output.isPresent()){
-                //TODO: find a right way to identify error
-                String outputStr = output.get();
-                boolean matched = StringUtils.containsIgnoreCase(outputStr, "error");
-                Logger.Info(outputStr);
-                if(matched){
-                    Logger.Error("Training task terminated with error output " + outputStr);
-                    Exception ex = new Exception("training expeirment terminated with error output");
-                    taskUpdateListener.onError(ex, getTaskId());
-                }else{
-                    //TODO: move output folder to the dest
-                    taskUpdateListener.onSuccess(getTaskId());
+            StartedProcess proc = procExecutor.readOutput(true).destroyOnExit().start();
+            rProcess = proc.getProcess();
+            Future<ProcessResult> futureResult = proc.getFuture();
+            Optional<ProcessResult> resultOptional = Optional.empty();
+            try {
+                // check the status here, if found cancelled signal, kill the process using Zt-Killer
+                while (!futureResult.isDone()) {
+                    if (cancelled) {
+                        processStarted = true;
+                        throw new InterruptedException();
+                    }
                 }
-            }else{
-                //TODO: move output folder to the dest
-                taskUpdateListener.onSuccess(getTaskId());
+                processFinished = true;
+                resultOptional = Optional.ofNullable(futureResult.get());
+            } catch (ExecutionException e) {  //exception may be thrown because future cancellation
+                e.printStackTrace();
+            }
+            output = Optional.ofNullable(resultOptional.get().getOutput().getUTF8());
+//            output =  Optional.ofNullable(procExecutor.readOutput(true).destroyOnExit().execute().outputUTF8());
+            // search error string in output if output is present
+            if (!cancelled) {
+                if (output.isPresent()) {
+                    //TODO: find a right way to identify error
+                    String outputStr = output.get();
+                    boolean matched = StringUtils.containsIgnoreCase(outputStr, "error");
+                    Logger.Info(outputStr);
+                    if (matched) {
+                        Logger.Error("Training task terminated with error output " + outputStr);
+                        Exception ex = new Exception("training experiment terminated with error output");
+                        if (!cancelled) {
+                            taskUpdateListener.onError(ex, getTaskId());
+                        }
+                    } else {
+                        //TODO: move output folder to the dest
+                        if (!cancelled) {
+                            taskUpdateListener.onSuccess(getTaskId());
+                        }
+                    }
+                } else {
+                    //TODO: move output folder to the dest
+                    if (!cancelled) {
+                        taskUpdateListener.onSuccess(getTaskId());
+                    }
+                }
             }
         } catch (IOException e) {
             Logger.Error("IOException happened when starting training experiment");
             e.printStackTrace();
             taskUpdateListener.onError(e, getTaskId());
         } catch (InterruptedException e) {
-            Logger.Error("The training experiment has been interrupted in accidentally");
-            e.printStackTrace();
-            taskUpdateListener.onError(e, getTaskId());
-        } catch (TimeoutException e) {
-            Logger.Error("The training experiment timed out");
-            e.printStackTrace();
-            taskUpdateListener.onError(e, getTaskId());
+            if (cancelled) {
+                //invoke zt-killer
+                if (processStarted) {
+                    if (!processFinished) {
+                        Optional<Process> procOptional = Optional.ofNullable(rProcess);
+                        if (procOptional.isPresent()) {
+                            Process tmpProcess = procOptional.get();
+
+                            SystemProcess sysProcess = Processes.newStandardProcess(procOptional.get());
+                            try {
+                                ProcessUtil.destroyGracefullyOrForcefullyAndWait(sysProcess, 2, TimeUnit.SECONDS, 1, TimeUnit.SECONDS);
+                                //TODO: add more proper exception handling
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            } catch (InterruptedException e1) {
+                                e1.printStackTrace();
+                            } catch (TimeoutException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            } else {
+                Logger.Error("The training experiment has been interrupted in accidentally");
+                e.printStackTrace();
+                taskUpdateListener.onError(e, getTaskId());
+            }
         }
+
     };
     /**
      * Delete temp workspace folder in the background

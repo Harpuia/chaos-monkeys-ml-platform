@@ -99,6 +99,7 @@ public enum TrainingTaskManager implements TaskManager{
 
         @Override
         public void onCancelled(String taskId) {
+            TrainingTask task = updateTaskStatus(taskId, TaskState.CANCELLED);
             runningTaskNum.decrementAndGet();
         }
 

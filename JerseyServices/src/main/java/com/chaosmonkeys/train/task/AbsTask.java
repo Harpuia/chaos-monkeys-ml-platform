@@ -4,6 +4,7 @@ import com.chaosmonkeys.train.task.interfaces.OnTaskUpdateListener;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Base class of Async task
@@ -14,6 +15,8 @@ public abstract class AbsTask {
     private volatile TaskState state = TaskState.IDLE;
 
     private volatile ExecutorService singleExecutorService;
+    // lock for managing connection
+    private final ReentrantLock stateUpdateLock = new ReentrantLock();
 
     protected OnTaskUpdateListener taskUpdateListener = null;
     //private ResultType result;
@@ -67,9 +70,15 @@ public abstract class AbsTask {
 
     /**
      * package - only task pacakge can set state
+     * using lock to make sure consistent state update 
      */
     void setState(TaskState tState){
-        this.state = tState;
+        stateUpdateLock.lock();
+        try{
+            this.state = tState;
+        }finally {
+            stateUpdateLock.unlock();
+        }
     }
     final void setTaskUpdateListener(OnTaskUpdateListener listener){
         this.taskUpdateListener = listener;

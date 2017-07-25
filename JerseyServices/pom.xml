@@ -41,6 +41,12 @@
             <artifactId>zt-exec</artifactId>
             <version>1.9</version>
         </dependency>
+        <!-- ZT Process Killer -->
+        <dependency>
+            <groupId>org.zeroturnaround</groupId>
+            <artifactId>zt-process-killer</artifactId>
+            <version>1.7</version>
+        </dependency>
         <!-- ActiveJDBC ORM -->
         <dependency>
             <groupId>org.javalite</groupId>

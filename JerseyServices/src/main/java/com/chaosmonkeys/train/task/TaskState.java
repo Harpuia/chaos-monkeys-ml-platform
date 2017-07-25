@@ -11,7 +11,7 @@ public enum TaskState {
     IDLE(0), INITIALIZING(1), INITIALIZED(2), STARTED(3), CANCELLED(4), SUCCESS(5), ERROR(6);
 
     private final int value;
-    private List<String> strValList = Arrays.asList("IDLE", "INITIALIZING","INITIALIZED", "STARTED", "CANCELLED", "SUCCESS", "ERROR");
+    private static List<String> strValList = Arrays.asList("IDLE", "INITIALIZING","INITIALIZED", "STARTED", "CANCELLED", "SUCCESS", "ERROR");
 
     TaskState(int value){
         this.value = value;
@@ -31,5 +31,18 @@ public enum TaskState {
     @Override
     public String toString() {
         return StringValue();
+    }
+
+    /**
+     * Judge whether a state string represented Finished
+     * @param status
+     * @return
+     */
+    public static boolean isFinished(String status){
+        int idx = strValList.indexOf(status);
+        if(idx > 3){
+            return true;
+        }
+        return false;
     }
 }

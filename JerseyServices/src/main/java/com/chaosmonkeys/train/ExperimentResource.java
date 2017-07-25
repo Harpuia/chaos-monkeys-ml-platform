@@ -9,10 +9,7 @@ import com.chaosmonkeys.dao.Dataset;
 import com.chaosmonkeys.dao.Experiment;
 import com.chaosmonkeys.dao.Task;
 import com.chaosmonkeys.train.dto.ExperimentDto;
-import com.chaosmonkeys.train.task.ResourceInfo;
-import com.chaosmonkeys.train.task.TaskType;
-import com.chaosmonkeys.train.task.TrainingTaskInfo;
-import com.chaosmonkeys.train.task.TrainingTaskManager;
+import com.chaosmonkeys.train.task.*;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -39,7 +36,7 @@ public class ExperimentResource {
     public static final int ERR_EXP_RECORD_NOT_FOUND = 303;
     public static final int ERR_WRONG_TASK_TYPE = 304;
     public static final int ERR_INVALID_RES_PATH = 305;
-    public static final int ERR_REQUIRED_FILE_MISSING = 306;
+    public static final int ERR_ALREADY_FINISHED = 306;
     public static final int ERR_UNKNOWN = 399;
 
     // reference to the task manager
@@ -107,6 +104,45 @@ public class ExperimentResource {
         return genSuccResponse();
     }
 
+    @POST
+    @Path("/stop")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response stopExperiment(ExperimentDto experimentDto){
+        //TODO: add proper error message to front end
+        int validCode = 0;
+        String expName = experimentDto.getExperiment_name();
+        // TODO: extract following checking logic to one single method, or maybe impossible..
+        // no experiment name
+        if(StringUtils.isBlank(expName)){
+            validCode = ERR_BLANK_PARAMS;
+            return genErrorResponse(validCode);
+        }
+        DbUtils.openConnection();
+        // query from database to get experiment information
+        List<Experiment> experiments = Experiment.where("experiment_name = ?", expName);
+        if(experiments.size() != 1){
+            if(0 == experiments.size()){
+                validCode = ERR_EXP_RECORD_NOT_FOUND;
+            }else{
+                validCode = ERR_DUPLICATE_EXP_RECORD;
+            }
+            return genErrorResponse(validCode);
+        }
+        Experiment experiment = experiments.get(0);
+        String experimentState = experiment.getString("last_status");
+        DbUtils.closeConnection();
+        //TODO prevent experiment state is null because of test data
+        if (!TaskState.isFinished(experimentState)){
+            getTaskManager().cancelTaskByExperimentName(expName);
+            return genSuccResponseWithMsg("Experiment cancelled");
+        }else{
+            validCode = ERR_ALREADY_FINISHED;
+            return genErrorResponse(validCode);
+        }
+    }
+    //--------------------------------------------------------------------
+
     /**
      * Get an instance of training task manager
      * @return
@@ -132,6 +168,8 @@ public class ExperimentResource {
                 break;
             case(ERR_INVALID_RES_PATH):
                 msg = "Resources path stored in system is invalid";
+            case(ERR_ALREADY_FINISHED):
+                msg = "The experiment has already finished";
             default:
                 errorCode = ERR_UNKNOWN;
                 msg = "unknown error";
@@ -142,6 +180,8 @@ public class ExperimentResource {
                 .build();
         return response;
     }
+
+
 
     /**
      * Generate corrpesponding successful message
