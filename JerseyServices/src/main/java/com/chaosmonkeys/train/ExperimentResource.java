@@ -160,6 +160,7 @@ public class ExperimentResource {
      * @return
      */
     public Response genErrorResponse(int errorCode){
+        //TODO: add proper error response for all unexpected error
         BaseResponse responseEntity = new BaseResponse();
         String msg;
         switch (errorCode){

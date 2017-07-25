@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Traning task manager used for handling task callback
@@ -20,7 +21,7 @@ public enum TrainingTaskManager implements TaskManager{
     // singleton
     INSTANCE;
 
-    private java.util.concurrent.atomic.AtomicInteger runningTaskNum;
+    private java.util.concurrent.atomic.AtomicInteger runningTaskNum = new AtomicInteger();
     // taskId -> Task
     private Map<String, TrainingTask> taskMap = new ConcurrentHashMap<>();
     // map experiment name to task ID because the frontend would like to use experiment name as identifier

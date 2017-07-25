@@ -84,23 +84,7 @@ public class TrainingTask extends AbsTask{
         cancelled = true;       // let runnable check the volatile variable and throw interruption
         taskUpdateListener.onCancelled(getTaskId());
     }
-    // Thread/Runnable related inner class ------------------------------------
 
-//    /**
-//     * Custom thread factory used for controling cancellation of current runnable
-//     */
-//    private class SingleTaskThreadFactory extends ThreadFactory{
-//        // override the anonymous thread's interrupt action
-//        @Override
-//        public Thread newThread(Runnable r) {
-//            return new Thread(r) {
-//                @Override
-//                public void interrupt() {
-//                    super.interrupt();
-//                    r.cancel();
-//                };
-//        }};
-//    }
     //** Task Performers  ----------------------------------------------------------------------
     /**
      * Runnable for checking

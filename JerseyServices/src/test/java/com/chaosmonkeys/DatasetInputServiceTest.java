@@ -59,7 +59,7 @@ public class DatasetInputServiceTest extends JerseyTest {
      */
     @Test
     public void testGetRequest() {
-        int errorCode = target("services/upload").request().get().getStatus();
+        int errorCode = target("services/datasets/upload").request().get().getStatus();
         assertEquals(405, errorCode);
     }
 
@@ -68,7 +68,7 @@ public class DatasetInputServiceTest extends JerseyTest {
      */
     @Test
     public void testUnsupportedMediaType() {
-        int responseMsg = target("services/upload").request().post(Entity.text("asb")).getStatus();
+        int responseMsg = target("services/datasets/upload").request().post(Entity.text("asb")).getStatus();
         assertEquals(Response.Status.UNSUPPORTED_MEDIA_TYPE.getStatusCode(), responseMsg);
     }
 
@@ -95,7 +95,7 @@ public class DatasetInputServiceTest extends JerseyTest {
                     .field("user_id", "test_u_id")
                     .field("name", "testname");
             // request the response Jersey 2.25 will not recognize multipartEntity.getMediaType()
-            Response response = target("services/upload").request().post(Entity.entity(multipartEntity, contentType));
+            Response response = target("services/datasets/upload").request().post(Entity.entity(multipartEntity, contentType));
 
             assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
             response.close();
@@ -127,7 +127,7 @@ public class DatasetInputServiceTest extends JerseyTest {
                     .field("format","csv")
                     .bodyPart(filePart);
             // request the response Jersey 2.25 will not recognize multipartEntity.getMediaType()
-            Response response = target("services/upload").request().post(Entity.entity(multipartEntity, contentType));
+            Response response = target("services/datasets/upload").request().post(Entity.entity(multipartEntity, contentType));
 
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
             response.close();
