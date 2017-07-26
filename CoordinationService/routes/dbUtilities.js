@@ -34,7 +34,3 @@ var dateToText = function (currentdate) {
   + currentdate.getMinutes() + ":"
   + currentdate.getSeconds();
 }
-
-module.exports = {
-    twoDigits: twoDigits
-};
