@@ -8,7 +8,7 @@ $(document).ready(function () {
 
 //Load the page
 function loadPage() {
-  //Reset a specific modal 
+  //Reset a specific modal
   resetModal('createExperimentModal');
   //Load upload types
   $.get("experiments/list", function (data) {
@@ -86,7 +86,28 @@ function submitForm() {
     });
   }
 }
-
+/* stop the experiment shown in detail now*/
+function stopExperiment(expName){
+  var experimentInfo = {
+    experiment_name: expName
+  }
+  $('#stopExperimentButton').prop("disabled", true);
+  $.ajax({
+    url: "http://127.0.0.1:8080/services/exp/stop",
+    type: "POST",
+    contentType: 'application/json',
+    data: JSON.stringify(experimentInfo),
+    success: function (data) {
+      alert("The experiment " + experimentInfo.experiment_name + " has been stopped successfully.");
+    },
+    error: function (request, status, error) {
+      //Disabling submit button
+      $('#stopExperimentButton').prop("disabled", false);
+      //TODO: change alert to bootstrap alert
+      alert("Oops! An error occurs when canceling the task. Please check the error log in log path for possible reasons: " + status + error);
+    }
+  });
+}
 
 
 /*Check if the required field are filled */
@@ -143,8 +164,12 @@ function displayDetails(experimentIndex) {
 
   //Showing the stop experiment button dynamically
   if (experimentsData[experimentIndex]['last_status'] !== 'SUCCESS' && experimentsData[experimentIndex]['last_status'] !== 'ERROR' && experimentsData[experimentIndex]['last_status'] !== 'CANCELLED') {
-
-    $('#stopExperimentButton').html('<button class="btn btn-primary" onclick="alert(\'Call Stop Service for - ' + experimentsData[experimentIndex]['experiment_name'] + '\')">Stop Experiment</button>');
+    var tmpExpName = experimentsData[experimentIndex].experiment_name;
+    $('#stopExperimentButton').html('<button class="btn btn-primary" id="stopButton" >Stop Experiment</button>');
+    var stopButton = $('#stopButton')
+    stopButton.click(function(){
+      stopExperiment(tmpExpName);
+    });
   } else {
     $('#stopExperimentButton').html('');
   }

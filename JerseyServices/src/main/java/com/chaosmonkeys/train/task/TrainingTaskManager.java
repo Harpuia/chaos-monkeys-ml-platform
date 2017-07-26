@@ -43,7 +43,8 @@ public enum TrainingTaskManager implements TaskManager{
 
 
     public boolean cancelTaskByExperimentName(String experimentName){
-        TrainingTask trainTask  = taskMap.get(experimentName);
+        String taskId = taskNameIdMap.get(experimentName);
+        TrainingTask trainTask  = taskMap.get(taskId);
         trainTask.cancelWorks();
         return true;
     }

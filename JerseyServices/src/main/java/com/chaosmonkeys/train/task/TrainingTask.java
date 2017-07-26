@@ -104,6 +104,8 @@ public class TrainingTask extends AbsTask{
                 if(!cancelled){
                     taskUpdateListener.onInitialized(taskInfo.getTaskId());
                 }
+            }else {
+                Logger.Info("Experiment cancelled during initializing");
             }
         } catch (IOException e) {
             Logger.Error("Initializing experiment error when copying resource to temp workspace");
@@ -189,8 +191,6 @@ public class TrainingTask extends AbsTask{
                     if (!processFinished) {
                         Optional<Process> procOptional = Optional.ofNullable(rProcess);
                         if (procOptional.isPresent()) {
-                            Process tmpProcess = procOptional.get();
-
                             SystemProcess sysProcess = Processes.newStandardProcess(procOptional.get());
                             try {
                                 ProcessUtil.destroyGracefullyOrForcefullyAndWait(sysProcess, 2, TimeUnit.SECONDS, 1, TimeUnit.SECONDS);
