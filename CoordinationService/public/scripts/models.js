@@ -40,7 +40,7 @@ $(document).ready(function () {
 function displayDetails(modelIndex) {
   $('#modelName').text(modelsData[modelIndex]['name']);
   $('#modelDescription').text(modelsData[modelIndex]['description']);
-  $('#modelPath').text(modelsData[modelIndex]['path']);
+  $('#modelPath').html('<a href="http://127.0.0.1:3000/download/model/' + modelsData[modelIndex]['id'] + '" target="_blank">Download</a>');
 
   //Load tasks types
   $.get("tasks/listByModel/" + modelsData[modelIndex]['id'], function (data) {
