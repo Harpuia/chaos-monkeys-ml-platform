@@ -178,10 +178,10 @@ public class ExperimentResource {
                 break;
             case(ERR_ALREADY_FINISHED):
                 msg = "The experiment has already finished";
-                break;;
+                break;
             case(ERR_DUPLICATE_EXP_RECORD):
                 msg = "Found duplicate experiment records in system. This is an issue related with backend database. Please contact administer";
-                break;;
+                break;
             default:
                 errorCode = ERR_UNKNOWN;
                 msg = "unknown error";
