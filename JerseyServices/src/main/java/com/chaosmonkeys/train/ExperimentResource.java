@@ -71,7 +71,7 @@ public class ExperimentResource {
         Task task = experiment.parent(Task.class);
         // type
         String taskType = task.getTaskType();
-        if(!taskType.equals(Constants.TYPE_TRAIN)){
+        if(!taskType.equals(Constants.TYPE_TRAIN) && !taskType.equals(Constants.TYPE_EXECUTION)){
             validCode = ERR_WRONG_TASK_TYPE;
             return genErrorResponse(validCode);
         }
@@ -167,10 +167,21 @@ public class ExperimentResource {
             case(ERR_BLANK_PARAMS):
                 msg = "Experiment name is not provided in your request";
                 break;
+            case(ERR_EXP_RECORD_NOT_FOUND):
+                msg = "No such experiment stored in the system";
+                break;
+            case(ERR_WRONG_TASK_TYPE):
+                msg = "Invalid associated task type";
+                break;
             case(ERR_INVALID_RES_PATH):
                 msg = "Resources path stored in system is invalid";
+                break;
             case(ERR_ALREADY_FINISHED):
                 msg = "The experiment has already finished";
+                break;;
+            case(ERR_DUPLICATE_EXP_RECORD):
+                msg = "Found duplicate experiment records in system. This is an issue related with backend database. Please contact administer";
+                break;;
             default:
                 errorCode = ERR_UNKNOWN;
                 msg = "unknown error";
