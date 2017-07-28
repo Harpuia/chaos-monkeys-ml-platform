@@ -127,25 +127,25 @@ public class Launcher {
     Launcher.hostIP = MachineIPUtility.getRealIp();*/
 
         //Start registration
-        ThreadSafeRegister registerThread = new ThreadSafeRegister();
-        registerThread.start();
+        //ThreadSafeRegister registerThread = new ThreadSafeRegister();
+        //registerThread.start();
 
         //Check register status
-        try {
-            registerThread.join();
-        } catch (InterruptedException e) {
-            Logger.SaveLog(LogType.Exception, "EXCEPTION: Failed to register.");
-        }
-        if (isRegistered) {
-            //Send heartbeats
-//            HeartBeatsClient hbClient = new HeartBeatsClient();
-//            hbClient.startSendHeartBeat(coordinationIP);
-            // input service heartbeats clients
-            DatasetInputServiceHeartBeatsClient datasetInputServiceHeartBeatsClient = new DatasetInputServiceHeartBeatsClient();
-            datasetInputServiceHeartBeatsClient.startSendHeartBeat(coordinationIP);
-        } else {
-            Logger.SaveLog(LogType.Error, "ERROR: Failed to register on coordination service! Please contact administrator.");
-        }
+//        try {
+////            registerThread.join();
+//        } catch (InterruptedException e) {
+//            Logger.SaveLog(LogType.Exception, "EXCEPTION: Failed to register.");
+////        }
+//        if (isRegistered ||!isRegistered ) {
+//            //Send heartbeats
+////            HeartBeatsClient hbClient = new HeartBeatsClient();
+////            hbClient.startSendHeartBeat(coordinationIP);
+//            // input service heartbeats clients
+//            DatasetInputServiceHeartBeatsClient datasetInputServiceHeartBeatsClient = new DatasetInputServiceHeartBeatsClient();
+//            datasetInputServiceHeartBeatsClient.startSendHeartBeat(coordinationIP);
+//        } else {
+//            Logger.SaveLog(LogType.Error, "ERROR: Failed to register on coordination service! Please contact administrator.");
+//        }
 
     }
 
@@ -224,7 +224,8 @@ public class Launcher {
     public static void main(String[] args) throws Exception {
         // the first argument should be the absolute path of the config.ini file
         if (args != null) {
-            String configurationPath = args[0];
+            String configurationPath = "C:\\Users\\hitno\\Documents\\data61work\\dev_branch\\CMUChaosMonkeysExperimentationPlatform\\JerseyServices\\config.ini";
+            //String configurationPath = args[0];
             new Launcher().start(configurationPath);
         } else {
             System.out.println("Error! Argument not provided: path to configuration file (config.ini)");
