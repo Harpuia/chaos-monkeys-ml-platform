@@ -6,6 +6,7 @@ import com.chaosmonkeys.Utilities.Logger;
 import com.chaosmonkeys.Utilities.StringUtils;
 import com.chaosmonkeys.Utilities.db.DbUtils;
 import com.chaosmonkeys.dao.Experiment;
+import com.chaosmonkeys.dao.Prediction;
 import com.chaosmonkeys.dao.PredictionModel;
 import com.chaosmonkeys.train.task.interfaces.OnTaskUpdateListener;
 import org.zeroturnaround.exec.ProcessExecutor;
@@ -257,15 +258,15 @@ public class ExecutionTask extends AbsTask{
         int projectId = experiment.getInteger("project_id");
         int experimentId = (Integer) experiment.getId();
         // TODO: change model to prediction in the future
-        PredictionModel model = new PredictionModel();
+        Prediction prediction = new Prediction();
         // TODO: the stored sample information should be modified after
         try {
-            model.setModelName(expName + "-prediction")
-                    .setDescription("sample description")
+            prediction.setModelName(expName + "- prediction")
+                    .setDescription("Prediction output for the experiment: " + expName)
                     .setPath(targetFolder.toPath().toRealPath().toString())
                     .setProjectId(projectId)
                     .setExperimentId(experimentId);
-            model.save();
+            prediction.save();
             DbUtils.closeConnection();
             Logger.Info("a new prediction has been created and stored in the system");
         } catch (IOException e) {

@@ -10,10 +10,10 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.*;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 /**
  * Class containing all possible service calls (API methods)
@@ -85,16 +85,19 @@ public class DatasetInputService {
         // Open the direct parent folder
         File executionFolder = FileUtils.createNewFolderUnder(FileUtils.EXECUTION_DATA, datasetFolder);
         File targetFolder = FileUtils.createNewFolderUnder(dataName, executionFolder);
-        boolean receiveSucess = receiveFile(fileInputStream, targetFolder, fileMetaData.getFileName());
+        // + FileUtils.sanitizeFilename(fileMetaData.getFileName()) // if you wanna the original filename
+        String dateTimeStr = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuu-MMM-d-HH-mm-ss", Locale.US)); // check locale when deploying
+        String dataFileName = userId + "-" + dateTimeStr + "-" +  FileUtils.sanitizeFilename(dataName)  + "." + format.toLowerCase();
+        boolean receiveSucess = receiveFile(fileInputStream, targetFolder, dataFileName);
         if(!receiveSucess){
             validCode = ERR_TRANSMISSION_FILE;
             return genErrorResponse(validCode);
         }
-
+        File targetFile = new File(targetFolder, dataFileName);
         //insert data sets into database.
         boolean inserted = false;
         try {
-            inserted = DbUtils.storeDataSet(userId,projectId,dataName,dataDescription,targetFolder.getCanonicalPath(),format);
+            inserted = DbUtils.storeDataSet(userId,projectId,dataName,dataDescription, targetFile.getCanonicalPath(),format);
         } catch (IOException e) {
             Logger.Exception("Fail to store new datasets into database");
             e.printStackTrace();
