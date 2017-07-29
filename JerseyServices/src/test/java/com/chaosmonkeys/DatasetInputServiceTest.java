@@ -73,7 +73,8 @@ public class DatasetInputServiceTest extends JerseyTest {
     }
 
     /**
-     * Test with wrong parameter type (project id)
+     * Test with empty file uploaded (the fileStream is null)
+     * expected return BAD_REQUEST
      */
     @Test
     public void testLackOfFormBodyPart(){
@@ -83,7 +84,7 @@ public class DatasetInputServiceTest extends JerseyTest {
         FormDataBodyPart filePart;
         try {
             // create test file
-            final File testFile = folder.newFile("test.txt");
+            final File testFile = folder.newFile("testCSV.csv");
 
             filePart = new FileDataBodyPart("file", testFile);   // pom.xml
 
@@ -97,7 +98,7 @@ public class DatasetInputServiceTest extends JerseyTest {
             // request the response Jersey 2.25 will not recognize multipartEntity.getMediaType()
             Response response = target("services/datasets/upload").request().post(Entity.entity(multipartEntity, contentType));
 
-            assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
             response.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -105,10 +106,11 @@ public class DatasetInputServiceTest extends JerseyTest {
     }
 
     /**
-     * Test with normal operation
+     * Test with invalid file extension operation
+     * TODO: someone could build a test data util or coleection inside the test class
      */
     @Test
-    public void testNormalUpload() {
+    public void testInvalidExtensionUpload() {
         MediaType contentType = MediaType.MULTIPART_FORM_DATA_TYPE;
         contentType = Boundary.addBoundary(contentType);
         // declare a file as part of the form data
@@ -129,11 +131,41 @@ public class DatasetInputServiceTest extends JerseyTest {
             // request the response Jersey 2.25 will not recognize multipartEntity.getMediaType()
             Response response = target("services/datasets/upload").request().post(Entity.entity(multipartEntity, contentType));
 
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+            response.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * Test with normal operation
+     */
+    @Test
+    public void testNormalUpload() {
+        MediaType contentType = MediaType.MULTIPART_FORM_DATA_TYPE;
+        contentType = Boundary.addBoundary(contentType);
+        // declare a file as part of the form data
+        FormDataBodyPart filePart;
+        try {
+            // create test file
+            final File testFile = folder.newFile("testCSV.csv");
+            filePart = new FileDataBodyPart("file", testFile);   // pom.xml
+
+            // construct the entire form with all required parameters
+            MultiPart multipartEntity = new FormDataMultiPart()
+                    .field("project_id", "123")
+                    .field("user_id", "321")
+                    .field("name", "testname")
+                    .field("description", "memeda des")
+                    .field("format","csv")
+                    .bodyPart(filePart);
+            // request the response Jersey 2.25 will not recognize multipartEntity.getMediaType()
+            Response response = target("services/datasets/upload").request().post(Entity.entity(multipartEntity, contentType));
+
             assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
             response.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 }
