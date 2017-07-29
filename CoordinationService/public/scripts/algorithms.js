@@ -179,7 +179,7 @@ function displayDetails(algorithmIndex) {
   $('#algorithmName').text(algorithmsData[algorithmIndex]['name']);
   $('#algorithmDescription').text(algorithmsData[algorithmIndex]['description']);
   $('#algorithmLanguage').text(algorithmsData[algorithmIndex]['language']);
-  $('#algorithmPath').text(algorithmsData[algorithmIndex]['path']);
+  $('#algorithmPath').html('<a href="http://127.0.0.1:3000/download/algorithm/' + algorithmsData[algorithmIndex]['id'] + '" target="_blank">Download</a>');
 
   //Load algorithms types
   $.get("tasks/listByAlgorithm/" + algorithmsData[algorithmIndex]['id'], function (data) {

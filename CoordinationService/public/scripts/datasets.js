@@ -187,7 +187,7 @@ function displayDetails(datasetIndex) {
   $('#datasetName').text(datasetsData[datasetIndex]['name']);
   $('#datasetDescription').text(datasetsData[datasetIndex]['description']);
   $('#datasetFormat').text(datasetsData[datasetIndex]['format']);
-  $('#datasetPath').text(datasetsData[datasetIndex]['path']);
+  $('#datasetPath').html('<a href="http://127.0.0.1:3000/download/dataset/' + datasetsData[datasetIndex]['id'] + '" target="_blank">Download</a>');
 
   //Load tasks types
   $.get("tasks/listByDataset/" + datasetsData[datasetIndex]['id'], function (data) {
