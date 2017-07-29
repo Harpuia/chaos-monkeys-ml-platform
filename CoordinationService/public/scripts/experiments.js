@@ -17,17 +17,24 @@ function loadPage() {
     if (!experimentsData || experimentsData.length === 0) {
       $('#experimentsTableBody').html('<h3>This list is empty!</h3>');
     } else {
+      var loading;
       for (i = 0; i < data['experimentsData'].length; i++) {
+        loading = false;
         var cssLabel;
-        if (data['experimentsData'][i]['last_status'] === 'SUCCESS' || data['experimentsData'][i]['last_status'] === 'CANCELLED')
+        if (data['experimentsData'][i]['last_status'] === 'SUCCESS' || data['experimentsData'][i]['last_status'] === 'CANCELED')
           cssLabel = 'label-success';
         else if (data['experimentsData'][i]['last_status'] === 'ERROR')
           cssLabel = 'label-danger';
-        else if(data['experimentsData'][i]['last_status'] === 'IDLE')
+        else if (data['experimentsData'][i]['last_status'] === 'IDLE')
           cssLabel = 'label-default';
-        else
+        else {
           cssLabel = 'label-warning';
-        experimentsList += '<tr><td><span class="fa fa-flask" aria-hidden="true"></span>&nbsp;&nbsp;' + data['experimentsData'][i]['experiment_name'] + '</td><td>' + data['experimentsData'][i]['description'] + '<br><span class="label ' + cssLabel + '">' + data['experimentsData'][i]['last_status'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td></tr>';
+          loading = true;
+        }
+        var spinner = '';
+        if (loading)
+          spinner = '&nbsp;&nbsp;<span class="fa fa-refresh" aria-hidden="true">';
+        experimentsList += '<tr><td><span class="fa fa-flask" aria-hidden="true"></span>&nbsp;&nbsp;' + data['experimentsData'][i]['experiment_name'] + spinner + '</td><td>' + data['experimentsData'][i]['description'] + '<br><span class="label ' + cssLabel + '">' + data['experimentsData'][i]['last_status'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td></tr>';
       }
       $('#experimentsTableBody').html(experimentsList);
     }
@@ -87,7 +94,7 @@ function submitForm() {
   }
 }
 /* stop the experiment shown in detail now*/
-function stopExperiment(expName){
+function stopExperiment(expName) {
   var experimentInfo = {
     experiment_name: expName
   }
@@ -167,7 +174,7 @@ function displayDetails(experimentIndex) {
     var tmpExpName = experimentsData[experimentIndex].experiment_name;
     $('#stopExperimentButton').html('<button class="btn btn-primary" id="stopButton" >Stop Experiment</button>');
     var stopButton = $('#stopButton')
-    stopButton.click(function(){
+    stopButton.click(function () {
       stopExperiment(tmpExpName);
     });
   } else {
