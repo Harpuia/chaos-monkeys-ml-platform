@@ -42,6 +42,9 @@ public class FileUtils {
 
     // Constants operating with model storage
     public static final String MODEL_PATH = WORKSPACE_PATH + FILE_SEPARATOR + "Models" + FILE_SEPARATOR;
+
+    // Constants operating with prediction storage
+    public static final String PREDICTION_PATH = WORKSPACE_PATH + FILE_SEPARATOR + "Predictions" + FILE_SEPARATOR;
     // Filename case sensitive
     private static boolean sensitive = false;
 
@@ -99,8 +102,8 @@ public class FileUtils {
 
     /**
      * Check if a File object is a folder and existed
-     * @param folder
-     * @return
+     * @param folder File instance that need to be checked
+     * @return folder is valid or not
      */
     public static boolean checkFolderValid(File folder){
         boolean succ = false;
@@ -130,7 +133,7 @@ public class FileUtils {
      *
      * @param folderName
      * @param parentFolder
-     * @return
+     * @return created folder
      */
     public static File createNewFolderUnder(String folderName, File parentFolder) {
         File folder = new File(parentFolder, folderName);
@@ -146,7 +149,7 @@ public class FileUtils {
      * please replace the path to absolute path
      *
      * @param path
-     * @return
+     * @return created folder
      */
     public static File createFolderInPath(String path) {
         File rootFolder = new File(path);
@@ -180,6 +183,10 @@ public class FileUtils {
      */
     public static File createModelFolder(){
         return createFolderInPath(MODEL_PATH);
+    }
+
+    public static File createPredictionFolder(){
+        return createFolderInPath(PREDICTION_PATH);
     }
     /**
      * Create model folder if it does not exit

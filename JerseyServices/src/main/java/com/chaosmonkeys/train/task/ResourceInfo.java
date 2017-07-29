@@ -1,6 +1,7 @@
 package com.chaosmonkeys.train.task;
 
 import com.chaosmonkeys.Utilities.FileUtils;
+import com.chaosmonkeys.train.Constants;
 
 import java.io.File;
 
@@ -57,7 +58,27 @@ public class ResourceInfo {
         boolean valid = datasetValid && algrValid && workspaceValid && modelValid;
         return valid;
     }
+    /**
+     * Check whether ResourceInfo are ready
+     * @param type
+     * @return
+     */
+    public boolean checkRequirement(String type){
 
+        boolean modelValid = false;
+
+        boolean datasetValid = FileUtils.checkFolderValid(datasetFolder);
+        boolean algrValid = FileUtils.checkFolderValid(algorithmFolder);
+        boolean workspaceValid = FileUtils.checkFolderValid(workspaceFolder);
+
+        if(type.equals(Constants.TYPE_TRAIN)){
+            modelValid = true;
+        }else{
+            modelValid = FileUtils.checkFolderValid(modelFolder);
+        }
+        boolean valid = datasetValid && algrValid && workspaceValid && modelValid;
+        return valid;
+    }
 
     //** Builder -------------------------------------------------------------------------------
     public static class ResourceInfoBuilder {

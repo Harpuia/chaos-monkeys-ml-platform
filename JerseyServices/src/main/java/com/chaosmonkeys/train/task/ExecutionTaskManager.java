@@ -1,6 +1,5 @@
 package com.chaosmonkeys.train.task;
 
-
 import com.chaosmonkeys.Utilities.db.DbUtils;
 import com.chaosmonkeys.dao.Experiment;
 import com.chaosmonkeys.train.task.interfaces.OnTaskUpdateListener;
@@ -12,57 +11,57 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Traning task manager used for handling task callback
+ * Execution/Prediction task manager used for handling task callback
  * adding task, invoking updating database and provide proper info for
- * heartbeats
+ * heartbeats (maybe)
  */
-
-public enum TrainingTaskManager implements TaskManager{
+public enum ExecutionTaskManager implements  TaskManager{
     // singleton
     INSTANCE;
 
-    private java.util.concurrent.atomic.AtomicInteger runningTaskNum = new AtomicInteger();
+    AtomicInteger runningTaskNum = new AtomicInteger();
     // taskId -> Task
-    private Map<String, TrainingTask> taskMap = new ConcurrentHashMap<>();
+    private Map<String, ExecutionTask> taskMap = new ConcurrentHashMap<>();
     // map experiment name to task ID because the frontend would like to use experiment name as identifier
     private Map<String, String> taskNameIdMap = new ConcurrentHashMap<>();
 
-    public boolean submitTask(BaseTaskInfo taskInfo){
-        TrainingTaskInfo trainTaskInfo = (TrainingTaskInfo) taskInfo;
-        TrainingTask trainingTask = new TrainingTask(trainTaskInfo, mOnTaskUpdateListener);
-        taskMap.put(trainTaskInfo.getTaskId(), trainingTask);
-        taskNameIdMap.put(trainTaskInfo.getExperimentName(), trainTaskInfo.getTaskId());
-        trainingTask.initialize();
 
-        // TODO: discover some error case which may return false
+    @Override
+    public boolean submitTask(BaseTaskInfo taskInfo) {
+        ExecutionTaskInfo predictTaskInfo = (ExecutionTaskInfo) taskInfo;
+        ExecutionTask predictTask = new ExecutionTask(predictTaskInfo, mOnTaskUpdateListener);
+        // update the reference of experiment name -> taskId -> task
+        taskMap.put(predictTaskInfo.getTaskId(), predictTask);
+        taskNameIdMap.put(predictTaskInfo.getExperimentName(), predictTaskInfo.getTaskId());
+        predictTask.initialize();
+
         return true;
     }
 
     @Override
-    public boolean cancelTask(String taskId){
-        TrainingTask trainTask = taskMap.get(taskId);
-        trainTask.cancelWorks();
+    public boolean cancelTask(String taskId) {
+        ExecutionTask predictTask  = taskMap.get(taskId);
+        predictTask.cancelWorks();
         return true;
     }
 
     @Override
-    public boolean cancelTaskByExperimentName(String experimentName){
+    public boolean cancelTaskByExperimentName(String experimentName) {
         String taskId = taskNameIdMap.get(experimentName);
-        TrainingTask trainTask  = taskMap.get(taskId);
-        trainTask.cancelWorks();
+        ExecutionTask predictTask  = taskMap.get(taskId);
+        predictTask.cancelWorks();
         return true;
     }
 
-
-
+    //---------------
     /**
      * Update experiment task status in database
      * @param taskId
      * @param state
      */
-    public TrainingTask updateTaskStatus(String taskId, TaskState state){
-        TrainingTask task = taskMap.get(taskId);
-        TrainingTaskInfo trainTaskInfo = task.getTaskInfo();
+    public ExecutionTask updateTaskStatus(String taskId, TaskState state){
+        ExecutionTask task = taskMap.get(taskId);
+        BaseTaskInfo trainTaskInfo = task.getTaskInfo();
         // set initializing status and update database record
         DbUtils.openConnection();
         task.setState(state);
@@ -83,6 +82,9 @@ public enum TrainingTaskManager implements TaskManager{
         return task;
     }
 
+    /**
+     * Listener for monitoring and controling the lifecycle of tasks
+     */
     OnTaskUpdateListener mOnTaskUpdateListener = new OnTaskUpdateListener() {
         // start initializing
         @Override
@@ -93,7 +95,7 @@ public enum TrainingTaskManager implements TaskManager{
         // task workspace has been initialized, the manager should update record and let the task start if available
         @Override
         public void onInitialized(String taskId) {
-            TrainingTask task = updateTaskStatus(taskId, TaskState.INITIALIZED);
+            ExecutionTask task = updateTaskStatus(taskId, TaskState.INITIALIZED);
             // task is permitted to run
             task.performTask();
         }
@@ -105,13 +107,13 @@ public enum TrainingTaskManager implements TaskManager{
 
         @Override
         public void onCancelled(String taskId) {
-            TrainingTask task = updateTaskStatus(taskId, TaskState.CANCELLED);
+            ExecutionTask task = updateTaskStatus(taskId, TaskState.CANCELLED);
             runningTaskNum.decrementAndGet();
         }
 
         @Override
         public void onSuccess(String taskId) {
-            TrainingTask task = updateTaskStatus(taskId, TaskState.SUCCESS);
+            ExecutionTask task = updateTaskStatus(taskId, TaskState.SUCCESS);
             runningTaskNum.decrementAndGet();
             task.cleanUp();
         }
@@ -126,5 +128,4 @@ public enum TrainingTaskManager implements TaskManager{
     public int getRunningTaskNum(){
         return runningTaskNum.get();
     }
-
 }

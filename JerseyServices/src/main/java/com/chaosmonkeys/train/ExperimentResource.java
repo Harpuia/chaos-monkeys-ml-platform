@@ -2,12 +2,10 @@ package com.chaosmonkeys.train;
 
 import com.chaosmonkeys.DTO.BaseResponse;
 import com.chaosmonkeys.Utilities.FileUtils;
+import com.chaosmonkeys.Utilities.Logger;
 import com.chaosmonkeys.Utilities.StringUtils;
 import com.chaosmonkeys.Utilities.db.DbUtils;
-import com.chaosmonkeys.dao.Algorithm;
-import com.chaosmonkeys.dao.Dataset;
-import com.chaosmonkeys.dao.Experiment;
-import com.chaosmonkeys.dao.Task;
+import com.chaosmonkeys.dao.*;
 import com.chaosmonkeys.train.dto.ExperimentDto;
 import com.chaosmonkeys.train.task.*;
 
@@ -18,7 +16,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
-import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -37,6 +34,7 @@ public class ExperimentResource {
     public static final int ERR_WRONG_TASK_TYPE = 304;
     public static final int ERR_INVALID_RES_PATH = 305;
     public static final int ERR_ALREADY_FINISHED = 306;
+    public static final int ERR_INVALID_EXP_STATUS = 307;
     public static final int ERR_UNKNOWN = 399;
 
     // reference to the task manager
@@ -69,37 +67,65 @@ public class ExperimentResource {
         Experiment experiment = experiments.get(0);
         // find the related task (1-n relationship)
         Task task = experiment.parent(Task.class);
-        // type
+        // task type checking, only TYPE_TRAIN or TYPE_EXECUTION is permitted
         String taskType = task.getTaskType();
         if(!taskType.equals(Constants.TYPE_TRAIN) && !taskType.equals(Constants.TYPE_EXECUTION)){
             validCode = ERR_WRONG_TASK_TYPE;
             return genErrorResponse(validCode);
         }
+        boolean isPredictionTask = taskType.equals(Constants.TYPE_EXECUTION) ;
         // find the related algorithm
+        // TODO: I guess if there are corrupt data stored in the database, this will crash because of related info cannot be found
         Algorithm algr = task.parent(Algorithm.class);
         Dataset dataset = task.parent(Dataset.class);
+
         // construct ResourceInfo
         String datasetPath = dataset.getDatasetPath();
         String algrPath = algr.getAlgorithmPath();
         String algrLanguage =algr.getAlgorithmLanguage();
-        // close connection
-        DbUtils.closeConnection();
+
         File datasetFolder = new File(datasetPath);
         File algrFolder = new File(algrPath);
         File workspaceFolder = FileUtils.createTempDir();
-        ResourceInfo resInfo = new ResourceInfo.ResourceInfoBuilder().
+        ResourceInfo.ResourceInfoBuilder resInfoBuilder = new ResourceInfo.ResourceInfoBuilder().
                 setDatasetFolder(datasetFolder).
                 setAlgorithmFolder(algrFolder).
-                setWorkspaceFolder(workspaceFolder).build();
-        if(! resInfo.checkRequirement(TaskType.TRAIN)){
-            //TODO: delete temp folder, clean up
+                setWorkspaceFolder(workspaceFolder);
+        if(isPredictionTask){
+            PredictionModel predictModel= task.parent(PredictionModel.class);
+            String modelPath = predictModel.getString("path");
+            File modelFolder = new File(modelPath);
+            resInfoBuilder.setModelFolder(modelFolder);
+        }
+        // close connection
+        DbUtils.closeConnection();
+
+        ResourceInfo resInfo = resInfoBuilder.build();
+        if(! resInfo.checkRequirement(taskType)){
+            FileUtils.deleteQuietly(workspaceFolder);   // delete tmp workspace folder
             validCode = ERR_INVALID_RES_PATH;
             return genErrorResponse(validCode);
         }
-        // construct TaskInfo
-        TrainingTaskInfo trainingTaskInfo= new TrainingTaskInfo(expName, algrLanguage, resInfo);
-        // get task manager instance and submit the task
-        TrainingTaskManager.INSTANCE.submitTask(trainingTaskInfo);
+        validCode = CHECK_SUCCESS;
+        switch (taskType){
+            case(Constants.TYPE_TRAIN):
+                // construct TaskInfo
+                TrainingTaskInfo trainingTaskInfo= new TrainingTaskInfo(expName, algrLanguage, resInfo);
+                // get task manager instance and submit the task
+                TrainingTaskManager.INSTANCE.submitTask(trainingTaskInfo);
+                break;
+            case(Constants.TYPE_EXECUTION):
+                ExecutionTaskInfo executionTaskInfo = new ExecutionTaskInfo(expName, algrLanguage, resInfo);
+                ExecutionTaskManager.INSTANCE.submitTask(executionTaskInfo);
+                break;
+            default:
+                Logger.Error("Unknown issue lead to unsupported task type when submitting experiment to run");
+                validCode = ERR_WRONG_TASK_TYPE;
+                break;
+        }
+        if(CHECK_SUCCESS != validCode ){
+            return genErrorResponse(validCode);
+        }
 
         return genSuccResponse();
     }
@@ -133,11 +159,15 @@ public class ExperimentResource {
         String experimentState = experiment.getString("last_status");
         DbUtils.closeConnection();
         //TODO prevent experiment state is null because of test data
-        if (!TaskState.isFinished(experimentState)){
+        if ( TaskState.isValidStatus(experimentState) || !TaskState.isFinished(experimentState)){
             getTaskManager().cancelTaskByExperimentName(expName);
             return genSuccResponseWithMsg("Experiment cancelled");
         }else{
-            validCode = ERR_ALREADY_FINISHED;
+            if(TaskState.isValidStatus(experimentState)){
+                validCode = ERR_INVALID_EXP_STATUS;
+            }else{
+                validCode = ERR_ALREADY_FINISHED;
+            }
             return genErrorResponse(validCode);
         }
     }
@@ -181,6 +211,9 @@ public class ExperimentResource {
                 break;
             case(ERR_DUPLICATE_EXP_RECORD):
                 msg = "Found duplicate experiment records in system. This is an issue related with backend database. Please contact administer";
+                break;
+            case(ERR_INVALID_EXP_STATUS):
+                msg = "The experiment has an unexpected status now, cancelation cannot work, please contact administrator";
                 break;
             default:
                 errorCode = ERR_UNKNOWN;

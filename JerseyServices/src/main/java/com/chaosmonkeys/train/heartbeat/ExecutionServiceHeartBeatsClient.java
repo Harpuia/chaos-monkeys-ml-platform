@@ -6,6 +6,7 @@ import com.chaosmonkeys.Utilities.Logger;
 
 import com.chaosmonkeys.train.Constants;
 import com.chaosmonkeys.train.dto.ExecutionServiceStatus;
+import com.chaosmonkeys.train.task.ExecutionTaskManager;
 import com.chaosmonkeys.train.task.TrainingTaskManager;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
@@ -44,7 +45,7 @@ public class ExecutionServiceHeartBeatsClient {
         Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
         while (true) {
             try {
-                int runningNum = TrainingTaskManager.INSTANCE.getRunningTaskNum();
+                int runningNum = TrainingTaskManager.INSTANCE.getRunningTaskNum() + ExecutionTaskManager.INSTANCE.getRunningTaskNum();
                 String runState = runningNum > 0 ? Constants.STATUS_RUN : Constants.STATUS_IDLE;
                 ExecutionServiceStatus status = new ExecutionServiceStatus(Launcher.getHostIP(), runState);
 

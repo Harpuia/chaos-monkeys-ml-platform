@@ -14,7 +14,6 @@ import org.zeroturnaround.exec.StartedProcess;
 import org.zeroturnaround.process.ProcessUtil;
 import org.zeroturnaround.process.Processes;
 import org.zeroturnaround.process.SystemProcess;
-import org.zeroturnaround.process.WindowsProcess;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,25 +23,22 @@ import java.util.Optional;
 import java.util.concurrent.*;
 
 /**
- * Training task runner
+ * Prediction/Execution experiment runner
  */
-public class TrainingTask extends AbsTask{
+public class ExecutionTask extends AbsTask{
 
-    private TrainingTaskInfo taskInfo;
+    private BaseTaskInfo taskInfo;
     // volatile used for checking cancelled status
     private volatile boolean cancelled = false;
-
-    public TrainingTask(TrainingTaskInfo trainTaskInfo, OnTaskUpdateListener listener){
-        this.taskInfo = trainTaskInfo;
+    private String taskId;
+    /** Constructor */
+    public ExecutionTask(BaseTaskInfo taskInfo, OnTaskUpdateListener listener){
+        this.taskInfo = taskInfo;
         this.setTaskUpdateListener(listener);
+        this.taskId = taskInfo.getTaskId();
     }
 
-    //---------------------------------------
-    @Override
-    protected ExecutorService getExecutorService() {
-        return super.getExecutorService();
-    }
-
+    /** Task lifecycle related*/
     @Override
     protected void initialize() {
         // evaluate the current state, backward is not permitted
@@ -60,7 +56,7 @@ public class TrainingTask extends AbsTask{
         if(isInitialized()){
             taskUpdateListener.onStarted(getTaskId());
             final ExecutorService executorService = getExecutorService();
-            executorService.submit(rTrainingPerformer);
+            executorService.submit(rPredictPerformer);
         }
     }
 
@@ -69,7 +65,7 @@ public class TrainingTask extends AbsTask{
         if(isFinished()){
             // success
             final ExecutorService executorService = getExecutorService();
-            executorService.submit(this::moveOutputToModel);
+            executorService.submit(this::moveOutputToPrediction);
             // todo: error or cancel or finished
             executorService.submit(cleanUpPerformer);
         }
@@ -82,8 +78,14 @@ public class TrainingTask extends AbsTask{
         cancelled = true;       // let runnable check the volatile variable and throw interruption
         taskUpdateListener.onCancelled(getTaskId());
     }
+    @Override
+    protected ExecutorService getExecutorService() {
+        return super.getExecutorService();
+    }
 
-    //** Task Performers  ----------------------------------------------------------------------
+    //---------------------------------
+    /** Runnables: if you like clean but complex code, try to extract these runnables to standalone class */
+
     /**
      * Runnable for checking
      */
@@ -95,8 +97,11 @@ public class TrainingTask extends AbsTask{
                 FileUtils.copyDirectory(res.getAlgorithmFolder(),res.getWorkspaceFolder());
                 if(cancelled){ throw new InterruptedException(); }
                 File tmpInputFolder = new File(res.getWorkspaceFolder(), "input");
+                File tmpModelFolder = new File(res.getWorkspaceFolder(), "model");
                 // copy data set content to workspace input folder
                 FileUtils.copyDirectory(res.getDatasetFolder(), tmpInputFolder);
+                if(cancelled){ throw new InterruptedException(); }
+                FileUtils.copyDirectory(res.getModelFolder(), tmpModelFolder);
                 if(cancelled){ throw new InterruptedException(); }
                 // invoke initialized
                 if(!cancelled){
@@ -111,23 +116,25 @@ public class TrainingTask extends AbsTask{
             //TODO: trigger error and clean up
         }catch (InterruptedException ex){   // cancelled
             Logger.Info("Experiment cancelled during initializing");
+            // TODO: maybe delete the workspace folder if user wants it
         }
     };
 
-
     /**
-     * Runnable used to run training task
+     * Runnable used to run prediction/execution task
      * run the application and move resulted files to a proper folder
+     * TODO: adding logic to check using which language runtime
      */
-    private Runnable rTrainingPerformer = () -> {
+    private Runnable rPredictPerformer = () -> {
         // construct command
         final File workspaceFolder = getTaskInfo().getResourceInfo().getWorkspaceFolder();
+        // TODO: if the entry point change, modify this, or extrac it to XML or Constants for managementz
         final File entryFile = new File(workspaceFolder, "Main.R");
         Process rProcess = null;    // use for canceling R application
         boolean processStarted = false;
         boolean processFinished = false;
         Path rFilePath = entryFile.toPath();
-        //TODO: check kinds of OS and use different command
+        //TODO: check kinds of OS and use different command, here we assume the Rscript command has been installed
         ProcessExecutor procExecutor = new ProcessExecutor().directory(workspaceFolder).command("Rscript", rFilePath.toString());
         Optional<String> output = Optional.empty();
         try {
@@ -159,8 +166,8 @@ public class TrainingTask extends AbsTask{
                     boolean matched = StringUtils.containsIgnoreCase(outputStr, "error");
                     Logger.Info(outputStr);
                     if (matched) {
-                        Logger.Error("Training task terminated with error output " + outputStr);
-                        Exception ex = new Exception("training experiment terminated with error output");
+                        Logger.Error("Execution task terminated with error output " + outputStr);
+                        Exception ex = new Exception("Execution experiment terminated with error output");
                         if (!cancelled) {
                             taskUpdateListener.onError(ex, getTaskId());
                         }
@@ -184,8 +191,8 @@ public class TrainingTask extends AbsTask{
         } catch (InterruptedException e) {
             if (cancelled) {
                 //invoke zt-killer
-                if (processStarted) {
-                    if (!processFinished) {
+                if (processStarted) {   // if process is not started, there is not need to kill it :)
+                    if (!processFinished) { // if the process has finished, there is not need to kill it : )
                         Optional<Process> procOptional = Optional.ofNullable(rProcess);
                         if (procOptional.isPresent()) {
                             SystemProcess sysProcess = Processes.newStandardProcess(procOptional.get());
@@ -203,24 +210,25 @@ public class TrainingTask extends AbsTask{
                     }
                 }
             } else {
-                Logger.Error("The training experiment has been interrupted in accidentally");
+                Logger.Error("The execution experiment has been interrupted in accidentally");
                 e.printStackTrace();
                 taskUpdateListener.onError(e, getTaskId());
             }
         }
 
     };
+
     /**
      * Delete temp workspace folder in the background
      */
     private Runnable cleanUpPerformer = () -> {
         // create a model folder
-
     };
 
-    private void moveOutputToModel(){
+    // TODO: when we have design, put the prediction output to the right place
+    private void moveOutputToPrediction(){
         //create Algorithm folder if it does not exist yet
-        File modelFolder = FileUtils.createModelFolder();
+        File modelFolder = FileUtils.createPredictionFolder();
         Logger.SaveLog(LogType.Information, "PredictionModel storage root folder has been created");
         //create dev language folder if it does not exist yet
         String language = getTaskInfo().getExperimentLanguage();
@@ -237,7 +245,7 @@ public class TrainingTask extends AbsTask{
         } catch (IOException e) {
             //TODO: trigger error handler and cleanup
             e.printStackTrace();
-            Logger.Error("Error happened when moving output to model folder");
+            Logger.Error("Error happened when moving output to prediction folder");
         }
         // store in database
         //TODO: move to DbUtils
@@ -245,34 +253,56 @@ public class TrainingTask extends AbsTask{
         DbUtils.openConnection();
         List<Experiment> experiments = Experiment.where("experiment_name = ?", expName);
         Experiment experiment = experiments.get(0);
+        // TODO: check this if later there is no project_id in database
         int projectId = experiment.getInteger("project_id");
         int experimentId = (Integer) experiment.getId();
+        // TODO: change model to prediction in the future
         PredictionModel model = new PredictionModel();
+        // TODO: the stored sample information should be modified after
         try {
-            model.setModelName(expName + "-model")
+            model.setModelName(expName + "-prediction")
                     .setDescription("sample description")
                     .setPath(targetFolder.toPath().toRealPath().toString())
                     .setProjectId(projectId)
                     .setExperimentId(experimentId);
             model.save();
             DbUtils.closeConnection();
-            Logger.Info("a new model has been created and stored in the system");
+            Logger.Info("a new prediction has been created and stored in the system");
         } catch (IOException e) {
             e.printStackTrace();
-            Logger.Error("database error when insert a new model");
+            Logger.Error("database error when insert a new prediction");
             DbUtils.closeConnection();
             taskUpdateListener.onError(e, getTaskId());
         }
 
     }
 
-    //** Utils -----------------------------------------------------------------------------------
 
+    //--------------------------------
+    /** Utils */
+    /**
+     * return task ID,
+     * this method assumes the instance has been intialized correctlys
+     * @return
+     */
     public String getTaskId(){
-        return taskInfo.getTaskId();
+        return this.taskId;
     }
 
-    public TrainingTaskInfo getTaskInfo() {
+    /**
+     * Get task info instance
+     * @return BaseTaskInfo which contains all required infomation
+     */
+    public BaseTaskInfo getTaskInfo(){
         return taskInfo;
+    }
+
+    /**
+     * Get task info
+     * @return ExecutionTaskInfo which contains all required infomation
+     */
+    public ExecutionTaskInfo getExecutionTaskInfo(){
+        ExecutionTaskInfo info = (ExecutionTaskInfo) taskInfo;
+        return info;
     }
 }

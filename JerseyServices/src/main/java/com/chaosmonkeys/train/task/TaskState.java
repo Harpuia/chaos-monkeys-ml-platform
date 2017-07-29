@@ -45,4 +45,17 @@ public enum TaskState {
         }
         return false;
     }
+
+    /**
+     * Determine if a string is a valid status string
+     * @return
+     */
+    public static boolean isValidStatus(String str){
+        if(null != str && 0 != str.length()){
+            if(strValList.contains(str)){
+                return true;
+            }
+        }
+        return false;
+    }
 }
