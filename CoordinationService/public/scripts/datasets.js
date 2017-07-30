@@ -152,7 +152,6 @@ function submitForm() {
     $.ajax({
       url: "http://127.0.0.1:8080/services/datasets/upload",
       type: "POST",
-      dataType: 'text',
       data: form,
       processData: false,
       contentType: false,
@@ -160,8 +159,14 @@ function submitForm() {
         showSubmissionResult("Success!", success, successText);
         loadPage();
       },
-      error: function (request, status, error) {
-        showSubmissionResult("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
+      error: function (jqXHR, status, error) {
+        if (jqXHR.responseJSON) {
+          var resObject = jqXHR.responseJSON;
+          displayAlertByType(resObject, alert, alertText);
+        } else {
+          var networkErr = "Upload request failed, please check your network connection or contact the server administrator";
+          showSubmissionResult(networkErr, alert, alertText);
+        }
       },
       complete: function () {
         document.getElementById("uploading").style.display = "none";
@@ -175,6 +180,13 @@ function submitForm() {
 function showSubmissionResult(message, alert, alertText) {
   alertText.innerText = message;
   alert.style.display = "block";
+}
+
+// response is object which contains code: int, msg: string, and success: boolean
+function displayAlertByType(response, alert, alertText) {
+  var errorCode = response.code;
+  var errorMsg = response.msg;
+  showSubmissionResult(errorMsg, alert, alertText);
 }
 
 //Hide form error
