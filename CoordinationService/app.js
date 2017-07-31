@@ -6,7 +6,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var stylus = require('stylus');
 var request = require('request');
-
 var index = require('./routes/index');
 var heartbeat = require('./routes/heartbeat');
 var datasets = require('./routes/datasets');
@@ -16,6 +15,7 @@ var experiments = require('./routes/experiments');
 var models = require('./routes/models');
 var algorithms = require('./routes/algorithms');
 var download = require('./routes/download');
+var download = require('./startup');
 
 var app = express();
 

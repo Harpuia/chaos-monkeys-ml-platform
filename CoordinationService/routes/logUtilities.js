@@ -34,5 +34,4 @@ logMessage = function (ifError, type, timestamp, message) {
 module.exports={
     errorType:errorType,
     operationType:operationType
-
 };

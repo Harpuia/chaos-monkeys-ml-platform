@@ -29,7 +29,6 @@ router.get("/list", function getExperiments(req, res, next) {
 
 /* Create a new experiment */
 router.post('/create', function insertNewExperiment(req, res, next) {
-  console.log('create');
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
@@ -54,8 +53,6 @@ router.post('/create', function insertNewExperiment(req, res, next) {
 }, function submitExperimentToRun(req, res, next) {
   // options used for submitting the experiment to Jersey backend
   var contents = { experiment_name: req.body.experiment_name };
-  console.log(req.body);
-  console.log(contents);
   logMessage(false, log.operationType.SubmitExperimentToRun, new Date(), "Submitting the experiment to Jersey backend");
   var options = {
     url: 'http://127.0.0.1:8080/services/exp/start',
@@ -64,7 +61,6 @@ router.post('/create', function insertNewExperiment(req, res, next) {
   };
   request(options, function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      console.log(body);
       logMessage(false, log.operationType.ResponseReceived, new Date(), "Received response from Jeysey backend");
     }else {
             logMessage(true, log.errorType.JeyseyError, new Date(), error);
