@@ -15,7 +15,7 @@ var experiments = require('./routes/experiments');
 var models = require('./routes/models');
 var algorithms = require('./routes/algorithms');
 var download = require('./routes/download');
-var download = require('./startup');
+var startup = require('./startup');
 
 var app = express();
 
