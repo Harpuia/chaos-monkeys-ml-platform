@@ -58,14 +58,13 @@ public class AlgorithmResource {
                                         @FormDataParam("file") FormDataContentDisposition fileMetaData,
                                         @FormDataParam("name") String algrName,
                                         @FormDataParam("description") String algrDescription,
-                                        @FormDataParam("user_id") String userId,
                                         @FormDataParam("language") String language){
         refreshServiceState();
-        if (null != userId && !userId.equals("")) {
-            Logger.SaveLog(LogType.Information, "INPUT: Received algorithm upload request from" + userId);
+        if (null != algrName && !algrName.equals("")) {
+            Logger.SaveLog(LogType.Information, "INPUT: Received algorithm upload request - Name: " + algrName);
         }
         // --::ERROR DETECTING
-        int validCode = detectUploadServiceParamError(fileInputStream, fileMetaData, algrName,algrDescription,userId,language);
+        int validCode = detectUploadServiceParamError(fileInputStream, fileMetaData, algrName,algrDescription,language);
         if( validCode != CHECK_SUCCESS){
             Response errorResponse = genErrorResponse(validCode);
             return errorResponse;
@@ -76,7 +75,7 @@ public class AlgorithmResource {
         //create dev language folder if it does not exist yet
         File langFolder = FileUtils.createNewFolderUnder(language, algrFolder);
         // create target folder
-        String targetFolderName = StringUtils.genAlgrStorageFolderName(algrName, userId);
+        String targetFolderName = StringUtils.genAlgrStorageFolderName(algrName);
         File targetFolder = FileUtils.createNewFolderUnder(targetFolderName, langFolder);
         String fileName = fileMetaData.getFileName();
         // start processing receiving
@@ -105,7 +104,11 @@ public class AlgorithmResource {
             return genErrorResponse(validCode);
         }
         try {
-            DbUtils.storeAlgorithm(userId, algrName, algrDescription, targetFolder.toPath().toRealPath().toString(), language);
+            // avoid null value of description
+            if(null == algrDescription){
+                algrDescription = "";
+            }
+            DbUtils.storeAlgorithm(algrName, algrDescription, targetFolder.toPath().toRealPath().toString(), language);
             Logger.SaveLog(LogType.Information, "Algorithm received successfully");
             return genSuccResponse();
         } catch (IOException e) {
@@ -191,16 +194,15 @@ public class AlgorithmResource {
      * @param fileMetaData
      *@param name
      * @param description
-     * @param userId
      * @param language     @return error code that has been defined in the global config or in the heading of this class
      */
-    public int detectUploadServiceParamError(InputStream fileInputStream, FormDataContentDisposition fileMetaData, String name, String description, String userId, String language){
+    public int detectUploadServiceParamError(InputStream fileInputStream, FormDataContentDisposition fileMetaData, String name, String description, String language){
         // check all string parameters are not blank
         // check whether the bodypart/file content are attached
         if(null == fileInputStream || null == fileMetaData){
             return ERR_FILE_BODYPART_MISSING;
         }
-        boolean isParamsValid = StringUtils.isNoneBlank(name, description, userId, language);
+        boolean isParamsValid = StringUtils.isNoneBlank(name, description, language);
         if(!isParamsValid){
             return ERR_BLANK_PARAMS;
         }

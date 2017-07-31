@@ -11,7 +11,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.*;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -53,8 +52,6 @@ public class DatasetInputService {
      * @param fileMetaData
      * @param dataName
      * @param dataDescription
-     * @param userId
-     * @param projectId
      * @param format
      * @return
      */
@@ -66,16 +63,14 @@ public class DatasetInputService {
                                @FormDataParam("file") FormDataContentDisposition fileMetaData,
                                @FormDataParam("name") String dataName,
                                @FormDataParam("description") String dataDescription,
-                               @FormDataParam("user_id") String userId,
-                               @FormDataParam("project_id") String projectId,
                                @FormDataParam("format") String format){
         refreshServiceState();
         int validCode = CHECK_SUCCESS;
-        if (null != userId && !userId.equals("")) {
-            Logger.SaveLog(LogType.Information, "INPUT: Received dataset upload request from" + userId);
+        if (null != dataName && !dataName.equals("")) {
+            Logger.SaveLog(LogType.Information, "INPUT: Received dataset upload request. Name: " + dataName);
         }
         // check parameters
-        validCode = detectUploadServiceParamError(fileInputStream, fileMetaData, dataName, userId, projectId, format);
+        validCode = detectUploadServiceParamError(fileInputStream, fileMetaData, dataName, format);
         if(CHECK_SUCCESS != validCode){
             return genErrorResponse(validCode);
         }
@@ -87,7 +82,7 @@ public class DatasetInputService {
         File targetFolder = FileUtils.createNewFolderUnder(dataName, executionFolder);
         // + FileUtils.sanitizeFilename(fileMetaData.getFileName()) // if you wanna the original filename
         String dateTimeStr = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuu-MMM-d-HH-mm-ss", Locale.US)); // check locale when deploying
-        String dataFileName = userId + "-" + dateTimeStr + "-" +  FileUtils.sanitizeFilename(dataName)  + "." + format.toLowerCase();
+        String dataFileName = dateTimeStr + "-" +  FileUtils.sanitizeFilename(dataName)  + "." + format.toLowerCase();
         boolean receiveSucess = receiveFile(fileInputStream, targetFolder, dataFileName);
         if(!receiveSucess){
             validCode = ERR_TRANSMISSION_FILE;
@@ -97,7 +92,7 @@ public class DatasetInputService {
         //insert data sets into database.
         boolean inserted = false;
         try {
-            inserted = DbUtils.storeDataSet(userId,projectId,dataName,dataDescription, targetFile.getCanonicalPath(),format);
+            inserted = DbUtils.storeDataSet(dataName,dataDescription, targetFile.getCanonicalPath(),format);
         } catch (IOException e) {
             Logger.Exception("Fail to store new datasets into database");
             e.printStackTrace();
@@ -115,26 +110,19 @@ public class DatasetInputService {
 
     /**
      * Receive dataset file
-     * @param fileInputStream
-     * @param targetFolder
-     * @param fileName
-     * @return
+     * @param fileInputStream fileInputStream that provided by the API
+     * @param targetFolder  target fodler which is used to store this dataset
+     * @param fileName  the storage name of the dataset file
+     * @return  true if all operations are valid, otherwise @value{false}
      */
     public boolean receiveFile(InputStream fileInputStream, File targetFolder, String fileName){
         // receive all file parts and store in targetFolder using filename
         // if exception happen, delete targetFolder
+        File targetFile = new File(targetFolder, fileName);
+        // add to uploading set
+        uploadSet.add(fileName);
         try {
-            int read = 0;       // the total number of bytes read into the buffer
-            byte[] bytes = new byte[1024];
-
-            // add to uploading set
-            uploadSet.add(fileName);
-            OutputStream out = new FileOutputStream(new File(targetFolder, fileName));
-            while ((read = fileInputStream.read(bytes)) != -1) {
-                out.write(bytes, 0, read);
-            }
-            out.flush();
-            out.close();
+            FileUtils.receiveFile(fileInputStream, targetFile);
             // remove this one from uploading list
             uploadSet.remove(fileName);
         } catch (IOException e) {
@@ -144,6 +132,7 @@ public class DatasetInputService {
             FileUtils.deleteQuietly(targetFolder);
             Logger.Info("Target folder for datasets has been deleted");
             e.printStackTrace();
+            uploadSet.remove(fileName);
             return false;
         }
         refreshServiceState();
@@ -152,21 +141,19 @@ public class DatasetInputService {
 
     /**
      * check whether all dataset parameters for uploading dataset
-     * @param fileInputStream
-     * @param fileMetaData
-     * @param name
-     * @param userId
-     * @param projectId
-     * @param format
-     * @return
+     * @param fileInputStream InputStream provided by Jersey resource API
+     * @param fileMetaData FileMetaData that contains information such as file name
+     * @param name  dataset name
+     * @param format  dataset name, acceptable formats are csv and json now
+     * @return  error code or valid code
      */
-    public int detectUploadServiceParamError(InputStream fileInputStream, FormDataContentDisposition fileMetaData, String name, String userId, String projectId, String format){
+    public int detectUploadServiceParamError(InputStream fileInputStream, FormDataContentDisposition fileMetaData, String name, String format){
         // check all string parameters are not blank
         // check whether the bodypart/file content are attached
         if(null == fileInputStream || null == fileMetaData){
             return ERR_FILE_BODYPART_MISSING;
         }
-        boolean isParamsValid = StringUtils.isNoneBlank(name, userId, projectId, format);
+        boolean isParamsValid = StringUtils.isNoneBlank(name, format);
         if(!isParamsValid){
             return ERR_BLANK_PARAMS;
         }
@@ -187,10 +174,10 @@ public class DatasetInputService {
 
     /**
      * Generate corrpesponding error message based on error code
-     * @param errorCode
-     * @return
+     * @param errorCode error code defined in this class
+     * @return Response instance with proper error message and error code
      */
-    public Response genErrorResponse(int errorCode){
+    private Response genErrorResponse(int errorCode){
         BaseResponse responseEntity = new BaseResponse();
         String msg;
         switch (errorCode){
@@ -226,7 +213,7 @@ public class DatasetInputService {
      * Generate corrpesponding successful message
      * @return Success Response
      */
-    public Response genSuccResponse(){
+    private Response genSuccResponse(){
         BaseResponse responseEntity = new BaseResponse();
         responseEntity.successful("Upload successfully");
 

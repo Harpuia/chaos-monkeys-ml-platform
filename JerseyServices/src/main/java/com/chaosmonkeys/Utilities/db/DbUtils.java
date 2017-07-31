@@ -67,20 +67,16 @@ public final class DbUtils {
 
     /**
      * Insert the data sets information to the ConfigurationDatabase database.
-     * @param userId the user id.
-     * @param projectId the project id.
      * @param dataName the target database name.
      * @param dataDescription the description regarding the input data.
      * @param path the input data path.
      * @param format the input data format.
      * @return false if insert error
      */
-    public static boolean storeDataSet(String userId, String projectId, String dataName, String dataDescription, String path, String format){
+    public static boolean storeDataSet(String dataName, String dataDescription, String path, String format){
         openConnection();
         Dataset dataset = new Dataset()
                 .setDatasetName(dataName)
-                .setProjectId(projectId)
-                .setUserId(userId)
                 .setDescription(dataDescription)
                 .setDatasetPath(path)
                 .setFormat(format);
@@ -90,11 +86,18 @@ public final class DbUtils {
         return inserted;
     }
 
-    public static boolean storeAlgorithm(String userName, String name, String description, String path, String language){
+    /**
+     * Store algorithm record in database
+     * @param name algorithm name
+     * @param description algorithm description
+     * @param path
+     * @param language
+     * @return
+     */
+    public static boolean storeAlgorithm( String name, String description, String path, String language){
         openConnection();
         Algorithm algr= new Algorithm()
                 .setAlgorithmName(name)
-                .setAlgorithmUserName(userName)
                 .setAlgorithmDescription(description)
                 .setAlgorithmPath(path)
                 .setAlgorithmLanguage(language);

@@ -3,6 +3,8 @@ package com.chaosmonkeys.Utilities;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.text.Normalizer;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -62,15 +64,13 @@ public class StringUtils {
      * @param userId
      * @return
      */
-    public static String genAlgrStorageFolderName(String name, String userId){
+    public static String genAlgrStorageFolderName(String name){
         StringBuilder strBuilder = new StringBuilder();
         String validName = FileUtils.sanitizeFilename(name);
         strBuilder.append(validName);
         strBuilder.append("-");
-        String validUserId = FileUtils.sanitizeFilename(userId);
-        strBuilder.append(validUserId);
-        strBuilder.append("-");
-        strBuilder.append(System.currentTimeMillis());
+        String dateTimeStr = LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuu-MMM-d-HH-mm-ss", Locale.US)); // check locale when deploying
+        strBuilder.append(dateTimeStr);
 
         return strBuilder.toString();
     }

@@ -23,10 +23,7 @@ public class Prediction extends Model{
         set("description", description);
         return this;
     }
-    public Prediction setProjectId(int id){
-        set("project_id", id);
-        return this;
-    }
+
     public Prediction setExperimentId(int id){
         set("experiment_id", id);
         return this;

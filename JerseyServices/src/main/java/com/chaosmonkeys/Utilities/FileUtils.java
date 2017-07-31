@@ -196,6 +196,20 @@ public class FileUtils {
         return createFolderInPath(MODEL_PATH).toPath();
     }
 
+    // Upload/Download related mehtods TODO:move these methods to some other stable classes not in FIleUtils
+    public static void receiveFile(InputStream fileInputStream, File targetFile) throws IOException{
+        int read = 0;       // the total number of bytes read into the buffer
+        byte[] bytes = new byte[1024];
+
+        OutputStream out = new FileOutputStream(targetFile);
+        while ((read = fileInputStream.read(bytes)) != -1) {
+            out.write(bytes, 0, read);
+        }
+        out.flush();
+        out.close();
+    }
+
+
     //----------------------------------------------------------------------
     private static void copyFileTo(File source, File dest) throws IOException {
         Files.copy(source.toPath(), dest.toPath());

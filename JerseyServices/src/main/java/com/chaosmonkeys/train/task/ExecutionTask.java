@@ -255,7 +255,6 @@ public class ExecutionTask extends AbsTask{
         List<Experiment> experiments = Experiment.where("experiment_name = ?", expName);
         Experiment experiment = experiments.get(0);
         // TODO: check this if later there is no project_id in database
-        int projectId = experiment.getInteger("project_id");
         int experimentId = (Integer) experiment.getId();
         // TODO: change model to prediction in the future
         Prediction prediction = new Prediction();
@@ -264,7 +263,6 @@ public class ExecutionTask extends AbsTask{
             prediction.setModelName(expName + "- prediction")
                     .setDescription("Prediction output for the experiment: " + expName)
                     .setPath(targetFolder.toPath().toRealPath().toString())
-                    .setProjectId(projectId)
                     .setExperimentId(experimentId);
             prediction.save();
             DbUtils.closeConnection();

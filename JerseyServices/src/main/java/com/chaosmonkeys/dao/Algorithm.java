@@ -50,8 +50,5 @@ public class Algorithm extends Model {
         set("language",language);
         return this;
     }
-    public Algorithm setAlgorithmUserName(String userName){
-        set("username",userName);
-        return this;
-    }
+
 }

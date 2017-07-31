@@ -245,14 +245,12 @@ public class TrainingTask extends AbsTask{
         DbUtils.openConnection();
         List<Experiment> experiments = Experiment.where("experiment_name = ?", expName);
         Experiment experiment = experiments.get(0);
-        int projectId = experiment.getInteger("project_id");
         int experimentId = (Integer) experiment.getId();
         PredictionModel model = new PredictionModel();
         try {
             model.setModelName(expName + "-model")
                     .setDescription("sample description")
                     .setPath(targetFolder.toPath().toRealPath().toString())
-                    .setProjectId(projectId)
                     .setExperimentId(experimentId);
             model.save();
             DbUtils.closeConnection();
