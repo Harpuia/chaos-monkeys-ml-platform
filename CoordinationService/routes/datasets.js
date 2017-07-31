@@ -9,7 +9,7 @@ router.get('/list', function getDatasets(req, res) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
-  var query = 'select datasets.id, datasets.name, datasets.description, datasets.format, datasets.path from datasets';
+  var query = 'select * from datasets';
   logMessage(false, log.operationType.QueryData, new Date(), query);
   //Return all services
   var results = connection.query(query, function selectAllDatasets(err, rows, fields) {

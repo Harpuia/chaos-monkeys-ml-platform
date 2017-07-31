@@ -8,7 +8,7 @@ router.get('/list', function getTasks(req, res) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
-  var query = 'select tasks.id, projects.name as project_name, datasets.name as dataset_name, algorithms.name as algorithm_name, tasks.name, tasks.description, tasks.type from tasks join projects on tasks.project_id = projects.id join datasets on tasks.dataset_id = datasets.id join algorithms on tasks.algorithm_id = algorithms.id';
+  var query = 'select tasks.id, datasets.name as dataset_name, algorithms.name as algorithm_name, tasks.name, tasks.description, tasks.type from tasks join algorithms on tasks.algorithm_id = algorithms.id join datasets on tasks.dataset_id = datasets.id';
   logMessage(false, log.operationType.QueryData, new Date(), query);
   //Return tasks information
   var results = connection.query(query, function getAllTasks(err, rows, fields) {

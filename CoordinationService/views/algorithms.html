@@ -43,7 +43,7 @@
       <!-- The justified navigation menu is meant for single line per list item.
            Multiple lines will require custom code not provided by Bootstrap. -->
       <div class="masthead">
-        <h3 class="text-muted">Project Amazon</h3>
+        <h3 class="text-muted">Chaos Monkeys Experimentation Platform</h3>
         <nav>
           <ul class="nav nav-justified">
             <li><a href="/experiments">Experiments</a></li>
@@ -135,10 +135,6 @@
                         <label for="file" class="control-label">Algorithm Files</label>
                         <input type="file" name="file" id="algorithm_file" onchange="checkAlgFileExtension()"/>
                       </div>
-                      <div class="form-group required">
-                        <label for="user id" class="control-label">User ID</label>
-                        <input type="text" class="form-control" name="user_id" id="user_id" />
-                      </div>
                       <div>
                         <button id="submitButton" type="button" class="btn btn-primary" onclick="submitForm()">Upload</button>
                       </div>
@@ -195,11 +191,6 @@
                         <label for="data name" class="control-label">Task Name</label>
                         <input type="text" class="form-control" name="taskName" id="taskName" />
                       </div>
-                      <div class="form-group required">
-                        <label for="ProjectID" class="control-label">Project ID</label>
-                        <input type="text" class="form-control" id="projectId" />
-                      </div>
-
                       <div class="form-group">
                         <label for="description">Description</label>
                         <textarea class="form-control" rows="5" id="taskDescription"> </textarea>
@@ -257,13 +248,6 @@
                     <h4>Algorithm Path:</h4>
                     <span id='algorithmPath'></span>
                   </p>
-
-                  <!-- Uncomment this block after the database table is filled -->
-                  <!--p>
-                    <h4>Algorithm Parent Project Name:</h4>
-                    <span id='algorithmProject'></span>
-                  </p-->
-
                   <p>
                     <h4>Associated Tasks:</h4>
                     <div class="table-responsive">

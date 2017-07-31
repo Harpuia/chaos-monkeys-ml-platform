@@ -44,7 +44,7 @@
             <!-- The justified navigation menu is meant for single line per list item.
            Multiple lines will require custom code not provided by Bootstrap. -->
             <div class="masthead">
-                <h3 class="text-muted">Project Amazon</h3>
+                <h3 class="text-muted">Chaos Monkeys Experimentation Platform</h3>
                 <nav>
                     <ul class="nav nav-justified">
                         <li><a href="/experiments">Experiments</a></li>
@@ -118,11 +118,6 @@
                                                 <label for="data name" class="control-label">Task Name</label>
                                                 <input type="text" class="form-control" name="name" id="name" />
                                             </div>
-                                            <div class="form-group required">
-                                                <label for="ProjectID" class="control-label">Project ID</label>
-                                                <input type="text" class="form-control" id="projectId" />
-                                            </div>
-
                                             <div class="form-group">
                                                 <label for="description">Description</label>
                                                 <textarea class="form-control" rows="5" id="taskDescription"> </textarea>
@@ -206,16 +201,6 @@
                                                 <label for="description">Description</label>
                                                 <textarea class="form-control" rows="5" name="description" id="description"> </textarea>
                                             </div>
-
-                                            <div class="form-group required">
-                                                <label for="user id" class="control-label">User ID</label>
-                                                <input type="text" class="form-control" name="user_id" id="user_id" />
-                                            </div>
-                                            <div class="form-group required">
-                                                <label for="project id" class="control-label">Project ID</label>
-                                                <input type="text" class="form-control" name="project_id" id="project_id" />
-                                            </div>
-
                                             <div class="form-group required">
                                                 <label for="DataFormat" class="control-label">Data Format</label>
                                                 <br>
@@ -266,13 +251,6 @@
                                         <h4>Dataset Path:</h4>
                                         <span id='datasetPath'></span>
                                     </p>
-
-                                    <!-- Uncomment this block after the database table is filled -->
-                                    <!--p>
-                                        <h4>Dataset Parent Project Name:</h4>
-                                        <span id='datasetProject'></span>
-                                    </p-->
-
                                     <p>
                                         <h4>Associated Tasks:</h4>
                                         <div class="table-responsive">

@@ -8,7 +8,7 @@ router.get('/list', function getModels(req, res) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
-  var query = 'select * from models';
+  var query = 'SELECT models.id as id, models.name as name, models.description as description, models.path as path, experiments.experiment_name as experiment_name FROM models join experiments on models.experiment_id = experiments.id';
   logMessage(false, log.operationType.QueryData, new Date(), query);
   //Return all services
   var results = connection.query(query, function getAllModels(err, rows, fields) {

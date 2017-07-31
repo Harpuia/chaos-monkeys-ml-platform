@@ -59,7 +59,6 @@ function loadPage() {
 function checkAlgorithmUploadFormRequiredFields() {
   var fileName = $("#algorithm_file")[0].value;
   var algorithmName = $("#algorithm_name").val();
-  var userId = $("#user_id").val();
   var language = $("#language")[0];
   var selectedLanguage = language.options[language.selectedIndex].text;
   var alert = $('#formUploadError')[0];
@@ -75,10 +74,6 @@ function checkAlgorithmUploadFormRequiredFields() {
   }
   else if (fileName.length == 0) {
     showSubmissionResult('Please choose an algorithm file.', alert, alertText);
-    return false;
-  }
-  else if (userId.length == 0) {
-    showSubmissionResult('Please input the User ID.', alert, alertText);
     return false;
   }
   else {
@@ -196,10 +191,6 @@ function displayDetails(algorithmIndex) {
     }
   });
 
-  // Uncomment the following two lines after the table field is filled.
-  //$('#datasetProject').text(algorithmsData[algorithmIndex]['project_name']);
-  //$('#datasetTask').text(algorithmsData[algorithmIndex]['task_name']);
-
   $('#detailsModal').modal('show');
 }
 
@@ -217,7 +208,6 @@ function submitTaskForm() {
   var alert = $('#formTaskError')[0];
   var alertText = $('#formTaskErrorText')[0];
   var tasksInfoForTrain = {
-    "project_id": $("#projectId").val(),
     "dataset_id": $("#taskDatasetName").val(),
     "algorithm_id": algorithmsData[selectedAlgorithmId]['id'],
     "model_id": null,
@@ -252,7 +242,6 @@ function submitTaskForm() {
 
 function checkRequiredTaskFields() {
   var taskName = $("#taskName").val();
-  var projectId = $("#projectId").val();
   var selectedTaskType = $("#taskType").val();
   var selectedAlgorithmName = $("#taskAlgorithmsNames").val();
   var alert = $('#formTaskError')[0];
@@ -264,10 +253,6 @@ function checkRequiredTaskFields() {
   }
   else if (taskName.length == 0) {
     showSubmissionResult('Please input a task name.', alert, alertText);
-    return false;
-  }
-  else if (projectId.length == 0) {
-    showSubmissionResult('Please input the Project ID.', alert, alertText);
     return false;
   }
   else if (selectedAlgorithmName.length == 0) {

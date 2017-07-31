@@ -25,7 +25,7 @@ function loadPage() {
       $('#tasksTableBody').html('<h3>This list is empty!</h3>');
     } else {
       for (i = 0; i < data['tasks'].length; i++) {
-        tasksList += '<tr><td><span class="fa fa-check-square-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '<br><span class="label label-success">' + data['tasks'][i]['project_name'] + '</span>&nbsp;&nbsp;<span class="label label-success">' + data['tasks'][i]['type'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createNewExperimentFromTask(' + i + ')" class="btn btn-primary">Run an experiment</button></td></tr>';
+        tasksList += '<tr><td><span class="fa fa-check-square-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['tasks'][i]['name'] + '</td><td>' + data['tasks'][i]['description'] + '<br><span class="label label-success">' + data['tasks'][i]['type'] + '</span>&nbsp;&nbsp;<span class="label label-success">' + data['tasks'][i]['algorithm_name'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createNewExperimentFromTask(' + i + ')" class="btn btn-primary">Run an experiment</button></td></tr>';
       }
       $('#tasksTableBody').html(tasksList);
     }
@@ -101,7 +101,6 @@ function submitTaskForm() {
   var alert = $('#formError')[0];
   var alertText = $('#formErrorText')[0];
   var tasksInfoForTrain = {
-    "project_id": $("#projectId").val(),
     "dataset_id": $("#datasetsNames").val(),
     "algorithm_id": $("#algorithmsNames").val(),
     "model_id": null,
@@ -110,7 +109,6 @@ function submitTaskForm() {
     "type": $("#type")[0].options[$("#type")[0].selectedIndex].text
   }
   var tasksInfoForExe = {
-    "project_id": $("#projectId").val(),
     "dataset_id": $("#datasetsNames").val(),
     "algorithm_id": null,
     "model_id": $("#modelsNames").val(),
@@ -159,7 +157,6 @@ function submitTaskForm() {
 function checkRequiredFields() {
   var t = $("#type")[0];
   var taskName = $("#name").val();
-  var projectId = $("#projectId").val();
   var d = $("#datasetsNames")[0];
   var a = $("#algorithmsNames")[0];
   var m = $("#modelsNames")[0];
@@ -176,10 +173,6 @@ function checkRequiredFields() {
   }
   else if (taskName.length == 0) {
     showSubmissionResult('Please input a task name.', alert, alertText);
-    return false;
-  }
-  else if (projectId.length == 0) {
-    showSubmissionResult('Please input the Project ID.', alert, alertText);
     return false;
   }
   else if (selectedDatasetName.length == 0) {
@@ -209,7 +202,6 @@ function displayDetails(taskIndex) {
   $('#taskName').text(tasksData[taskIndex]['name']);
   $('#taskDescription').text(tasksData[taskIndex]['description']);
   $('#taskType').text(tasksData[taskIndex]['type']);
-  $('#taskProject').text(tasksData[taskIndex]['project_name']);
   $('#taskAlgorithm').text(tasksData[taskIndex]['algorithm_name']);
   $('#taskDataset').text(tasksData[taskIndex]['dataset_name']);
   $('#detailsModal').modal('show');;
@@ -228,15 +220,10 @@ function createNewExperimentFromTask(index) {
 function checkExperimentRequiredFields() {
   var experimentName = $("#experimentName").val();
   var taskName = $("#experimentTaskName").val();
-  var projectId = $("#experimentProjectId").val();
   var alert = $('#formExperimentError')[0];
   var alertText = $('#formExperimentErrorText')[0];
   if (experimentName.length == 0) {
     showSubmissionResult('Please input an experiment name.', alert, alertText);
-    return false;
-  }
-  else if (projectId.length == 0) {
-    showSubmissionResult('Please input the Project ID.', alert, alertText);
     return false;
   }
   else if (taskName.length == 0) {
@@ -255,7 +242,6 @@ function submitExperimentForm() {
   var alert = $('#formExperimentError')[0];
   var alertText = $('#formExperimentErrorText')[0];
   var experimentInfo = {
-    "project_id": $("#experimentProjectId").val(),
     "task_id": selectedTaskId,
     "experiment_name": $("#experimentName").val(),
     "start": null,

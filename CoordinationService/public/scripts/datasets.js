@@ -28,7 +28,7 @@ function loadPage() {
       $('#datasetsTableBody').html('<h3>This list is empty!</h3>');
     } else {
       for (i = 0; i < data['datasets'].length; i++) {
-        datasetsList += '<tr><td><span class="fa fa-file-text-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['datasets'][i]['name'] + '</td><td>' + data['datasets'][i]['description'] + '<br><span class="label label-success">' + data['datasets'][i]['path'] + '</span>&nbsp;&nbsp;<span class="label label-success">' + data['datasets'][i]['format'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createTaskFromDataset(' + i + ')" class="btn btn-primary">Create Task</button></td></tr>';
+        datasetsList += '<tr><td><span class="fa fa-file-text-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['datasets'][i]['name'] + '</td><td>' + data['datasets'][i]['description'] + '<br><span class="label label-success">' + data['datasets'][i]['format'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createTaskFromDataset(' + i + ')" class="btn btn-primary">Create Task</button></td></tr>';
       }
       $('#datasetsTableBody').html(datasetsList);
     }
@@ -81,8 +81,6 @@ function showUploadingSpinner() {
 function checkUploadFormRequiredFields() {
   var fileName = $("#file")[0].value;
   var datasetName = $("#dataset_name").val();
-  var userId = $("#user_id").val();
-  var projectId = $("#project_id").val();
   var dataFormat = $("#format")[0];
   var selectedDataFormat = dataFormat.options[dataFormat.selectedIndex].text;
   var alert = $('#formUploadError')[0];
@@ -94,14 +92,6 @@ function checkUploadFormRequiredFields() {
   }
   else if (datasetName.length == 0) {
     showSubmissionResult('Please input a dataset name.', alert, alertText);
-    return false;
-  }
-  else if (userId.length == 0) {
-    showSubmissionResult('Please input the User ID.', alert, alertText);
-    return false;
-  }
-  else if (projectId.length == 0) {
-    showSubmissionResult('Please input the Project ID.', alert, alertText);
     return false;
   }
   else if (selectedDataFormat.length == 0) {
@@ -215,9 +205,6 @@ function displayDetails(datasetIndex) {
       }
     }
   });
-  // Uncomment the following two lines after the table field is filled.
-  //$('#datasetProject').text(datasetsData[datasetIndex]['project_name']);
-  //$('#datasetTask').text(datasetsData[datasetIndex]['task_name']);
 
   $('#detailsModal').modal('show');
 }
@@ -239,7 +226,6 @@ function submitTaskForm() {
   var alert = $('#formTaskError')[0];
   var alertText = $('#formTaskErrorText')[0];
   var tasksInfoForTrain = {
-    "project_id": $("#projectId").val(),
     "dataset_id": datasetsData[selectedDatasetId]['id'],
     "algorithm_id": $("#algorithmsNames").val(),
     "model_id": null,
@@ -248,7 +234,6 @@ function submitTaskForm() {
     "type": $("#type")[0].options[$("#type")[0].selectedIndex].text
   }
   var tasksInfoForExe = {
-    "project_id": $("#projectId").val(),
     "dataset_id": selectedDatasetId,
     "algorithm_id": null,
     "model_id": $("#modelsNames").val(),
@@ -289,7 +274,6 @@ function submitTaskForm() {
 function checkRequiredTaskFields() {
   var t = $("#type")[0];
   var taskName = $("#name").val();
-  var projectId = $("#projectId").val();
   var a = $("#algorithmsNames")[0];
   var m = $("#modelsNames")[0];
   var selectedTaskType = t.options[t.selectedIndex].text;
@@ -304,10 +288,6 @@ function checkRequiredTaskFields() {
   }
   else if (taskName.length == 0) {
     showSubmissionResult('Please input a task name.', alert, alertText);
-    return false;
-  }
-  else if (projectId.length == 0) {
-    showSubmissionResult('Please input the Project ID.', alert, alertText);
     return false;
   }
   else if (selectedTaskType.toLowerCase() == "training" && selectedAlgorithmName.length == 0) {

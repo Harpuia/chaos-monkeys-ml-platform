@@ -20,7 +20,7 @@ $(document).ready(function () {
       $('#modelsTableBody').html('<h3>This list is empty!</h3>');
     } else {
       for (i = 0; i < data['models'].length; i++) {
-        modelsList += '<tr><td><span class="fa fa-cog" aria-hidden="true"></span>&nbsp;&nbsp;' + data['models'][i]['name'] + '</td><td>' + data['models'][i]['description'] + '<br><span class="label label-success">' + data['models'][i]['path'] + '</span>&nbsp;&nbsp;<span class="label label-success">' + data['models'][i]['project_id'] + '</span>&nbsp;&nbsp;<span class="label label-success">' + data['models'][i]['experiment_id'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createTaskFromModel(' + i + ')" class="btn btn-primary">Create Task</button></td></tr>';
+        modelsList += '<tr><td><span class="fa fa-cog" aria-hidden="true"></span>&nbsp;&nbsp;' + data['models'][i]['name'] + '</td><td>' + data['models'][i]['description'] + '<br><span class="label label-success">' + data['models'][i]['experiment_name'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createTaskFromModel(' + i + ')" class="btn btn-primary">Create Task</button></td></tr>';
       }
       $('#modelsTableBody').html(modelsList);
     }

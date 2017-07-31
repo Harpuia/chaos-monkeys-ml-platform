@@ -60,7 +60,6 @@ function submitForm() {
   var alert = $('#formError')[0];
   var alertText = $('#formErrorText')[0];
   var experimentInfo = {
-    "project_id": $("#projectId").val(),
     "task_id": $("#tasksNames").val(),
     "experiment_name": $("#experimentName").val(),
     "start": null,
@@ -122,15 +121,10 @@ function checkRequiredFields() {
   var experimentName = $("#experimentName").val();
   var t = $("#tasksNames")[0];
   var selectedTaskName = t.options[t.selectedIndex].text;
-  var projectId = $("#projectId").val();
   var alert = $('#formError')[0];
   var alertText = $('#formErrorText')[0];
   if (experimentName.length == 0) {
     showSubmissionResult('Please input an experiment name.', alert, alertText);
-    return false;
-  }
-  else if (projectId.length == 0) {
-    showSubmissionResult('Please input the Project ID.', alert, alertText);
     return false;
   }
   else if (selectedTaskName.length == 0) {
