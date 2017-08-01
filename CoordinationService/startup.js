@@ -13,7 +13,7 @@ connection.query(sql, function deleteAllConnectedServices(err, result) {
   if (err) {
     logMessage(true, log.errorType.DBError, new Date(), err);
   } else {
-    logMessage(true, log.operationType.ResponseReceived, new Date(), 'Query successful: connected_services table cleared.');
+    logMessage(false, log.operationType.ResponseReceived, new Date(), 'Query successful: connected_services table cleared.');
   }
 });
 
