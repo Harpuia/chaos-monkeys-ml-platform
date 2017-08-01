@@ -39,8 +39,6 @@ logMessage = function (ifError, type, timestamp, message) {
             var results = connection.query(query, [timestamp, type, message], function insertLog(err, result) {
                 if (err) {  // pass the err to error handler
                     console.log(query);
-                    err.source = 'mysql'; // add error source for tracing
-                    err.status = 500;
                 }
                 connection.end();
             });
@@ -55,8 +53,6 @@ logMessage = function (ifError, type, timestamp, message) {
         var results = connection.query(query, [timestamp, type, message], function insertLog(err, result) {
             if (err) {  // pass the err to error handler
                 console.log("eoor occurred", err);
-                err.source = 'mysql'; // add error source for tracing
-                err.status = 500;
             }
             connection.end();
         });
