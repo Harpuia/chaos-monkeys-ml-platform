@@ -27,10 +27,10 @@ USE `LogDatabase`;
 -- Table structure for table `errors_logs`
 --
 
-DROP TABLE IF EXISTS `errors_logs`;
+DROP TABLE IF EXISTS `errors_log`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `errors_logs` (
+CREATE TABLE `errors_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `timestamp` datetime DEFAULT NULL,
   `type` varchar(30) NOT NULL,
