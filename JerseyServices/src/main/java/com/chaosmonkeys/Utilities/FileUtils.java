@@ -101,6 +101,19 @@ public class FileUtils {
     }
 
     /**
+     * Check the dataset path file, only for datsets file path
+     * @param file
+     * @return
+     */
+    public static boolean checkDatasetFileValid(File file){
+        boolean succ = false;
+        if(null != file && file.exists() && !file.isDirectory()){
+            succ = true;
+        }
+        return succ;
+    }
+
+    /**
      * Check if a File object is a folder and existed
      * @param folder File instance that need to be checked
      * @return folder is valid or not

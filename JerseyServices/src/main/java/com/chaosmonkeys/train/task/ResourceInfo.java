@@ -14,7 +14,7 @@ import java.io.File;
 public class ResourceInfo {
 
     // Resource Folder Reference
-    protected File datasetFolder;
+    protected File datasetFolder;   // TODO: rename it because we change it to dataset file now
     protected File algorithmFolder;
     protected File modelFolder;
     protected File workspaceFolder;
@@ -46,7 +46,7 @@ public class ResourceInfo {
 
         boolean modelValid = false;
 
-        boolean datasetValid = FileUtils.checkFolderValid(datasetFolder);
+        boolean datasetValid = FileUtils.checkDatasetFileValid(datasetFolder);
         boolean algrValid = FileUtils.checkFolderValid(algorithmFolder);
         boolean workspaceValid = FileUtils.checkFolderValid(workspaceFolder);
 
@@ -67,7 +67,7 @@ public class ResourceInfo {
 
         boolean modelValid = false;
 
-        boolean datasetValid = FileUtils.checkFolderValid(datasetFolder);
+        boolean datasetValid = FileUtils.checkDatasetFileValid(datasetFolder);
         boolean algrValid = FileUtils.checkFolderValid(algorithmFolder);
         boolean workspaceValid = FileUtils.checkFolderValid(workspaceFolder);
 
