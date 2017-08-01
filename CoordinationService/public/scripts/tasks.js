@@ -79,7 +79,6 @@ function showTaskType() {
     showDropdown(algorithmDropdown);
   }
   else if (selectedValue.toLowerCase() == "execution") {
-    hideDropdown(algorithmDropdown);
     showDropdown(modelDropdown);
   }
 }
@@ -155,6 +154,7 @@ function submitTaskForm() {
 
 //Checks if all required fields are filled correctly
 function checkRequiredFields() {
+  /*
   var t = $("#type")[0];
   var taskName = $("#name").val();
   var d = $("#datasetsNames")[0];
@@ -189,6 +189,8 @@ function checkRequiredFields() {
   }
   else
     return true;
+  */
+  return true;
 }
 
 //Show submission result after clicking Submit button
