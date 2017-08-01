@@ -5,7 +5,7 @@ var utilities = require('./dbUtilities');
 var log = require('./logUtilities');
 
 /* gets the list of datasets from the database */
-router.get('/list', function getDatasets(req, res) {
+router.get('/list', function getDatasets(req, res, next) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
@@ -30,7 +30,7 @@ router.get('/list', function getDatasets(req, res) {
 });
 
 /* gets the supported formats */
-router.get('/formats', function getFormats(req, res) {
+router.get('/formats', function getFormats(req, res, next) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();

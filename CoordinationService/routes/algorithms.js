@@ -4,7 +4,7 @@ var router = express.Router();
 var log = require('./logUtilities');
 
 /* gets the supported languages */
-router.get('/languages', function getFormats(req, res) {
+router.get('/languages', function getFormats(req, res, next) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
@@ -32,7 +32,7 @@ router.get('/languages', function getFormats(req, res) {
 });
 
 /* gets the list of algorithms from the database */
-router.get('/list', function getAlgorithms(req, res) {
+router.get('/list', function getAlgorithms(req, res, next) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();

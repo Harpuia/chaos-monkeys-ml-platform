@@ -4,7 +4,7 @@ var path = require('path');
 var utilities = require('./dbUtilities');
 var log = require('./logUtilities');
 /* gets the models list */
-router.get('/list', function getModels(req, res) {
+router.get('/list', function getModels(req, res, next) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();

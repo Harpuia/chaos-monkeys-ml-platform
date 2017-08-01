@@ -4,7 +4,7 @@ var path = require('path');
 var utilities = require('./dbUtilities');
 var log = require('./logUtilities');
 /* gets the list of tasks */
-router.get('/list', function getTasks(req, res) {
+router.get('/list', function getTasks(req, res, next) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
@@ -28,7 +28,7 @@ router.get('/list', function getTasks(req, res) {
   connection.end();
 });
 /* Get the tasks types */
-router.get('/type', function getTypes(req, res) {
+router.get('/type', function getTypes(req, res, next) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
@@ -52,7 +52,7 @@ router.get('/type', function getTypes(req, res) {
 });
 
 /* Get the tasks names */
-router.get('/names', function getNames(req, res) {
+router.get('/names', function getNames(req, res, next) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
@@ -76,7 +76,7 @@ router.get('/names', function getNames(req, res) {
 });
 
 /* Get the datasets names */
-router.get('/datasetsnames', function getDatasetsNames(req, res) {
+router.get('/datasetsnames', function getDatasetsNames(req, res, next) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
@@ -100,7 +100,7 @@ router.get('/datasetsnames', function getDatasetsNames(req, res) {
 });
 
 /* Get the algorithms names */
-router.get('/algorithmsnames', function getAlgorithmsNames(req, res) {
+router.get('/algorithmsnames', function getAlgorithmsNames(req, res, next) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
@@ -124,7 +124,7 @@ router.get('/algorithmsnames', function getAlgorithmsNames(req, res) {
 });
 
 /* Get the models names */
-router.get('/modelsnames', function getModelsNames(req, res) {
+router.get('/modelsnames', function getModelsNames(req, res, next) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
@@ -148,7 +148,7 @@ router.get('/modelsnames', function getModelsNames(req, res) {
 });
 
 /* Create a new task in training type */
-router.post('/createTrainingTask', function insertNewTask(req, res) {
+router.post('/createTrainingTask', function insertNewTask(req, res, next) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
@@ -172,7 +172,7 @@ router.post('/createTrainingTask', function insertNewTask(req, res) {
 });
 
 /* Create a new task in exectution type */
-router.post('/createExecutionTask', function insertNewTask(req, res) {
+router.post('/createExecutionTask', function insertNewTask(req, res, next) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
@@ -197,7 +197,7 @@ router.post('/createExecutionTask', function insertNewTask(req, res) {
 });
 
 /* List the tasks from dataset page */
-router.get('/listByDataset/:dataset_id', function listByDataset(req, res) {
+router.get('/listByDataset/:dataset_id', function listByDataset(req, res, next) {
   var dataset_id = req.params.dataset_id;
 
   //Connect to DB
@@ -221,7 +221,7 @@ router.get('/listByDataset/:dataset_id', function listByDataset(req, res) {
 });
 
 /* List the tasks from model page */
-router.get('/listByModel/:model_id', function listByModel(req, res) {
+router.get('/listByModel/:model_id', function listByModel(req, res, next) {
   var model_id = req.params.model_id;
 
   //Connect to DB
@@ -245,7 +245,7 @@ router.get('/listByModel/:model_id', function listByModel(req, res) {
 });
 
 /* List the tasks from algorithm page */
-router.get('/listByAlgorithm/:algorithm_id', function listByAlgorithm(req, res) {
+router.get('/listByAlgorithm/:algorithm_id', function listByAlgorithm(req, res, next) {
   var algorithm_id = req.params.algorithm_id;
 
   //Connect to DB

@@ -5,7 +5,7 @@ var utilities = require('./dbUtilities');
 var request = require('request');
 
 /* Downloads a document stored in one of the services */
-router.get('/:entity/:id', function routeRoot(req, res) {
+router.get('/:entity/:id', function routeRoot(req, res, next) {
   //The url should be called as follows: <baseURL>/download/dataset/5, for example
   var entityName = req.params['entity'];
   var entityId = req.params['id'];

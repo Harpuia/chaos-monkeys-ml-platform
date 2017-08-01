@@ -2,23 +2,32 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 var utilities = require('./dbUtilities');
+var log = require('./logUtilities');
 
 const SERVICE_EXISTS_ERRORCODE = 1062;
 
 /* gets the table of services */
-router.get('/table', function getServiceTable(req, res) {
+router.get('/table', function getServiceTable(req, res, next) {
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
 
   //Return all services
-  var results = connection.query('select * from connected_services', function getAllConnectedServices(err, rows, fields) {
+  var sql = 'select * from connected_services';
+  logMessage(false, log.operationType.QueryData, new Date(), sql);
+  var results = connection.query(sql, function getAllConnectedServices(err, rows, fields) {
     if (err) {  // pass the err to error handler
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;
       next(err)
+    } else {
+      var result;
+      var duration;
+      for (var i = 0; i < rows.length; i++) {
+        duration = Date.now() - sqlDateToEpoch(rows[i]['last_updated']);
+      }
+      res.json({ table: rows });
     }
-    res.json({ table: rows });
   });
 
   //Closing connection
@@ -26,7 +35,7 @@ router.get('/table', function getServiceTable(req, res) {
 });
 
 /* registers a service in the table */
-router.post('/registerService', function registerService(req, res) {
+router.post('/registerService', function registerService(req, res, next) {
   var currentdate = new Date();
   var newService = req.body;
 
@@ -49,7 +58,7 @@ router.post('/registerService', function registerService(req, res) {
 });
 
 /* sets status */
-router.post('/setStatus', function handleHeartbeatMsg(req, res) {
+router.post('/setStatus', function handleHeartbeatMsg(req, res, next) {
   var currentdate = new Date();
   var serviceStatus = req.body;
 
@@ -70,5 +79,24 @@ router.post('/setStatus', function handleHeartbeatMsg(req, res) {
   });
   connection.end();
 });
+
+//Converts an SQL Date to epoch
+function sqlDateToEpoch(dateString) {
+  if (dateString) {
+    var parts = dateString.toString().match(/([a-zA-Z]{3}) (\d{2}) (\d{4}) (\d{2}):(\d{2}):(\d{2})/);
+    var value = Date.UTC(parts[3], getMonthFromString(parts[1]), parts[2], parts[4], parts[5], parts[6]);
+    return value;
+  } else
+    return null;
+}
+
+//Gets the month number from a month string
+function getMonthFromString(month) {
+  if (month) {
+    return new Date(Date.parse(month + " 1, 2012")).getMonth() + 1;
+  }
+  else
+    return null;
+}
 
 module.exports = router;

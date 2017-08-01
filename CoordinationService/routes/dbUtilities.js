@@ -15,22 +15,31 @@ createDbConnection = function () {
 
 /* Truncates/pads numbers to two digits */
 var twoDigits = function twoDigits(d) {
-  if(0 <= d && d < 10) return "0" + d.toString();
-  if(-10 < d && d < 0) return "-0" + (-1*d).toString();
-  return d.toString();
+  if (d) {
+    if (0 <= d && d < 10) return "0" + d.toString();
+    if (-10 < d && d < 0) return "-0" + (-1 * d).toString();
+    return d.toString();
+  } else
+    return null;
 }
 
 /* Transforms a JS date to MySQL format */
-toMysqlFormat = function(date) {
-  return date.getUTCFullYear() + "-" + twoDigits(1 + date.getUTCMonth()) + "-" + twoDigits(date.getUTCDate()) + " " + twoDigits(date.getUTCHours()) + ":" + twoDigits(date.getUTCMinutes()) + ":" + twoDigits(date.getUTCSeconds());
+toMysqlFormat = function (date) {
+  if (date) {
+    return date.getUTCFullYear() + "-" + twoDigits(1 + date.getUTCMonth()) + "-" + twoDigits(date.getUTCDate()) + " " + twoDigits(date.getUTCHours()) + ":" + twoDigits(date.getUTCMinutes()) + ":" + twoDigits(date.getUTCSeconds());
+  } else
+    return null;
 };
 
 /* Utility function */
 var dateToText = function (currentdate) {
-  return currentdate.getDate() + "/"
-  + (currentdate.getMonth() + 1) + "/"
-  + currentdate.getFullYear() + " @ "
-  + currentdate.getHours() + ":"
-  + currentdate.getMinutes() + ":"
-  + currentdate.getSeconds();
+  if (currentdate) {
+    return currentdate.getDate() + "/"
+      + (currentdate.getMonth() + 1) + "/"
+      + currentdate.getFullYear() + " @ "
+      + currentdate.getHours() + ":"
+      + currentdate.getMinutes() + ":"
+      + currentdate.getSeconds();
+  } else
+    return null;
 }
