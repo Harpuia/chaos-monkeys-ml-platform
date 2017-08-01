@@ -41,15 +41,12 @@ logMessage = function (ifError, type, timestamp, message) {
                     console.log(query);
                     err.source = 'mysql'; // add error source for tracing
                     err.status = 500;
-                    next(err);
                 }
                 connection.end();
-                
             });
         }
     }
-    else      
-    {
+    else {
         console.log(timestamp + " " + type + ": " + message);
         var connection = createLogDbConnection();
         connection.connect();
@@ -60,9 +57,8 @@ logMessage = function (ifError, type, timestamp, message) {
                 console.log("eoor occurred", err);
                 err.source = 'mysql'; // add error source for tracing
                 err.status = 500;
-                next(err);
             }
-            connection.end(); 
+            connection.end();
         });
     }
 }
