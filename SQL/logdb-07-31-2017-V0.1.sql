@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.7.17, for osx10.12 (x86_64)
 --
--- Host: localhost    Database: LogDatabase
+-- Host: localhost    Database: logdatabase
 -- ------------------------------------------------------
 -- Server version	5.7.18
 
@@ -16,15 +16,15 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `LogDatabase`
+-- Current Database: `logdatabase`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `LogDatabase` /*!40100 DEFAULT CHARACTER SET latin1 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `logdatabase` /*!40100 DEFAULT CHARACTER SET latin1 */;
 
-USE `LogDatabase`;
+USE `logdatabase`;
 
 --
--- Table structure for table `errors_logs`
+-- Table structure for table `errors_log`
 --
 
 DROP TABLE IF EXISTS `errors_log`;
@@ -40,12 +40,12 @@ CREATE TABLE `errors_log` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `errors_logs`
+-- Dumping data for table `errors_log`
 --
 
-LOCK TABLES `errors_logs` WRITE;
-/*!40000 ALTER TABLE `errors_logs` DISABLE KEYS */;
-/*!40000 ALTER TABLE `errors_logs` ENABLE KEYS */;
+LOCK TABLES `errors_log` WRITE;
+/*!40000 ALTER TABLE `errors_log` DISABLE KEYS */;
+/*!40000 ALTER TABLE `errors_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
