@@ -94,3 +94,9 @@ dependency-reduced-pom.xml
 
 # Maven Archiver
 maven-archiver/
+
+# IntelliJIDEA Folder
+.idea/
+
+# IML File
+basic-service.iml
