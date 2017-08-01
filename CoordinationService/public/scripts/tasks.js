@@ -161,9 +161,9 @@ function checkRequiredFields() {
   var a = $("#algorithmsNames")[0];
   var m = $("#modelsNames")[0];
   var selectedTaskType = t.options[t.selectedIndex].text;
-  var selectedDatasetName = d.options[d.selectedIndex].text;
-  var selectedAlgorithmName = a.options[a.selectedIndex].text;
-  var selectedModelName = m.options[m.selectedIndex].text;
+  var selectedDatasetName = d.options[d.selectedIndex] ===undefined ?"":d.options[d.selectedIndex].text;
+  var selectedAlgorithmName = a.options[a.selectedIndex]===undefined ? "": a.options[a.selectedIndex].text;
+  var selectedModelName = m.options[m.selectedIndex]===undefined ? "": m.options[m.selectedIndex].text;
   var alert = $('#formError')[0];
   var alertText = $('#formErrorText')[0];
   

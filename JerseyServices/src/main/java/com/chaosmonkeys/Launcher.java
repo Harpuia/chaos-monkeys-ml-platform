@@ -8,6 +8,7 @@ import com.chaosmonkeys.Utilities.LogType;
 import com.chaosmonkeys.Utilities.Logger;
 import com.chaosmonkeys.Utilities.MachineIPHelper;
 import com.chaosmonkeys.datasetinputservice.DatasetInputServiceHeartBeatsClient;
+import com.chaosmonkeys.train.heartbeat.ExecutionServiceHeartBeatsClient;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
@@ -100,15 +101,15 @@ public class Launcher {
             Logger.SaveLog(LogType.Exception, "EXCEPTION: could not get localhost IP address.");
         }
 
-        //Start http server
-        startServiceServer();
-
         //Loading the basic info
         ConfigInfo configInfoInfo = ConfigurationHelper.loadBasicInfo(configPath);
         serviceName = configInfoInfo.getServiceName();
         serviceType = configInfoInfo.getServiceType();
         serviceDescription = configInfoInfo.getServiceDescription();
         coordinationIP = configInfoInfo.getCoordinationIP();
+
+        //Start http server
+        startServiceServer();
 
         //Displaying service information
         Logger.SaveLog(LogType.Information, "The Coordination IP is :" + coordinationIP);
@@ -123,8 +124,8 @@ public class Launcher {
         //TODO: Replace with appropriate IP (development/production)
         //For testing
         Launcher.hostIP = "127.0.0.1:8080";
-    /*For production
-    Launcher.hostIP = MachineIPUtility.getRealIp();*/
+        /*For production
+        Launcher.hostIP = MachineIPUtility.getRealIp();*/
 
         //Start registration
         ThreadSafeRegister registerThread = new ThreadSafeRegister();
@@ -138,11 +139,18 @@ public class Launcher {
         }
         if (isRegistered) {
             //Send heartbeats
-//            HeartBeatsClient hbClient = new HeartBeatsClient();
-//            hbClient.startSendHeartBeat(coordinationIP);
+            //HeartBeatsClient hbClient = new HeartBeatsClient();
+            //hbClient.startSendHeartBeat(coordinationIP);
             // input service heartbeats clients
-            DatasetInputServiceHeartBeatsClient datasetInputServiceHeartBeatsClient = new DatasetInputServiceHeartBeatsClient();
-            datasetInputServiceHeartBeatsClient.startSendHeartBeat(coordinationIP);
+            if (serviceType.equals("DataInput")) {
+                DatasetInputServiceHeartBeatsClient datasetInputServiceHeartBeatsClient = new DatasetInputServiceHeartBeatsClient();
+                datasetInputServiceHeartBeatsClient.startSendHeartBeat(coordinationIP);
+            } else if (serviceType.equals("Training") || serviceType.equals("Execution")) {
+                ExecutionServiceHeartBeatsClient executionServiceHeartBeatsClient = new ExecutionServiceHeartBeatsClient();
+                executionServiceHeartBeatsClient.startSendHeartBeat(coordinationIP);
+            } else if (serviceType.equals("AlgrInput")) {
+                Logger.SaveLog(LogType.Error, "ERROR: HeartBeat Client of the Algorithm Input Service not defined!");
+            }
         } else {
             Logger.SaveLog(LogType.Error, "ERROR: Failed to register on coordination service! Please contact administrator.");
         }
@@ -164,11 +172,25 @@ public class Launcher {
      */
     public static HttpServer startServer() {
         //Create a resource config that scans for JAX-RS resources and providers in com.chaosmonkeys package
-        final ResourceConfig rc = new ResourceConfig().packages("com.chaosmonkeys");
+        //final ResourceConfig rc = new ResourceConfig().packages("com.chaosmonkeys");
+        final ResourceConfig rc;
+        if (serviceType.equals("DataInput")) {
+            rc = new ResourceConfig().packages("com.chaosmonkeys.datasetinputservice");
+        } else if(serviceType.equals("AlgrInput")) {
+            rc = new ResourceConfig().packages("com.chaosmonkeys.algrinputservice");
+        } else if(serviceType.equals("Training") || serviceType.equals("Execution")) {
+            rc = new ResourceConfig().packages("com.chaosmonkeys.train");
+        } else {
+            rc = new ResourceConfig().packages("com.chaosmonkeys");
+            Logger.SaveLog(LogType.Error, "ERROR: Service type" + serviceType + " not defined!");
+        }
         // register jackson for parsing JSON
         rc.register(JacksonFeature.class);
         // register multipart for supporting file upload
         rc.register(MultiPartFeature.class);
+
+        rc.register(CORSFilter.class);
+
         //Create and start a new instance of grizzly http server exposing the Jersey application at BASE_URI
         return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
     }

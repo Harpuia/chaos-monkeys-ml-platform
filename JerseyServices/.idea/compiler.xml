@@ -6,13 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="JerseyServices" />
-        <module name="simple-service" />
+        <module name="basic-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="JerseyServices" target="1.8" />
-      <module name="simple-service" target="1.8" />
+      <module name="basic-service" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

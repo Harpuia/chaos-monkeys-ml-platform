@@ -63,7 +63,7 @@ router.post('/create', function insertNewExperiment(req, res, next) {
     if (!error && response.statusCode == 200) {
       logMessage(false, log.operationType.ResponseReceived, new Date(), "Received response from Jeysey backend");
     }else {
-      logMessage(true, log.errorType.JerseyError, new Date(), error);
+            logMessage(true, log.errorType.JerseyError, new Date(), error);
     }
     //TODO: put this response in previous middleware when implementing the new design
     // we return a success message to the frontend for easy use now ...

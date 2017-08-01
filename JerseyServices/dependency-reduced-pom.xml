@@ -32,6 +32,19 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.javalite</groupId>
+        <artifactId>activejdbc-instrumentation</artifactId>
+        <version>${activejdbc.version}</version>
+        <executions>
+          <execution>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>instrument</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <artifactId>maven-shade-plugin</artifactId>
         <version>2.4.3</version>
         <executions>
@@ -105,6 +118,7 @@
     </dependencies>
   </dependencyManagement>
   <properties>
+    <activejdbc.version>1.4.13</activejdbc.version>
     <jersey.version>2.25.1</jersey.version>
     <jaxrs.version>2.1-m07</jaxrs.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
