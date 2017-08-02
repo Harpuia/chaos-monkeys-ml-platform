@@ -45,6 +45,7 @@ public class ExperimentResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response startExperiment(ExperimentDto experimentDto){
+        Logger.Request("Received request for starting experiment");
         int validCode = 0;
         String expName = experimentDto.getExperiment_name();
         // TODO: extract following checking logic to one single method, or maybe impossible..
@@ -224,6 +225,7 @@ public class ExperimentResource {
                 msg = "unknown error";
         }
         responseEntity.failed(errorCode,msg);
+        Logger.Response("Server respond with error: " + msg);
         Response response = Response.status(Response.Status.BAD_REQUEST)
                 .entity(responseEntity)
                 .build();
@@ -239,7 +241,7 @@ public class ExperimentResource {
     public Response genSuccResponse(){
         BaseResponse responseEntity = new BaseResponse();
         responseEntity.successful("Your experiment has been submitted to run");
-
+        Logger.Response("Respond success");
         Response response = Response.ok()
                 .entity(responseEntity)
                 .build();
@@ -253,7 +255,7 @@ public class ExperimentResource {
     public Response genSuccResponseWithMsg(String msg){
         BaseResponse responseEntity = new BaseResponse();
         responseEntity.successful(msg);
-
+        Logger.Response("Respond success: " + msg);
         Response response = Response.ok()
                 .entity(responseEntity)
                 .build();
