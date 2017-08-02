@@ -7,6 +7,7 @@ import com.chaosmonkeys.Utilities.StringUtils;
 import com.chaosmonkeys.Utilities.db.DbUtils;
 import com.chaosmonkeys.dao.Experiment;
 import com.chaosmonkeys.dao.Prediction;
+import com.chaosmonkeys.train.Constants;
 import com.chaosmonkeys.train.task.interfaces.OnTaskUpdateListener;
 import org.zeroturnaround.exec.ProcessExecutor;
 import org.zeroturnaround.exec.ProcessResult;
@@ -19,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.*;
 
@@ -166,10 +168,14 @@ public class ExecutionTask extends AbsTask{
                     boolean matched = StringUtils.containsIgnoreCase(outputStr, "error");
                     Logger.Info(outputStr);
                     if (matched) {
+                        int errorMsgStartIndex = outputStr.toLowerCase(Locale.ENGLISH).indexOf("error");
+                        int errorMsgEndIndex = Math.min(outputStr.length(), Constants.ERR_MSG_LENGTH);
+                        String cutErrorMsg = outputStr.substring(errorMsgStartIndex,errorMsgEndIndex);
                         Logger.Error("Execution task terminated with error output " + outputStr);
                         Exception ex = new Exception("Execution experiment terminated with error output");
                         if (!cancelled) {
-                            taskUpdateListener.onError(ex, getTaskId());
+                            setErrorMsg(cutErrorMsg);
+                            taskUpdateListener.onError(ex, getTaskId(), cutErrorMsg);
                         }
                     } else {
                         //TODO: move output folder to the dest
@@ -187,7 +193,10 @@ public class ExecutionTask extends AbsTask{
         } catch (IOException e) {
             Logger.Error("IOException happened when starting training experiment");
             e.printStackTrace();
-            taskUpdateListener.onError(e, getTaskId());
+            String errorMsg = "IOException has been thrown during running. Exception message: " + e.getMessage();
+            errorMsg = errorMsg.substring(0, Math.min( Constants.ERR_MSG_LENGTH, errorMsg.length()));
+            setErrorMsg(errorMsg);
+            taskUpdateListener.onError(e, getTaskId(),errorMsg);
         } catch (InterruptedException e) {
             if (cancelled) {
                 //invoke zt-killer
@@ -212,7 +221,10 @@ public class ExecutionTask extends AbsTask{
             } else {
                 Logger.Error("The execution experiment has been interrupted in accidentally");
                 e.printStackTrace();
-                taskUpdateListener.onError(e, getTaskId());
+                String errorMsg = "InterruptedException has been thrown during running. Exception message: " + e.getMessage();
+                errorMsg = errorMsg.substring(0, Math.min( Constants.ERR_MSG_LENGTH, errorMsg.length()));
+                setErrorMsg(errorMsg);
+                taskUpdateListener.onError(e, getTaskId(), errorMsg);
             }
         }
 
@@ -270,7 +282,10 @@ public class ExecutionTask extends AbsTask{
             e.printStackTrace();
             Logger.Error("database error when insert a new prediction");
             DbUtils.closeConnection();
-            taskUpdateListener.onError(e, getTaskId());
+            String errorMsg = "IOException has been thrown when storing the results. Exception message: " + e.getMessage();
+            errorMsg = errorMsg.substring(0, Math.min( Constants.ERR_MSG_LENGTH, errorMsg.length()));
+            setErrorMsg(errorMsg);
+            taskUpdateListener.onError(e, getTaskId(), errorMsg);
         }
 
     }
