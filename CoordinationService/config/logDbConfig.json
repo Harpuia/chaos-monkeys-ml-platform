@@ -2,5 +2,6 @@
     "dbhost":"127.0.0.1",
     "dbuser":"root",
     "dbpassword":"root",
-    "dbname":"logdatabase"
+    "dbname":"logdatabase",
+    "port":"3306"
 }

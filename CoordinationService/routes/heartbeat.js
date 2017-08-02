@@ -3,6 +3,9 @@ var router = express.Router();
 var path = require('path');
 var utilities = require('./dbUtilities');
 var log = require('./logUtilities');
+var mysqlToCsv = require("mysql-to-csv")
+var nodeCmd = require("node-cmd");
+var config = require('../config/logDbConfig.json');
 
 const SERVICE_EXISTS_ERRORCODE = 1062;
 
@@ -98,5 +101,24 @@ function getMonthFromString(month) {
   else
     return null;
 }
+
+router.get('/exportErrLogToCSV', function exportErr(req, res){
+  var query="select * from operations_log";
+  var command="node exportToCSV.js -h "+config.dbhost+" -P "+config.port+" -d "+config.dbname+" -u "+config.dbuser+" -p "+config.dbpassword+" -q \""+query+"\" -t false -T csv -o sample";
+  console.log(command);
+  nodeCmd.get(
+        command,
+        function(err, data, stderr){
+          if(!err){
+            console.log("export success");
+            console.log(data);
+            res.send({ results: data });
+          }
+          else{
+            console.log('error',err);
+          }
+        }
+    );
+});
 
 module.exports = router;

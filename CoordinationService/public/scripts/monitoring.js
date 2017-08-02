@@ -9,3 +9,15 @@ setInterval(function () {
     $('table').html(tr);
   })
 }, 2000);
+
+function exportErrLogToCSV() {
+  /*$.getJSON("http://127.0.0.1:3000/exportErrLogToCSV", function (data) {
+    alert(data);
+  });*/
+  $.get("exportErrLogToCSV", function (data) {
+    var result=data['results'];
+    if(result !==undefined){
+      alert("success");
+    }
+  });
+}
