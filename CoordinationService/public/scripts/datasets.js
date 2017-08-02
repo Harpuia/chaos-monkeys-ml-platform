@@ -313,7 +313,6 @@ function showTaskType() {
     showDropdown(algorithmDropdown);
   }
   else if (selectedValue.toLowerCase() == "execution") {
-    hideDropdown(algorithmDropdown);
     showDropdown(modelDropdown);
   }
 }
