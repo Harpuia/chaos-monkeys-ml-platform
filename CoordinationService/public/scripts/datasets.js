@@ -292,7 +292,7 @@ function checkRequiredTaskFields() {
     showSubmissionResult('Please input a task name.', alert, alertText);
     return false;
   }
-  else if (selectedTaskType.toLowerCase() == "training" && selectedAlgorithmName.length == 0) {
+  else if (sselectedAlgorithmName.length == 0) {
     showSubmissionResult('Please select an algorithm.', alert, alertText);
     return false;
   }
