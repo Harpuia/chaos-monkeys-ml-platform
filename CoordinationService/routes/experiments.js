@@ -35,19 +35,18 @@ router.post('/create', function insertNewExperiment(req, res, next) {
   var query = 'insert into experiments SET ?';
   logMessage(false, log.operationType.QueryData, new Date(), query);
   //Insert tasks information into tasks table
-  var results = connection.query(query, req.body, function insertExperiment(err, result) {
-    if (err) {  // pass the err to error handler
+  connection.query(query, req.body, function insertExperiment(err, result) {
+    //Closing connection
+    connection.end();
+    if (err) { // pass the err to error handler
       logMessage(true, log.errorType.DBError, new Date(), err);
       err.source = 'mysql'; // add error source for tracing
       err.status = 500;
       next(err);
-    }
-    else {
+    } else {
       logMessage(false, log.operationType.ResponseReceived, new Date(), "Created a new experiment");
+      next();
     }
-    //Closing connection
-    connection.end();
-    next(); //send to backend
   });
 
 }, function submitExperimentToRun(req, res, next) {
@@ -59,18 +58,22 @@ router.post('/create', function insertNewExperiment(req, res, next) {
     method: 'POST',
     json: contents
   };
-  request(options, function (error, response, body) {
-    if (!error && response.statusCode == 200) {
+  request(options, function(error, response, body) {
+    if (!error && response.statusCode === 200) {
       logMessage(false, log.operationType.ResponseReceived, new Date(), "Received response from Jeysey backend");
-    }else {
-            logMessage(true, log.errorType.JerseyError, new Date(), error);
+      //TODO: put this response in previous middleware when implementing the new design
+      // we return a success message to the frontend for easy use now ...
+      res.json({ newexperimentinfo: req.body});
+    } else if (!error && response.statusCode === 400 ){
+      logMessage(false, log.operationType.ResponseReceived, new Date(), "Jeysey backend refused this request due to bad request");
+      //TODO: delete the experiment record just created
+      res.status(400).send({ code:body.code , msg:body.msg });
+    } else {
+      logMessage(true, log.errorType.JerseyError, new Date(), error);
+      res.status(500).send({ code:399 , msg:"Server may not work now, please try later or contact admin" });
     }
-    //TODO: put this response in previous middleware when implementing the new design
-    // we return a success message to the frontend for easy use now ...
-    res.json({ newexperimentinfo: req.body });
   });
 });
-
 
 
 module.exports = router;

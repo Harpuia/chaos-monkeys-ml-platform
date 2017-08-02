@@ -84,10 +84,16 @@ function submitForm() {
         loadPage();
         loadTaskNames();
       },
-      error: function (request, status, error) {
+      error: function (jqXHR, status, error) {
         //Disabling submit button
         $('#submitButton').prop("disabled", false);
-        showSubmissionResult("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
+        if (jqXHR.responseJSON) {
+          var resObject = jqXHR.responseJSON;  // this object contains keys: code and msg
+          displayAlertByType(resObject, alert, alertText);
+        } else {
+          var networkErr = "Submitting experiment request failed, please check your network connection or the server may be not startup";
+          showSubmissionResult(networkErr, alert, alertText);
+        }
       }
     });
   }
@@ -140,6 +146,13 @@ function checkRequiredFields() {
 function showSubmissionResult(message, alert, alertText) {
   alertText.innerText = message;
   alert.style.display = "block";
+}
+
+// response is object which contains code: int, msg: string, and success: boolean
+function displayAlertByType(response, alert, alertText) {
+  var errorCode = response.code;
+  var errorMsg = response.msg;
+  showSubmissionResult(errorMsg, alert, alertText);
 }
 
 /*Displays details for a selected experiment */
