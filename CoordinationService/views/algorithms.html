@@ -133,7 +133,7 @@
                       </div>
                       <div class="form-group required">
                         <label for="file" class="control-label">Algorithm Files</label>
-                        <input type="file" name="file" id="algorithm_file" onchange="checkAlgFileExtension()"/>
+                        <input type="file" name="file" id="algorithm_file" onchange="checkAlgFileExtension()" />
                       </div>
                       <div>
                         <button id="submitButton" type="button" class="btn btn-primary" onclick="submitForm()">Upload</button>
@@ -185,7 +185,9 @@
                     <div class="description" id="contents" style="display:block">
                       <div class="form-group required">
                         <label for="TaskType" class="control-label">Task Type</label>
-                        <input type="text" class="form-control" name="type" id="taskType" value="Training" disabled/>
+                        <br>
+                        <select class="form-control" id="type" onchange="showTaskType()">
+                        </select>
                       </div>
                       <div class="form-group required">
                         <label for="data name" class="control-label">Task Name</label>
@@ -204,7 +206,14 @@
                       <div class="form-group required" id="algorithms">
                         <label for="AlgorithmsNames" class="control-label">Select Algorithm</label>
                         <br>
-                        <input type="text" class="form-control" id="taskAlgorithmsNames" disabled/>
+                        <select class="form-control" id="algorithmsNames">
+                                                </select>
+                      </div>
+                      <div class="form-group required" id="models" style="display:none">
+                        <label for="ModelsNames" class="control-label">Select Model</label>
+                        <br>
+                        <select class="form-control" id="modelsNames">
+                                                </select>
                       </div>
                     </div>
                   </form>

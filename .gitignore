@@ -98,5 +98,8 @@ maven-archiver/
 # IntelliJIDEA Folder
 .idea/
 
+# VS Code Config Folder
+.vscode/
+
 # IML File
 basic-service.iml
