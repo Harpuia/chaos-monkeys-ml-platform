@@ -235,8 +235,8 @@ function submitTaskForm() {
     "type": type
   }
   var tasksInfoForExe = {
-    "dataset_id": selectedDatasetId,
-    "algorithm_id": null,
+    "dataset_id": datasetsData[selectedDatasetId]['id'],
+    "algorithm_id": $("#algorithmsNames").val(),
     "model_id": $("#modelsNames").val(),
     "name": $("#name").val(),
     "description": $("#description").val(),
@@ -292,7 +292,7 @@ function checkRequiredTaskFields() {
     showSubmissionResult('Please input a task name.', alert, alertText);
     return false;
   }
-  else if (sselectedAlgorithmName.length == 0) {
+  else if (selectedAlgorithmName.length == 0) {
     showSubmissionResult('Please select an algorithm.', alert, alertText);
     return false;
   }
