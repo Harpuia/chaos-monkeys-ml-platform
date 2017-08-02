@@ -18,14 +18,17 @@ public final class DbUtils {
 
     // lock for managing connection
     private static ReentrantLock connectionLock = new ReentrantLock();
-
+    // lock for managing logging db connection
+    private static ReentrantLock logConnectionLock = new ReentrantLock();
 
     // JDBC connection properties
     private static String url;
+    private static String logUrl;
     private static String username;
     private static String password;
     private static String driver;
     private static String dbName;
+    private static String logDbName;
     private static ResourceBundle rb = ResourceBundle.getBundle("db.db-config");
     // using SSL for connection but turning off server verification
     private static String options = "?verifyServerCertificate=false&useSSL=true";
@@ -34,9 +37,11 @@ public final class DbUtils {
     static{
         dbName = rb.getString("jdbc.dbName");
         url = rb.getString("jdbc.baseurl") + rb.getString("jdbc.dbName") + options;
+        logUrl = rb.getString("jdbc.baseurl") + "logdatabase" + options;
         username = rb.getString("jdbc.username");
         password = rb.getString("jdbc.password");
         driver = rb.getString("jdbc.driver");
+        logDbName = "logdatabase";      // extract to resources file
         try {
             Class.forName(driver);
         } catch (ClassNotFoundException e) {
@@ -64,6 +69,25 @@ public final class DbUtils {
         connectionLock.unlock();
     }
 
+    /**
+     * open ActiveJDBC connection when needed in one thread
+     * this method only aimed to use the Log database
+     * if you wanna use another database, refactor it or write a
+     * new method
+     */
+    public static void openLogConnection(){
+        logConnectionLock.lock();
+        new DB(logDbName).open(driver, logUrl, username, password);
+    }
+
+    /**
+     * Close ActiveJDBC connection for LogDatabase in current thread
+     */
+    public static void closeLogConnection(){
+        new DB(logDbName).close();
+        //TODO: place lock to another proper code
+        logConnectionLock.unlock();
+    }
 
     /**
      * Insert the data sets information to the ConfigurationDatabase database.

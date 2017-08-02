@@ -204,6 +204,7 @@ public class DatasetInputService {
                 msg = "unknown error";
         }
         responseEntity.failed(errorCode,msg);
+        Logger.Response("Server respond with error: " + msg);
         Response response = Response.status(Response.Status.BAD_REQUEST)
                 .entity(responseEntity)
                 .build();
@@ -216,7 +217,7 @@ public class DatasetInputService {
     private Response genSuccResponse(){
         BaseResponse responseEntity = new BaseResponse();
         responseEntity.successful("Upload successfully");
-
+        Logger.Response("Respond success");
         Response response = Response.ok()
                 .entity(responseEntity)
                 .build();
