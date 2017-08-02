@@ -6,5 +6,7 @@ package com.chaosmonkeys.Utilities;
 public enum LogType {
     Error,
     Exception,
-    Information
+    Information,
+    Request,
+    Response
 }

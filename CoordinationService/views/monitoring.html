@@ -30,7 +30,7 @@
   <link href="/public/stylesheets/justified-nav.css" rel="stylesheet">
 
   <!-- Custom styles for this template -->
-  <!--<link href="/public/stylesheets/monitoring-table.css" rel="stylesheet"> -->
+  <link href="/public/stylesheets/monitoring-table.css" rel="stylesheet">
 
   <!-- To use the Font Awesome icons -->
   <link rel="stylesheet" href="/public/stylesheets/font-awesome.min.css">
@@ -66,12 +66,23 @@
   </header>
   <div class="col-md-8 col-md-offset-1">
     <h2 class="sub-header">Connected services</h2>
-    <h4 class="sub-header">Coordination Service IP: 127.0.0.1:3000</h4>
     <!-- Upload algorithm button -->
-      <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="downloadErrLog" onclick="exportErrLogToCSV()">Download Error Log</button>
+    <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="downloadErrLog" onclick="exportErrLogToCSV()">Download Error Log</button>
       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="downloadOpLog" onclick="exportOpLogToCSV()">Download Operation Log</button></p>
+    <h4 class="sub-header">Coordination Service local IP: 127.0.0.1:3000</h4>
+    <table class="table table-bordered">
+      <tr>
+        <th colspan="3">Color Code</th>
+      </tr>
+      <tr>
+        <td class="bg-success">OK (lost contact for less than 1 minute)</td>
+        <td class="bg-warning">Possible issue (lost contact for 1 to 2 minutes)</td>
+        <td class="bg-danger">Service disconnected (lost contact for 2 to 3 minutes)</td>
+      </tr>
+    </table>
+    <br><br>
     <div>
-      <table class="table table-responsive table-bordered">
+      <table id='monitoring_table' class="table table-responsive table-bordered">
       </table>
     </div>
   </div>

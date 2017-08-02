@@ -62,7 +62,7 @@ public class AlgorithmResource {
                                         @FormDataParam("language") String language){
         refreshServiceState();
         if (null != algrName && !algrName.equals("")) {
-            Logger.SaveLog(LogType.Information, "INPUT: Received algorithm upload request - Algorithm Name: " + algrName);
+            Logger.Request("Received algorithm upload request - Algorithm Name: " + algrName);
         }
         // --::ERROR DETECTING
         int validCode = detectUploadServiceParamError(fileInputStream, fileMetaData, algrName,algrDescription,language);
@@ -248,6 +248,7 @@ public class AlgorithmResource {
                 errorCode = ERR_UNKNOWN;
                 msg = "unknown error";
         }
+        Logger.Response("Server respond with error: " + msg);
         responseEntity.failed(errorCode,msg);
         Response response = Response.status(Response.Status.BAD_REQUEST)
                 .entity(responseEntity)
@@ -261,7 +262,7 @@ public class AlgorithmResource {
     public Response genSuccResponse(){
         BaseResponse responseEntity = new BaseResponse();
         responseEntity.successful("algorithm upload successfully");
-
+        Logger.Response("Respond success");
         Response response = Response.ok()
                                     .entity(responseEntity)
                                     .build();
