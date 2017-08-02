@@ -6,7 +6,7 @@ var log = require('./logUtilities');
 
 const SERVICE_EXISTS_ERRORCODE = 1062;
 
-/* gets the table of services, controls liveness of remote services and deregisters non responsive ones */
+/* gets the table of services, controls liveness of remote services and deregisters non responsive ones after 3 minutes */
 router.get('/table', function getServiceTable(req, res, next) {
   //Connect to DB
   var connection = createDbConnection();
@@ -30,7 +30,6 @@ router.get('/table', function getServiceTable(req, res, next) {
         duration = Date.now() - rows[i]['last_updated'];
         rows[i]['last_updated'] = duration / 1000;
         ip = rows[i]['ip'];
-        console.log(duration);
         if (duration > 180000) {
           //Remove service from table
           var sqlDelete = 'delete from connected_services where id ="' + rows[i]['id'] + '"';
