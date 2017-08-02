@@ -3,8 +3,8 @@ package com.chaosmonkeys.algrinputservice;
 import com.chaosmonkeys.Launcher;
 import com.chaosmonkeys.Utilities.LogType;
 import com.chaosmonkeys.Utilities.Logger;
-import com.chaosmonkeys.datasetinputservice.DTO.DatasetInputServiceStatusInfo;
-import com.chaosmonkeys.datasetinputservice.DTO.DatasetInputServiceWorkState;
+import com.chaosmonkeys.algrinputservice.DTO.AlgorithmInputServiceStatusInfo;
+import com.chaosmonkeys.algrinputservice.DTO.AlgorithmInputServiceWorkState;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.filter.LoggingFilter;
 
@@ -46,10 +46,10 @@ public class AlgorithmInputServiceHeartBeatsClient {
             Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
             while (true) {
                 try {
-                    //DatasetInputServiceWorkState workState = new DatasetInputServiceWorkState(DatasetInputService.checkSet, DatasetInputService.uploadSet, DatasetInputService.serviceStatus);
-                    //DatasetInputServiceStatusInfo serviceStatusInfo = new DatasetInputServiceStatusInfo(Launcher.getHostIP(), workState);
+                    AlgorithmInputServiceWorkState workState = new AlgorithmInputServiceWorkState(AlgorithmResource.checkSet, AlgorithmResource.uploadSet, AlgorithmResource.serviceStatus);
+                    AlgorithmInputServiceStatusInfo serviceStatusInfo = new AlgorithmInputServiceStatusInfo(Launcher.getHostIP(), workState);
 
-                    //Response response = invocationBuilder.post(Entity.entity(serviceStatusInfo, MediaType.APPLICATION_JSON));
+                    Response response = invocationBuilder.post(Entity.entity(serviceStatusInfo, MediaType.APPLICATION_JSON));
                 } catch (ProcessingException e) {
                     Logger.SaveLog(LogType.Exception, "EXCEPTION: Heartbeat Connection Timeout, retrying...");
                 }

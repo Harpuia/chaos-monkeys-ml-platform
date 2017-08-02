@@ -7,6 +7,7 @@ import com.chaosmonkeys.Utilities.ConfigurationHelper;
 import com.chaosmonkeys.Utilities.LogType;
 import com.chaosmonkeys.Utilities.Logger;
 import com.chaosmonkeys.Utilities.MachineIPHelper;
+import com.chaosmonkeys.algrinputservice.AlgorithmInputServiceHeartBeatsClient;
 import com.chaosmonkeys.datasetinputservice.DatasetInputServiceHeartBeatsClient;
 import com.chaosmonkeys.train.heartbeat.ExecutionServiceHeartBeatsClient;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -149,7 +150,8 @@ public class Launcher {
                 ExecutionServiceHeartBeatsClient executionServiceHeartBeatsClient = new ExecutionServiceHeartBeatsClient();
                 executionServiceHeartBeatsClient.startSendHeartBeat(coordinationIP);
             } else if (serviceType.equals("AlgrInput")) {
-                Logger.SaveLog(LogType.Error, "ERROR: HeartBeat Client of the Algorithm Input Service not defined!");
+                AlgorithmInputServiceHeartBeatsClient algorithmInputServiceHeartBeatsClient = new AlgorithmInputServiceHeartBeatsClient();
+                algorithmInputServiceHeartBeatsClient.startSendHeartBeat(coordinationIP);
             }
         } else {
             Logger.SaveLog(LogType.Error, "ERROR: Failed to register on coordination service! Please contact administrator.");
