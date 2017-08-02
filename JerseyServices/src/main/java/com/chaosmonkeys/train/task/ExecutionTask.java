@@ -7,7 +7,6 @@ import com.chaosmonkeys.Utilities.StringUtils;
 import com.chaosmonkeys.Utilities.db.DbUtils;
 import com.chaosmonkeys.dao.Experiment;
 import com.chaosmonkeys.dao.Prediction;
-import com.chaosmonkeys.dao.PredictionModel;
 import com.chaosmonkeys.train.task.interfaces.OnTaskUpdateListener;
 import org.zeroturnaround.exec.ProcessExecutor;
 import org.zeroturnaround.exec.ProcessResult;
@@ -100,7 +99,7 @@ public class ExecutionTask extends AbsTask{
                 File tmpInputFolder = new File(res.getWorkspaceFolder(), "input");
                 File tmpModelFolder = new File(res.getWorkspaceFolder(), "model");
                 // copy data set content to workspace input folder
-                FileUtils.copyDirectory(res.getDatasetFolder(), tmpInputFolder);
+                FileUtils.copyFileToDirectory(res.getDatasetFile(), tmpInputFolder);
                 if(cancelled){ throw new InterruptedException(); }
                 FileUtils.copyDirectory(res.getModelFolder(), tmpModelFolder);
                 if(cancelled){ throw new InterruptedException(); }

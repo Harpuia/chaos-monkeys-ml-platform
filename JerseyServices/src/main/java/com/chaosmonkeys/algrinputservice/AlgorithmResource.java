@@ -49,6 +49,7 @@ public class AlgorithmResource {
     public static final int ERR_FILE_BODYPART_MISSING = 204;
     public static final int ERR_UNZIP_EXCEPTION = 205;
     public static final int ERR_REQUIRED_FILE_MISSING = 206;
+    public static final int ERR_CANNOT_CREATE_FILE = 207;
     public static final int ERR_UNKNOWN = 299;
     @POST
     @Path("/upload")
@@ -61,7 +62,7 @@ public class AlgorithmResource {
                                         @FormDataParam("language") String language){
         refreshServiceState();
         if (null != algrName && !algrName.equals("")) {
-            Logger.SaveLog(LogType.Information, "INPUT: Received algorithm upload request - Name: " + algrName);
+            Logger.SaveLog(LogType.Information, "INPUT: Received algorithm upload request - Algorithm Name: " + algrName);
         }
         // --::ERROR DETECTING
         int validCode = detectUploadServiceParamError(fileInputStream, fileMetaData, algrName,algrDescription,language);
@@ -71,7 +72,14 @@ public class AlgorithmResource {
         }
         //create Algorithm folder if it does not exist yet
         File algrFolder = FileUtils.createAlgorithmFolder();
-        Logger.SaveLog(LogType.Information, "Algorithm storage root folder has been created");
+        try {
+            Logger.Info("Algorithm storage root folder has been created in " + algrFolder.toPath().toRealPath().toString());
+        } catch (IOException e) {
+            Logger.Error("Algorithm input service cannot create algorithm storage root folder due to unknown reason");
+            e.printStackTrace();
+            validCode = ERR_CANNOT_CREATE_FILE;
+            return genErrorResponse(validCode);
+        }
         //create dev language folder if it does not exist yet
         File langFolder = FileUtils.createNewFolderUnder(language, algrFolder);
         // create target folder
@@ -160,26 +168,19 @@ public class AlgorithmResource {
     public boolean receiveFile(InputStream fileInputStream, File targetFolder, String fileName){
         // receive all file parts and store in targetFolder using filename
         // if exception happen, delete targetFolder
+        uploadSet.add(fileName);
+        File targetFile = new File(targetFolder, fileName);
         try {
-            int read = 0;       // the total number of bytes read into the buffer
-            byte[] bytes = new byte[1024];
-
-            // add to uploading set
-            uploadSet.add(fileName);
-            OutputStream out = new FileOutputStream(new File(targetFolder, fileName));
-            while ((read = fileInputStream.read(bytes)) != -1) {
-                out.write(bytes, 0, read);
-            }
-            out.flush();
-            out.close();
+            FileUtils.receiveFile(fileInputStream, targetFile);
+            // remove this item from uploading list
+            uploadSet.remove(fileName);
+        } catch (IOException e) {
             // remove this one from uploading list
             uploadSet.remove(fileName);
-
-        } catch (IOException e) {
             // delete error dataset
-            Logger.SaveLog(LogType.Exception, "Error while uploading algorithm file.");
+            Logger.Exception("Exception happened while receiving algorithm file from client side.");
             FileUtils.deleteQuietly(targetFolder);
-            Logger.SaveLog(LogType.Exception, "delete folder created");
+            Logger.Exception("Delete the created folder due to the failure of receiving algorithm file");
             e.printStackTrace();
             return false;
         }
@@ -210,7 +211,7 @@ public class AlgorithmResource {
         // or from database in the future, but it may involve compute cost for each upload/other services, so let's keep R, Python C++ and Matlab now
         boolean isLangSupported = supportDevLanguageList.stream().anyMatch(lang -> lang.equals(language));
         if(!isLangSupported){
-            Logger.SaveLog(LogType.Exception,"Unsupported machine learning development language");
+            Logger.Info("Received algorithm uploading request with unsupported machine learning development language");
             return ERR_UNSUPPORTED_LANG;
         }
         return CHECK_SUCCESS;
@@ -239,6 +240,9 @@ public class AlgorithmResource {
                 break;
             case(ERR_UNZIP_EXCEPTION):
                 msg = "server unzip file throws exception, please check whether the file is corrupt or not";
+                break;
+            case(ERR_CANNOT_CREATE_FILE):
+                msg = "Server cannot store your file at this time, please try again or contact administrator";
                 break;
             default:
                 errorCode = ERR_UNKNOWN;

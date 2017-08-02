@@ -61,7 +61,6 @@ public class StringUtils {
     /**
      * Generate algorithm storage folder name (valid folder name in common OS)
      * @param name which is algorithm name
-     * @param userId
      * @return
      */
     public static String genAlgrStorageFolderName(String name){
@@ -78,7 +77,6 @@ public class StringUtils {
     /**
      * Generate algorithm storage folder name (valid folder name in common OS)
      * @param name which is experiment name
-     * @param userId
      * @return
      */
     public static String genModelStorageFolderName(String name){

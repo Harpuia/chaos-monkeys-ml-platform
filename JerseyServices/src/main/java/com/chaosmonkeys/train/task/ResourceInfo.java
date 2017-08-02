@@ -14,7 +14,7 @@ import java.io.File;
 public class ResourceInfo {
 
     // Resource Folder Reference
-    protected File datasetFolder;   // TODO: rename it because we change it to dataset file now
+    protected File datasetFile;
     protected File algorithmFolder;
     protected File modelFolder;
     protected File workspaceFolder;
@@ -23,13 +23,13 @@ public class ResourceInfo {
     //** Constructor ---------------------------------------------------------------------------
 
 
-    public ResourceInfo(File datasetFolder, File algorithmFolder, File workspaceFolder) {
-        this.datasetFolder = datasetFolder;
+    public ResourceInfo(File datasetFile, File algorithmFolder, File workspaceFolder) {
+        this.datasetFile = datasetFile;
         this.algorithmFolder = algorithmFolder;
         this.workspaceFolder = workspaceFolder;
     }
-    public ResourceInfo(File datasetFolder, File algorithmFolder, File modelFolder, File workspaceFolder) {
-        this(datasetFolder, algorithmFolder, workspaceFolder);
+    public ResourceInfo(File datasetFile, File algorithmFolder, File modelFolder, File workspaceFolder) {
+        this(datasetFile, algorithmFolder, workspaceFolder);
         if(null != modelFolder){
             this.modelFolder = modelFolder;
         }
@@ -46,7 +46,7 @@ public class ResourceInfo {
 
         boolean modelValid = false;
 
-        boolean datasetValid = FileUtils.checkDatasetFileValid(datasetFolder);
+        boolean datasetValid = FileUtils.checkDatasetFileValid(datasetFile);
         boolean algrValid = FileUtils.checkFolderValid(algorithmFolder);
         boolean workspaceValid = FileUtils.checkFolderValid(workspaceFolder);
 
@@ -60,14 +60,14 @@ public class ResourceInfo {
     }
     /**
      * Check whether ResourceInfo are ready
-     * @param type
+     * @param type Constants.TYPE_TRAIN or Constants.TYPE_EXECUTION
      * @return
      */
     public boolean checkRequirement(String type){
 
         boolean modelValid = false;
 
-        boolean datasetValid = FileUtils.checkDatasetFileValid(datasetFolder);
+        boolean datasetValid = FileUtils.checkDatasetFileValid(datasetFile);
         boolean algrValid = FileUtils.checkFolderValid(algorithmFolder);
         boolean workspaceValid = FileUtils.checkFolderValid(workspaceFolder);
 
@@ -113,12 +113,12 @@ public class ResourceInfo {
 
     //** Getter and Setter ---------------------------------------------------------------------
 
-    public File getDatasetFolder() {
-        return datasetFolder;
+    public File getDatasetFile() {
+        return datasetFile;
     }
 
-    public void setDatasetFolder(File datasetFolder) {
-        this.datasetFolder = datasetFolder;
+    public void setDatasetFile(File datasetFile) {
+        this.datasetFile = datasetFile;
     }
 
     public File getAlgorithmFolder() {

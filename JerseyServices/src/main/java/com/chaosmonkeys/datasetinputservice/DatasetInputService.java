@@ -94,16 +94,17 @@ public class DatasetInputService {
         try {
             inserted = DbUtils.storeDataSet(dataName,dataDescription, targetFile.getCanonicalPath(),format);
         } catch (IOException e) {
-            Logger.Exception("Fail to store new datasets into database");
+            Logger.Exception("Fail to store new datasets record into database");
             e.printStackTrace();
         }
         if(!inserted){
             FileUtils.deleteQuietly(targetFolder);
-            Logger.Info("insert dataset "+ dataName +" failed");
+            Logger.Info("insert dataset "+ dataName +" failed, return error message to frontend");
             validCode = ERR_STORE_IN_DB;
             return genErrorResponse(validCode);
         }
         refreshServiceState();
+        Logger.Info("Dataset upload request successfully. Dataset Name: " + dataName);
         return genSuccResponse();
     }
 
@@ -128,7 +129,6 @@ public class DatasetInputService {
         } catch (IOException e) {
             // delete error dataset
             Logger.Exception("IOException happened while the server are receiving dataset file");
-            Logger.Exception("Error while uploading datasets file.");
             FileUtils.deleteQuietly(targetFolder);
             Logger.Info("Target folder for datasets has been deleted");
             e.printStackTrace();
@@ -166,7 +166,7 @@ public class DatasetInputService {
         }
         boolean fileExtensionValid = DataVerification.isFileExtensionValidate(fileMetaData.getFileName());
         if(!fileExtensionValid){
-            Logger.Info("Invalid datasets file name");
+            Logger.Info("Detected invalid datasets file name");
             return ERR_INVALID_FILE_EXT;
         }
         return CHECK_SUCCESS;

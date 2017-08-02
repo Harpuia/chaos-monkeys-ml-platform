@@ -14,7 +14,6 @@ import org.zeroturnaround.exec.StartedProcess;
 import org.zeroturnaround.process.ProcessUtil;
 import org.zeroturnaround.process.Processes;
 import org.zeroturnaround.process.SystemProcess;
-import org.zeroturnaround.process.WindowsProcess;
 
 import java.io.File;
 import java.io.IOException;
@@ -96,7 +95,7 @@ public class TrainingTask extends AbsTask{
                 if(cancelled){ throw new InterruptedException(); }
                 File tmpInputFolder = new File(res.getWorkspaceFolder(), "input");
                 // copy data set content to workspace input folder
-                FileUtils.copyDirectory(res.getDatasetFolder(), tmpInputFolder);
+                FileUtils.copyFileToDirectory(res.getDatasetFile(), tmpInputFolder);
                 if(cancelled){ throw new InterruptedException(); }
                 // invoke initialized
                 if(!cancelled){

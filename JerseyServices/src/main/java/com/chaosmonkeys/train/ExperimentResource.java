@@ -84,11 +84,11 @@ public class ExperimentResource {
         String algrPath = algr.getAlgorithmPath();
         String algrLanguage =algr.getAlgorithmLanguage();
 
-        File datasetFolder = new File(datasetPath);
+        File datasetFile = new File(datasetPath);
         File algrFolder = new File(algrPath);
         File workspaceFolder = FileUtils.createTempDir();
         ResourceInfo.ResourceInfoBuilder resInfoBuilder = new ResourceInfo.ResourceInfoBuilder().
-                setDatasetFolder(datasetFolder).
+                setDatasetFolder(datasetFile).
                 setAlgorithmFolder(algrFolder).
                 setWorkspaceFolder(workspaceFolder);
         if(isPredictionTask){
@@ -109,12 +109,14 @@ public class ExperimentResource {
         validCode = CHECK_SUCCESS;
         switch (taskType){
             case(Constants.TYPE_TRAIN):
+                Logger.Info("Received training experiment request");
                 // construct TaskInfo
                 TrainingTaskInfo trainingTaskInfo= new TrainingTaskInfo(expName, algrLanguage, resInfo);
                 // get task manager instance and submit the task
                 TrainingTaskManager.INSTANCE.submitTask(trainingTaskInfo);
                 break;
             case(Constants.TYPE_EXECUTION):
+                Logger.Info("Received execution experiment request");
                 ExecutionTaskInfo executionTaskInfo = new ExecutionTaskInfo(expName, algrLanguage, resInfo);
                 ExecutionTaskManager.INSTANCE.submitTask(executionTaskInfo);
                 break;
@@ -141,9 +143,11 @@ public class ExperimentResource {
         // TODO: extract following checking logic to one single method, or maybe impossible..
         // no experiment name
         if(StringUtils.isBlank(expName)){
+            Logger.Exception("Received stop request for an experiment but the request does not contain experiment name");
             validCode = ERR_BLANK_PARAMS;
             return genErrorResponse(validCode);
         }
+        Logger.Info("Received stop request for experiment: " + expName);
         DbUtils.openConnection();
         // query from database to get experiment information
         List<Experiment> experiments = Experiment.where("experiment_name = ?", expName);
@@ -161,7 +165,7 @@ public class ExperimentResource {
         //TODO prevent experiment state is null because of test data
         if ( TaskState.isValidStatus(experimentState) || !TaskState.isFinished(experimentState)){
             getTaskManager().cancelTaskByExperimentName(expName);
-            return genSuccResponseWithMsg("Experiment cancelled");
+            return genSuccResponseWithMsg("Your experiment has been cancelled successfully");
         }else{
             if(TaskState.isValidStatus(experimentState)){
                 validCode = ERR_INVALID_EXP_STATUS;
