@@ -33,7 +33,7 @@ function resetModal(modalId) {
     });
 }
 
-//Formats time for display
+//Formats MYSQL Datetime for display
 function displayDateTime(time) {
     if (time)
         return time.replace('T', ' ').replace('.000Z', '');
@@ -48,11 +48,12 @@ function enableDisabledButtons(divId) {
 
 //Parse a String format date into a Date format
 function stringToDate(s) {
-    if (s != null)
+    if (s)
         return new Date(Date.parse(s.replace('-', '/', 'g')));
     else
-        return new Date();
+        return s;
 }
+
 //Transform milliseconds to HH:MM:SS format 
 function msToTime(duration) {
     var seconds = parseInt((duration / 1000) % 60)
@@ -67,6 +68,7 @@ function msToTime(duration) {
 
     return days + " days " + hours + " hours " + minutes + " minutes " + seconds + " seconds";
 }
+
 //Transform a javascript date format to YYYY-MM-DD HH:MM:SS format 
 function formatDate(datetime) {
     var year = datetime.getFullYear();

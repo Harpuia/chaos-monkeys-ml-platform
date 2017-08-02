@@ -15,23 +15,23 @@ var experiments = require('./routes/experiments');
 var models = require('./routes/models');
 var algorithms = require('./routes/algorithms');
 var download = require('./routes/download');
-var startup = require('./startup');
+//var startup = require('./startup');
 
 var app = express();
 
-// view engine setup
+//View engine setup (for errors)
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+//Modules
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(stylus.middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
-// mounting middleware
+
+//Mounting middleware
 app.use('/', index);
 app.use('/', heartbeat);
 app.use('/datasets', datasets);
@@ -44,14 +44,17 @@ app.use('/download', download);
 app.use('/public', express.static(__dirname + '/public'));
 app.use('/views', express.static(__dirname + '/views'));
 
-// catch 404 and forward to error handler
+//Disable caching
+//app.disable('etag');
+
+//Catch 404 and forward to error handler
 app.use(function handleNotFoundError(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
 
-// error handler
+//Error handler
 app.use(function handleError(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;

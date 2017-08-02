@@ -22,24 +22,3 @@ var twoDigits = function twoDigits(d) {
   } else
     return null;
 }
-
-/* Transforms a JS date to MySQL format */
-toMysqlFormat = function (date) {
-  if (date) {
-    return date.getUTCFullYear() + "-" + twoDigits(1 + date.getUTCMonth()) + "-" + twoDigits(date.getUTCDate()) + " " + twoDigits(date.getUTCHours()) + ":" + twoDigits(date.getUTCMinutes()) + ":" + twoDigits(date.getUTCSeconds());
-  } else
-    return null;
-};
-
-/* Utility function */
-var dateToText = function (currentdate) {
-  if (currentdate) {
-    return currentdate.getDate() + "/"
-      + (currentdate.getMonth() + 1) + "/"
-      + currentdate.getFullYear() + " @ "
-      + currentdate.getHours() + ":"
-      + currentdate.getMinutes() + ":"
-      + currentdate.getSeconds();
-  } else
-    return null;
-}
