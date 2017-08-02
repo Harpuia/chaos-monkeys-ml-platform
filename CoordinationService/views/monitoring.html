@@ -66,9 +66,20 @@
   </header>
   <div class="col-md-8 col-md-offset-1">
     <h2 class="sub-header">Connected services</h2>
-    <h4 class="sub-header">Coordination Service IP: 127.0.0.1:3000</h4>
+    <h4 class="sub-header">Coordination Service local IP: 127.0.0.1:3000</h4>
+    <table class="table table-bordered">
+      <tr>
+        <th colspan="3">Color Code</th>
+      </tr>
+      <tr>
+        <td class="bg-success">OK (lost contact for less than 1 minute)</td>
+        <td class="bg-warning">Possible issue (lost contact for 1 to 2 minutes)</td>
+        <td class="bg-danger">Service disconnected (lost contact for 2 to 3 minutes)</td>
+      </tr>
+    </table>
+    <br><br>
     <div>
-      <table class="table table-responsive table-bordered">
+      <table id='monitoring_table' class="table table-responsive table-bordered">
       </table>
     </div>
   </div>

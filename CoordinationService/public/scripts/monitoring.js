@@ -16,16 +16,14 @@ setInterval(function () {
       displayStatus = '';
       if (item['status']) {
         jsonStatus = JSON.parse(item['status']);
-        displayStatus += '<ul>';
         for (var name in jsonStatus) {
-          displayStatus += '<li>' + name + ' :' + jsonStatus[name] + '</li>';
+          displayStatus += '<p><strong>' + name + '</strong> :' + jsonStatus[name]+'</p>';
         }
-        displayStatus += '</ul>';
       } else {
         displayStatus = 'N/A';
       }
       tr += '<tr><td>' + item['ip_address'] + '</td><td>' + item['type'] + '</td><td>' + item['name'] + '</td><td>' + item['description'] + '</td><td style="width:30%">' + displayStatus + '</td><td ' + color + '>' + item['last_updated'] + '</td></tr>';
     }
-    $('table').html(tr);
+    $('#monitoring_table').html(tr);
   })
 }, 2000);

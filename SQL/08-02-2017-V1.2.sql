@@ -79,10 +79,10 @@ CREATE TABLE `connected_services` (
   `name` varchar(50) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
-  `last_updated` datetime DEFAULT NULL,
+  `last_updated` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ip_address_UNIQUE` (`ip_address`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -91,6 +91,7 @@ CREATE TABLE `connected_services` (
 
 LOCK TABLES `connected_services` WRITE;
 /*!40000 ALTER TABLE `connected_services` DISABLE KEYS */;
+INSERT INTO `connected_services` VALUES (9,'127.0.0.1:8080','DataInput','CSV Input Service','Input Service for CSV formats','{\"status\":\"IDLE\",\"checking\":[],\"uploading\":[],\"checkingList\":\"\",\"uploadingList\":\"\"}',1501658295952);
 /*!40000 ALTER TABLE `connected_services` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -287,4 +288,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-08-02  2:41:00
+-- Dump completed on 2017-08-02  3:19:14

@@ -15,7 +15,7 @@ var experiments = require('./routes/experiments');
 var models = require('./routes/models');
 var algorithms = require('./routes/algorithms');
 var download = require('./routes/download');
-//var startup = require('./startup');
+var startup = require('./startup');
 
 var app = express();
 
@@ -43,9 +43,6 @@ app.use('/algorithms', algorithms);
 app.use('/download', download);
 app.use('/public', express.static(__dirname + '/public'));
 app.use('/views', express.static(__dirname + '/views'));
-
-//Disable caching
-//app.disable('etag');
 
 //Catch 404 and forward to error handler
 app.use(function handleNotFoundError(req, res, next) {
