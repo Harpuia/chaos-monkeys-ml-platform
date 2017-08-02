@@ -76,6 +76,10 @@ public enum ExecutionTaskManager implements  TaskManager{
         if(state.value() > TaskState.STARTED.value()){
             exp.setTimestamp("end",nowTime);
         }
+        if(state == TaskState.ERROR){
+            String errorMsg = task.getErrorMsg();
+            exp.set("error_message",errorMsg);
+        }
         //TODO: add error handler for connection error
         exp.save();
         DbUtils.closeConnection();
@@ -119,7 +123,7 @@ public enum ExecutionTaskManager implements  TaskManager{
         }
 
         @Override
-        public void onError(Throwable ex, String taskId) {
+        public void onError(Throwable ex, String taskId, String errorMessage) {
             updateTaskStatus(taskId, TaskState.ERROR);
             runningTaskNum.decrementAndGet();
         }

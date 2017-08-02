@@ -9,6 +9,5 @@ public interface OnTaskUpdateListener {
     void onStarted(String taskId);
     void onCancelled(String taskId);
     void onSuccess(String taskId);
-    void onError(Throwable ex, String taskId);
-
+    void onError(Throwable ex, String taskId, String errorMessage);
 }

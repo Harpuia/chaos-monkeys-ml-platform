@@ -13,7 +13,8 @@ public abstract class AbsTask {
 
     private volatile boolean isCancelled = false;
     private volatile TaskState state = TaskState.IDLE;
-
+    // error message field used to store error message
+    private volatile String errorMsg = "";
     private volatile ExecutorService singleExecutorService;
     // lock for managing connection
     private final ReentrantLock stateUpdateLock = new ReentrantLock();
@@ -49,6 +50,13 @@ public abstract class AbsTask {
 
     protected abstract void cancelWorks();
 
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
+    }
     public final boolean isCancelled() {
         return ( isCancelled || state == TaskState.CANCELLED );
     }

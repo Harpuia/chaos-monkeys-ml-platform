@@ -14,4 +14,7 @@ public final class Constants {
     // task type columns in task table
     public static final String TYPE_TRAIN = "Training";
     public static final String TYPE_EXECUTION = "Execution";
+
+    // reserved error message length
+    public static final int ERR_MSG_LENGTH = 500;
 }
