@@ -4,13 +4,14 @@ var tasksData;
 //Initialization
 $(document).ready(function () {
   loadPage();
+  loadDropdowns();
 });
 
 //Page initialization method
 function loadPage() {
   //Reset a task modal 
   resetModal('createTaskModal');
-  
+
   //Reset an experiment modal 
   resetModal('createNewExperimentModal');
 
@@ -30,7 +31,9 @@ function loadPage() {
       $('#tasksTableBody').html(tasksList);
     }
   });
+}
 
+function loadDropdowns() {
   //Load task types
   $.get("tasks/type", function (data) {
     var types = '';
@@ -97,31 +100,32 @@ function submitTaskForm() {
   var successText = $('#formSuccessText')[0];
   var alert = $('#formError')[0];
   var alertText = $('#formErrorText')[0];
+  var type = $("#type")[0].options[$("#type")[0].selectedIndex].text;
   var tasksInfoForTrain = {
     "dataset_id": $("#datasetsNames").val(),
     "algorithm_id": $("#algorithmsNames").val(),
     "model_id": null,
     "name": $("#name").val(),
     "description": $("#description").val(),
-    "type": $("#type")[0].options[$("#type")[0].selectedIndex].text
+    "type": type
   }
   var tasksInfoForExe = {
     "dataset_id": $("#datasetsNames").val(),
-    "algorithm_id": null,
+    "algorithm_id": $("#algorithmsNames").val(),
     "model_id": $("#modelsNames").val(),
     "name": $("#name").val(),
     "description": $("#description").val(),
-    "type": $("#type")[0].options[$("#type")[0].selectedIndex].text
+    "type": type
   }
   var objectToSend;
   var serviceUrl;
   if (checkRequiredFields()) {
     //Choosing object to send and url
-    if (tasksInfoForTrain.type.toLowerCase() === "training") {
+    if (type.toLowerCase() === "training") {
       objectToSend = JSON.stringify(tasksInfoForTrain);
       serviceUrl = 'http://127.0.0.1:3000/tasks/createTrainingTask';
     }
-    else if (tasksInfoForExe.type.toLowerCase() === "execution") {
+    else if (type.toLowerCase() === "execution") {
       objectToSend = JSON.stringify(tasksInfoForExe);
       serviceUrl = 'http://127.0.0.1:3000/tasks/createExecutionTask';
     }
@@ -138,7 +142,7 @@ function submitTaskForm() {
       data: objectToSend,
       error: function (request, status, error) {
         showSubmissionResult("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
-        
+
         //Enabling submit button
         $('#submitTaskButton').prop("disabled", false);
       },
@@ -158,12 +162,12 @@ function checkRequiredFields() {
   var a = $("#algorithmsNames")[0];
   var m = $("#modelsNames")[0];
   var selectedTaskType = t.options[t.selectedIndex].text;
-  var selectedDatasetName = d.options[d.selectedIndex] ===undefined ?"":d.options[d.selectedIndex].text;
-  var selectedAlgorithmName = a.options[a.selectedIndex]===undefined ? "": a.options[a.selectedIndex].text;
-  var selectedModelName = m.options[m.selectedIndex]===undefined ? "": m.options[m.selectedIndex].text;
+  var selectedDatasetName = d.options[d.selectedIndex] === undefined ? "" : d.options[d.selectedIndex].text;
+  var selectedAlgorithmName = a.options[a.selectedIndex] === undefined ? "" : a.options[a.selectedIndex].text;
+  var selectedModelName = m.options[m.selectedIndex] === undefined ? "" : m.options[m.selectedIndex].text;
   var alert = $('#formError')[0];
   var alertText = $('#formErrorText')[0];
-  
+
   if (selectedTaskType.length == 0) {
     showSubmissionResult('Please select a task type.', alert, alertText);
     return false;
@@ -208,7 +212,7 @@ var selectedTaskId;
 
 //Creates an experiment from the task
 function createNewExperimentFromTask(index) {
-  selectedTaskId=tasksData[index]['id'];
+  selectedTaskId = tasksData[index]['id'];
   $('#experimentTaskName').val(tasksData[index]['name']);
   $('#createNewExperimentModal').modal('show');
 }
@@ -249,6 +253,8 @@ function submitExperimentForm() {
   }
 
   if (checkExperimentRequiredFields()) {
+    //Disabling submit button
+    $('#submitButton').prop("disabled", true);
     $.ajax({
       url: "http://127.0.0.1:3000/experiments/create",
       type: "POST",
@@ -260,6 +266,8 @@ function submitExperimentForm() {
         loadPage();
       },
       error: function (request, status, error) {
+        //Enabling submit button
+        $('#submitButton').prop("disabled", false);
         showSubmissionResult("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
       }
     });

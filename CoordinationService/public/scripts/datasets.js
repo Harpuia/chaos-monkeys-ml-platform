@@ -225,21 +225,22 @@ function submitTaskForm() {
   var successText = $('#formTaskSuccessText')[0];
   var alert = $('#formTaskError')[0];
   var alertText = $('#formTaskErrorText')[0];
+  var type = $("#type")[0].options[$("#type")[0].selectedIndex].text;
   var tasksInfoForTrain = {
     "dataset_id": datasetsData[selectedDatasetId]['id'],
     "algorithm_id": $("#algorithmsNames").val(),
     "model_id": null,
     "name": $("#name").val(),
     "description": $("#taskDescription").val(),
-    "type": $("#type")[0].options[$("#type")[0].selectedIndex].text
+    "type": type
   }
   var tasksInfoForExe = {
-    "dataset_id": selectedDatasetId,
-    "algorithm_id": null,
+    "dataset_id": datasetsData[selectedDatasetId]['id'],
+    "algorithm_id": $("#algorithmsNames").val(),
     "model_id": $("#modelsNames").val(),
     "name": $("#name").val(),
     "description": $("#description").val(),
-    "type": $("#type")[0].options[$("#type")[0].selectedIndex].text
+    "type": type
   }
   var objectToSend;
   var url;
@@ -247,12 +248,12 @@ function submitTaskForm() {
     //Disabling submit button
     $('#submitTaskButton').prop("disabled", true);
 
-    if (tasksInfoForTrain.type.toLowerCase() == "training") {
+    if (type.toLowerCase() == "training") {
       objectToSend = tasksInfoForTrain;
       url = 'http://127.0.0.1:3000/tasks/createTrainingTask';
     }
-    else if (tasksInfoForExe.type.toLowerCase() == "execution") {
-      objectToSend = tasksInfoForTrain;
+    else if (type.toLowerCase() == "execution") {
+      objectToSend = tasksInfoForExe;
       url = 'http://127.0.0.1:3000/tasks/createExecutionTask';
     }
     $.ajax({
@@ -266,6 +267,7 @@ function submitTaskForm() {
       },
       success: function (data) {
         showSubmissionResult("Task: " + data.newtaskinfo.name + " has been created successfully!", success, successText);
+        loadPage();
       }
     });
   }
@@ -290,7 +292,7 @@ function checkRequiredTaskFields() {
     showSubmissionResult('Please input a task name.', alert, alertText);
     return false;
   }
-  else if (selectedTaskType.toLowerCase() == "training" && selectedAlgorithmName.length == 0) {
+  else if (selectedAlgorithmName.length == 0) {
     showSubmissionResult('Please select an algorithm.', alert, alertText);
     return false;
   }
@@ -307,10 +309,8 @@ function showTaskType() {
   var e = $("#type")[0];
   var selectedValue = e.options[e.selectedIndex].text;
   var modelDropdown = $("#models")[0];
-  var algorithmDropdown = $("#algorithms")[0];
   if (selectedValue.toLowerCase() == "training") {
     hideDropdown(modelDropdown);
-    showDropdown(algorithmDropdown);
   }
   else if (selectedValue.toLowerCase() == "execution") {
     showDropdown(modelDropdown);
