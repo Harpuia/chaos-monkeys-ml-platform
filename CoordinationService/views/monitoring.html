@@ -66,10 +66,17 @@
   </header>
   <div class="col-md-8 col-md-offset-1">
     <h2 class="sub-header">Connected services</h2>
-    <!-- Upload algorithm button -->
-    <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="downloadErrLog" onclick="exportErrLogToCSV()">Download Error Log</button>
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="downloadOpLog" onclick="exportOpLogToCSV()">Download Operation Log</button></p>
     <h4 class="sub-header">Coordination Service local IP: 127.0.0.1:3000</h4>
+    <!-- Upload algorithm button -->
+    <p>
+      <div class="alert alert-danger alert-dismissible" id="formNoExist" style="display: none;" role="alert">
+        <a class="close" onclick="$('#formNoExist').hide()">×</a>
+        <strong>Error!</strong>
+        <div id='formNoExistText'></div>
+      </div>
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="downloadErrLog" onclick="exportErrLogToCSV()">Download Error Log</button>
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="downloadOpLog" onclick="exportOpLogToCSV()">Download Operation Log</button>
+    </p>
     <table class="table table-bordered">
       <tr>
         <th colspan="3">Color Code</th>

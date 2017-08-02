@@ -17,7 +17,7 @@ setInterval(function () {
       if (item['status']) {
         jsonStatus = JSON.parse(item['status']);
         for (var name in jsonStatus) {
-          displayStatus += '<p><strong>' + name + '</strong> :' + jsonStatus[name]+'</p>';
+          displayStatus += '<p><strong>' + name + '</strong> :' + jsonStatus[name] + '</p>';
         }
       } else {
         displayStatus = 'N/A';
@@ -27,15 +27,33 @@ setInterval(function () {
     $('#monitoring_table').html(tr);
   })
 }, 2000);
-
+/*Download the errors_log table as a CSV file */
 function exportErrLogToCSV() {
-  /*$.getJSON("http://127.0.0.1:3000/exportErrLogToCSV", function (data) {
-    alert(data);
-  });*/
-  $.get("exportErrLogToCSV", function (data) {
-    var result=data['results'];
-    if(result !==undefined){
-      alert("success");
+  $.get("/getErrLog", function (data) {
+    if (data['errorItems'].length > 0)
+      window.open('/exportErrLogToCSV');
+    else {
+      var alert = $('#formNoExist')[0];
+      var alertText = $('#formNoExistText')[0];
+      showSubmissionResult("There is no data in error log!", alert, alertText);
+
     }
   });
+}
+/*Download the operations_log table as a CSV file */
+function exportOpLogToCSV() {
+  $.get("/getOpLog", function (data) {
+    if (data['operationItems'].length > 0)
+      window.open('/exportOpLogToCSV');
+    else {
+      var alert = $('#formNoExist')[0];
+      var alertText = $('#formNoExistText')[0];
+      showSubmissionResult("There is no data in operation log!", alert, alertText);
+    }
+  });
+}
+/*Show bootstrap alert after clicking a button */
+function showSubmissionResult(message, alert, alertText) {
+  alertText.innerText = message;
+  alert.style.display = "block";
 }
