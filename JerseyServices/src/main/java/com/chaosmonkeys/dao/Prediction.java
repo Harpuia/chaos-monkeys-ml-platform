@@ -8,7 +8,7 @@ import org.javalite.activejdbc.annotations.Table;
  * ORM for Prediction table data
  */
 @DbName("ConfigurationDatabase")
-@Table("predictions`")
+@Table("`predictions`")
 public class Prediction extends Model{
     public Prediction setPath(String path){
         set("path", path);
