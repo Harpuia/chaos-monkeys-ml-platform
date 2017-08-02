@@ -46,6 +46,15 @@ function loadPage() {
     $('#language').html(languages);
   });
 
+  //Load task types
+  $.get("tasks/type", function (data) {
+    var types = '';
+    for (i = 0; i < data['types'].length; i++) {
+      types += '<option>' + data['types'][i]['type'] + '</option>\n';
+    }
+    $('#type').html(types);
+  });
+
   //Load datasets names
   $.get("tasks/datasetsnames", function (data) {
     var datasetsnames = '';
@@ -53,6 +62,15 @@ function loadPage() {
       datasetsnames += '<option value="' + data['datasetsnames'][i]['id'] + '">' + data['datasetsnames'][i]['name'] + '</option>\n';
     }
     $('#taskDatasetName').html(datasetsnames);
+  });
+
+  //Load models names
+  $.get("tasks/modelsnames", function (data) {
+    var modelsnames = '';
+    for (i = 0; i < data['modelsnames'].length; i++) {
+      modelsnames += '<option value="' + data['modelsnames'][i]['id'] + '">' + data['modelsnames'][i]['name'] + '</option>\n';
+    }
+    $('#modelsNames').html(modelsnames);
   });
 }
 //Checks if all required fields are filled correctly in the upload form
@@ -213,37 +231,59 @@ function submitTaskForm() {
     "model_id": null,
     "name": $("#taskName").val(),
     "description": $("#taskDescription").val(),
-    "type": $("#taskType").val()
+    "type": $("#type")[0].options[$("#type")[0].selectedIndex].text
   }
-
+  var tasksInfoForExe = {
+    "dataset_id": $("#taskDatasetName").val(),
+    "algorithm_id": algorithmsData[selectedAlgorithmId]['id'],
+    "model_id": $("#modelsNames").val(),
+    "name": $("#taskName").val(),
+    "description": $("#taskDescription").val(),
+    "type": $("#type")[0].options[$("#type")[0].selectedIndex].text
+  }
   var objectToSend;
   var url;
   if (checkRequiredTaskFields()) {
+    if (tasksInfoForTrain.type.toLowerCase() === "training") {
+      objectToSend = JSON.stringify(tasksInfoForTrain);
+      url = 'http://127.0.0.1:3000/tasks/createTrainingTask';
+    } else if (tasksInfoForExe.type.toLowerCase() === "execution") {
+      objectToSend = JSON.stringify(tasksInfoForExe);
+      url = 'http://127.0.0.1:3000/tasks/createExecutionTask';
+    }
+
     //Disabling submit button
     $('#submitTaskButton').prop("disabled", true);
 
-    objectToSend = tasksInfoForTrain;
-    url = 'http://127.0.0.1:3000/tasks/createTrainingTask';
     $.ajax({
       url: url,
       type: "POST",
       dataType: "json",
       contentType: 'application/json',
-      data: JSON.stringify(objectToSend),
+      data: objectToSend,
       error: function (request, status, error) {
         showSubmissionResult("Oops! An error occurs when creating the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
+
+        //Enabling submit button
+        $('#submitTaskButton').prop("disabled", false);
       },
       success: function (data) {
         showSubmissionResult("Task: " + data.newtaskinfo.name + " has been created successfully!", success, successText);
+        loadPage();
       }
     });
   }
 }
 
 function checkRequiredTaskFields() {
+  var t = $("#type")[0];
   var taskName = $("#taskName").val();
-  var selectedTaskType = $("#taskType").val();
+  var d = $("#taskDatasetName")[0];
+  var m = $("#modelsNames")[0];
+  var selectedTaskType = t.options[t.selectedIndex].text;
   var selectedAlgorithmName = $("#taskAlgorithmsNames").val();
+  var selectedDatasetName = d.options[d.selectedIndex] === undefined ? "" : d.options[d.selectedIndex].text;
+  var selectedModelName = m.options[m.selectedIndex] === undefined ? "" : m.options[m.selectedIndex].text;
   var alert = $('#formTaskError')[0];
   var alertText = $('#formTaskErrorText')[0];
 
@@ -255,12 +295,33 @@ function checkRequiredTaskFields() {
     showSubmissionResult('Please input a task name.', alert, alertText);
     return false;
   }
+  else if (selectedDatasetName.length == 0) {
+    showSubmissionResult('Please select a dataset.', alert, alertText);
+    return false;
+  }
   else if (selectedAlgorithmName.length == 0) {
     showSubmissionResult('Please select an algorithm.', alert, alertText);
     return false;
   }
+  else if (selectedTaskType.toLowerCase() == "execution" && selectedModelName.length == 0) {
+    showSubmissionResult('Please select a model.', alert, alertText);
+    return false;
+  }
   else {
     return true;
+  }
+}
+
+//Shows task type
+function showTaskType() {
+  var e = $("#type")[0];
+  var selectedValue = e.options[e.selectedIndex].text;
+  var modelDropdown = $("#models")[0];
+  if (selectedValue.toLowerCase() == "training") {
+    hideDropdown(modelDropdown);
+  }
+  else if (selectedValue.toLowerCase() == "execution") {
+    showDropdown(modelDropdown);
   }
 }
 

@@ -73,10 +73,8 @@ function showTaskType() {
   var e = $("#type")[0];
   var selectedValue = e.options[e.selectedIndex].text;
   var modelDropdown = $("#models")[0];
-  var algorithmDropdown = $("#algorithms")[0];
   if (selectedValue.toLowerCase() == "training") {
     hideDropdown(modelDropdown);
-    showDropdown(algorithmDropdown);
   }
   else if (selectedValue.toLowerCase() == "execution") {
     showDropdown(modelDropdown);
@@ -178,7 +176,7 @@ function checkRequiredFields() {
     showSubmissionResult('Please select a dataset.', alert, alertText);
     return false;
   }
-  else if (selectedTaskType.toLowerCase() == "training" && selectedAlgorithmName.length == 0) {
+  else if (selectedAlgorithmName.length == 0) {
     showSubmissionResult('Please select an algorithm.', alert, alertText);
     return false;
   }
