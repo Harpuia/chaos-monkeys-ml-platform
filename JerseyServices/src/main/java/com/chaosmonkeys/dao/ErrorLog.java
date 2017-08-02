@@ -5,6 +5,6 @@ import org.javalite.activejdbc.annotations.DbName;
 import org.javalite.activejdbc.annotations.Table;
 
 @DbName("logdatabase")
-@Table("`errors_logs`")
+@Table("`errors_log`")
 public class ErrorLog extends Model{
 }
