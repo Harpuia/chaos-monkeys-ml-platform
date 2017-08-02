@@ -50,6 +50,7 @@ public class AlgorithmResource {
     public static final int ERR_UNZIP_EXCEPTION = 205;
     public static final int ERR_REQUIRED_FILE_MISSING = 206;
     public static final int ERR_CANNOT_CREATE_FILE = 207;
+    public static final int ERR_INVALID_ZIP_EXT = 208;
     public static final int ERR_UNKNOWN = 299;
     @POST
     @Path("/upload")
@@ -203,6 +204,18 @@ public class AlgorithmResource {
         if(null == fileInputStream || null == fileMetaData){
             return ERR_FILE_BODYPART_MISSING;
         }
+        // check file extension, if it is not .zip or .ZIP return error message
+        String fileName = fileMetaData.getFileName();
+        int dotIndex = fileName.lastIndexOf(".");
+        if(dotIndex != -1 && dotIndex != fileName.length()-1 ){
+            // check the file extension
+            String ext = fileName.substring(dotIndex+1);
+            if(!ext.toLowerCase().equals("zip") ){
+                return ERR_INVALID_ZIP_EXT;
+            }
+        }else{
+            return ERR_INVALID_ZIP_EXT;
+        }
         boolean isParamsValid = StringUtils.isNoneBlank(name, description, language);
         if(!isParamsValid){
             return ERR_BLANK_PARAMS;
@@ -243,6 +256,9 @@ public class AlgorithmResource {
                 break;
             case(ERR_CANNOT_CREATE_FILE):
                 msg = "Server cannot store your file at this time, please try again or contact administrator";
+                break;
+            case(ERR_INVALID_ZIP_EXT):
+                msg = "Please upload valid zip file with .zip file extension";
                 break;
             default:
                 errorCode = ERR_UNKNOWN;
