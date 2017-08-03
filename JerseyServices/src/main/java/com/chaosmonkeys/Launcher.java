@@ -189,7 +189,7 @@ public class Launcher {
             rc = new ResourceConfig().packages("com.chaosmonkeys.algrinputservice");
         } else if (serviceType.startsWith("Train-") || serviceType.startsWith("Exec-")) {
             rc = new ResourceConfig().packages("com.chaosmonkeys.train");
-        } else if (serviceType.equals("JerseyAll")) {
+        } else if (serviceType.equals("JerseyTesting")) {
             rc = new ResourceConfig().packages("com.chaosmonkeys");
         } else {
             Logger.SaveLog(LogType.Error, "ERROR: Service type" + serviceType + " not defined!");
