@@ -4,36 +4,10 @@ var datasetsData;
 //Initialization
 $(document).ready(function () {
   loadPage();
+  loadDropdowns();
 });
 
-//Loads the page
-function loadPage() {
-  //Reset a specific modal
-  resetModal('uploadModal');
-
-  //Reset the create task modal
-  resetModal('createTaskModal');
-
-  //Showing the loading text
-  $('#datasetsTableBody').text('Loading...');
-
-  //Activate the popover in the upload modal
-  $('[data-toggle="popover"]').popover();
-
-  //Load datasets list
-  $.get("datasets/list", function (data) {
-    datasetsData = data['datasets'];
-    var datasetsList = '';
-    if (!datasetsData || datasetsData.length === 0) {
-      $('#datasetsTableBody').html('<h3>This list is empty!</h3>');
-    } else {
-      for (i = 0; i < data['datasets'].length; i++) {
-        datasetsList += '<tr><td><span class="fa fa-file-text-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['datasets'][i]['name'] + '</td><td>' + data['datasets'][i]['description'] + '<br><span class="label label-success">' + data['datasets'][i]['format'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createTaskFromDataset(' + i + ')" class="btn btn-primary">Create Task</button></td></tr>';
-      }
-      $('#datasetsTableBody').html(datasetsList);
-    }
-  });
-
+function loadDropdowns() {
   //Load upload types
   $.get("datasets/formats", function (data) {
     var formats = '';
@@ -68,6 +42,35 @@ function loadPage() {
       modelsnames += '<option value="' + data['modelsnames'][i]['id'] + '">' + data['modelsnames'][i]['name'] + '</option>\n';
     }
     $('#modelsNames').html(modelsnames);
+  });
+}
+
+//Loads the page
+function loadPage() {
+  //Reset a specific modal
+  resetModal('uploadModal');
+
+  //Reset the create task modal
+  resetModal('createTaskModal');
+
+  //Showing the loading text
+  $('#datasetsTableBody').text('Loading...');
+
+  //Activate the popover in the upload modal
+  $('[data-toggle="popover"]').popover();
+
+  //Load datasets list
+  $.get("datasets/list", function (data) {
+    datasetsData = data['datasets'];
+    var datasetsList = '';
+    if (!datasetsData || datasetsData.length === 0) {
+      $('#datasetsTableBody').html('<h3>This list is empty!</h3>');
+    } else {
+      for (i = 0; i < data['datasets'].length; i++) {
+        datasetsList += '<tr><td><span class="fa fa-file-text-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['datasets'][i]['name'] + '</td><td>' + data['datasets'][i]['description'] + '<br><span class="label label-success">' + data['datasets'][i]['format'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createTaskFromDataset(' + i + ')" class="btn btn-primary">Create Task</button></td></tr>';
+      }
+      $('#datasetsTableBody').html(datasetsList);
+    }
   });
 }
 
@@ -279,8 +282,8 @@ function checkRequiredTaskFields() {
   var a = $("#algorithmsNames")[0];
   var m = $("#modelsNames")[0];
   var selectedTaskType = t.options[t.selectedIndex].text;
-  var selectedAlgorithmName = a.options[a.selectedIndex].text;
-  var selectedModelName = m.options[m.selectedIndex].text;
+  var selectedAlgorithmName = a.options[a.selectedIndex] === undefined ? "" : a.options[a.selectedIndex].text;
+  var selectedModelName = m.options[m.selectedIndex] === undefined ? "" : m.options[m.selectedIndex].text;
   var alert = $('#formTaskError')[0];
   var alertText = $('#formTaskErrorText')[0];
 

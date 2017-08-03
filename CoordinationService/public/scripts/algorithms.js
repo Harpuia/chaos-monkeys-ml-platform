@@ -7,36 +7,10 @@ var selectedAlgorithmId;
 //Initialization
 $(document).ready(function () {
   loadPage();
+  loadDropdowns();
 });
 
-//Loads the page
-function loadPage() {
-  //Reset upload modal 
-  resetModal('uploadModal');
-
-  //Reset task modal
-  resetModal('createTaskModal');
-
-  //Activate the popover in the upload modal
-  $('[data-toggle="popover"]').popover();
-
-  //Showing the loading text
-  $('#algorithmsTableBody').text('Loading...');
-
-  //Load upload types
-  $.get("algorithms/list", function (data) {
-    algorithmsData = data['algorithms'];
-    var algorithmsList = '';
-    if (!algorithmsData || algorithmsData.length === 0) {
-      $('#algorithmsTableBody').html('<h3>This list is empty!</h3>');
-    } else {
-      for (i = 0; i < data['algorithms'].length; i++) {
-        algorithmsList += '<tr><td><span class="fa fa-file-code-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['algorithms'][i]['name'] + '</td><td>' + data['algorithms'][i]['description'] + '<br><span class="label label-success">' + data['algorithms'][i]['language'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createTaskFromAlgorithm(' + i + ')" class="btn btn-primary">Create Task</button></td></tr>';
-      }
-      $('#algorithmsTableBody').html(algorithmsList);
-    }
-  });
-
+function loadDropdowns() {
   //fulfill #language select
   $.get("algorithms/languages", function (data) {
     var languages = '';
@@ -71,6 +45,35 @@ function loadPage() {
       modelsnames += '<option value="' + data['modelsnames'][i]['id'] + '">' + data['modelsnames'][i]['name'] + '</option>\n';
     }
     $('#modelsNames').html(modelsnames);
+  });
+}
+
+//Loads the page
+function loadPage() {
+  //Reset upload modal 
+  resetModal('uploadModal');
+
+  //Reset task modal
+  resetModal('createTaskModal');
+
+  //Activate the popover in the upload modal
+  $('[data-toggle="popover"]').popover();
+
+  //Showing the loading text
+  $('#algorithmsTableBody').text('Loading...');
+
+  //Load upload types
+  $.get("algorithms/list", function (data) {
+    algorithmsData = data['algorithms'];
+    var algorithmsList = '';
+    if (!algorithmsData || algorithmsData.length === 0) {
+      $('#algorithmsTableBody').html('<h3>This list is empty!</h3>');
+    } else {
+      for (i = 0; i < data['algorithms'].length; i++) {
+        algorithmsList += '<tr><td><span class="fa fa-file-code-o" aria-hidden="true"></span>&nbsp;&nbsp;' + data['algorithms'][i]['name'] + '</td><td>' + data['algorithms'][i]['description'] + '<br><span class="label label-success">' + data['algorithms'][i]['language'] + '</span></td><td><button type="button" onclick="displayDetails(' + i + ')" class="btn btn-primary">Details</button></td><td><button type="button" onclick="createTaskFromAlgorithm(' + i + ')" class="btn btn-primary">Create Task</button></td></tr>';
+      }
+      $('#algorithmsTableBody').html(algorithmsList);
+    }
   });
 }
 //Checks if all required fields are filled correctly in the upload form
