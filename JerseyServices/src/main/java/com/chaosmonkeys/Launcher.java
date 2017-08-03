@@ -34,6 +34,7 @@ public class Launcher {
     /* Constants */
     //Base URI the Grizzly HTTP server will listen on
     public static final String BASE_URI = "http://localhost:8080/";
+
     //Service statuses
     //TODO: Add/Replace as required by the service specification
     /*public static final String RUNNING = "RUNNING";
@@ -44,24 +45,24 @@ public class Launcher {
     /* Attributes */
     //Path to the configuration file
     private static String configPath;
-    //IP of the host machine/VM
-    private static String hostIP;
+
     //Coordination service IP address
     private static String coordinationIP = NOT_SET;
-    //Service information
+
+    //Service information loaded from the config file
     public static String serviceName;
     public static String serviceType;
     public static String serviceDescription;
+    private static String hostIP;
+    public static String servicePort;
+    private static String serviceHost;
+
     //Service status
     public static String ServiceStatus = "STOPPED";
+
     //Is service registered with the coordination service
     private static boolean isRegistered = false;
 
-    /**
-     * Returns the host IP of the service.
-     *
-     * @return Host IP of the service.
-     */
     public static String getHostIP() {
         return hostIP;
     }
@@ -82,6 +83,15 @@ public class Launcher {
      */
     public static String getServiceStatus() {
         return ServiceStatus;
+    }
+
+    /**
+     * Sets the service host (IP with port)
+     * @param hostIP host IP
+     * @param servicePort Service Port
+     */
+    public static void setServiceHost(String hostIP, String servicePort) {
+        serviceHost = hostIP + ":" + servicePort + "/";
     }
 
     /**
@@ -108,6 +118,9 @@ public class Launcher {
         serviceType = configInfoInfo.getServiceType();
         serviceDescription = configInfoInfo.getServiceDescription();
         coordinationIP = configInfoInfo.getCoordinationIP();
+        hostIP = configInfoInfo.getServiceIP();
+        servicePort = configInfoInfo.getServicePort();
+        setServiceHost(hostIP, servicePort);
 
         //Start http server
         startServiceServer();
@@ -120,13 +133,7 @@ public class Launcher {
         } catch (Exception e) {
             Logger.SaveLog(LogType.Exception, "EXCEPTION: Failed to get IP from AWS.");
         }
-
-        //Self IP, which is sent to the coordination service
-        //TODO: Replace with appropriate IP (development/production)
-        //For testing
-        Launcher.hostIP = "127.0.0.1:8080";
-        /*For production
-        Launcher.hostIP = MachineIPUtility.getRealIp();*/
+        Logger.SaveLog(LogType.Information, "Port of my system is := " + servicePort);
 
         //Start registration
         ThreadSafeRegister registerThread = new ThreadSafeRegister();
@@ -164,7 +171,7 @@ public class Launcher {
      */
     public void startServiceServer() {
         final HttpServer server = startServer();
-        Logger.SaveLog(LogType.Information, String.format("Jersey app started with WADL available at " + "%sapplication.wadl\nHit enter to stop it...", BASE_URI));
+        Logger.SaveLog(LogType.Information, String.format("Jersey app started with WADL available at " + "%sapplication.wadl\nHit enter to stop it...", serviceHost));
     }
 
     /**
@@ -178,11 +185,11 @@ public class Launcher {
         final ResourceConfig rc;
         if (serviceType.startsWith("DataInput-")) {
             rc = new ResourceConfig().packages("com.chaosmonkeys.datasetinputservice");
-        } else if(serviceType.startsWith("AlgInput-")) {
+        } else if (serviceType.startsWith("AlgInput-")) {
             rc = new ResourceConfig().packages("com.chaosmonkeys.algrinputservice");
-        } else if(serviceType.startsWith("Train-") || serviceType.startsWith("Exec-")) {
+        } else if (serviceType.startsWith("Train-") || serviceType.startsWith("Exec-")) {
             rc = new ResourceConfig().packages("com.chaosmonkeys.train");
-        } else if(serviceType.equals("JerseyAll")) {
+        } else if (serviceType.equals("JerseyAll")) {
             rc = new ResourceConfig().packages("com.chaosmonkeys");
         } else {
             Logger.SaveLog(LogType.Error, "ERROR: Service type" + serviceType + " not defined!");
@@ -195,8 +202,8 @@ public class Launcher {
 
         rc.register(CORSFilter.class);
 
-        //Create and start a new instance of grizzly http server exposing the Jersey application at BASE_URI
-        return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
+        //Create and start a new instance of grizzly http server exposing the Jersey application at Service Host
+        return GrizzlyHttpServerFactory.createHttpServer(URI.create(serviceHost), rc);
     }
 
     /**
@@ -212,8 +219,7 @@ public class Launcher {
             //Setting up a web target for the calls
             WebTarget webTarget = client.target(coordinationIP).path("registerService");
 
-            //
-            RegistrationInfo serviceInfo = new RegistrationInfo(hostIP, serviceType, serviceName, serviceDescription);
+            RegistrationInfo serviceInfo = new RegistrationInfo(serviceHost, serviceType, serviceName, serviceDescription);
             while (!exit) {
                 Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
                 Response response = null;

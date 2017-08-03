@@ -21,13 +21,15 @@ public class ConfigurationHelper {
         try {
             ini = new Wini(new File(filename));
         } catch (IOException e) {
-            Logger.SaveLog(LogType.Exception, "EXCEPTION: Cannot read configuratio file "+ filename);
+            Logger.SaveLog(LogType.Exception, "EXCEPTION: Cannot read configuration file "+ filename);
         }
         ConfigInfo basicInfo = new ConfigInfo();
         basicInfo.setServiceName(ini.get("info", "name", String.class));
         basicInfo.setServiceType(ini.get("info", "type", String.class));
         basicInfo.setServiceDescription(ini.get("info", "description", String.class));
         basicInfo.setCoordinationIP(ini.get("coordination", "IP", String.class));
+        basicInfo.setServiceIP(ini.get("info", "ip", String.class));
+        basicInfo.setServicePort(ini.get("info", "port", String.class));
         return basicInfo;
     }
 }
