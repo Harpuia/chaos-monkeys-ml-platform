@@ -34,9 +34,12 @@ router.get('/table', function getServiceTable(req, res, next) {
         ip = rows[i]['ip'];
         if (duration > 180000) {
           //Remove service from table
+          //Connect to DB
+          var deleteConnection = createDbConnection();
+          deleteConnection.connect();
           var sqlDelete = 'delete from connected_services where id ="' + rows[i]['id'] + '"';
           logMessage(false, log.operationType.QueryData, new Date(), sqlDelete);
-          var results = connection.query(sqlDelete, function deleteInactiveServer(err, resp) {
+          var results = deleteConnection.query(sqlDelete, function deleteInactiveServer(err, resp) {
             if (err) {
               logMessage(true, log.errorType.DBError, new Date(), err);
               err.source = 'mysql';
@@ -46,6 +49,7 @@ router.get('/table', function getServiceTable(req, res, next) {
               logMessage(false, log.operationType.ResponseReceived, new Date(), 'Successfully deleted inactive server with IP: ' + ip);
             }
           });
+          deleteConnection.end();
         } else {
           result.push(rows[i]);
         }
