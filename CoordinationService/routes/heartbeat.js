@@ -15,7 +15,6 @@ router.get('/table', function getServiceTable(req, res, next) {
   connection.connect();
   ip = '';
   result = [];
-
   //Return all services
   var sql = 'select * from connected_services';
   logMessage(false, log.operationType.QueryData, new Date(), sql);
@@ -65,7 +64,6 @@ router.get('/table', function getServiceTable(req, res, next) {
 router.post('/registerService', function registerService(req, res, next) {
   var currentdate = Date.now();
   var newService = req.body;
-
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
@@ -88,7 +86,6 @@ router.post('/registerService', function registerService(req, res, next) {
 router.post('/setStatus', function handleHeartbeatMsg(req, res, next) {
   var currentdate = Date.now();
   var serviceStatus = req.body;
-
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
@@ -106,6 +103,7 @@ router.post('/setStatus', function handleHeartbeatMsg(req, res, next) {
   });
   connection.end();
 });
+
 /*Get errors_log items */
 router.get('/getErrLog', function getErrLog(req, res, next) {
   var connection = createLogDbConnection();
@@ -123,6 +121,7 @@ router.get('/getErrLog', function getErrLog(req, res, next) {
   });
   connection.end();
 });
+
 /*Get operations_log items */
 router.get('/getOpLog', function getOpLog(req, res, next) {
   var connection = createLogDbConnection();
@@ -140,6 +139,7 @@ router.get('/getOpLog', function getOpLog(req, res, next) {
   });
   connection.end();
 });
+
 /*Export errors_log table to a CSV file */
 router.get('/exportErrLogToCSV', function exportErr(req, res) {
   var query = "select * from errors_log";
@@ -153,6 +153,7 @@ router.get('/exportErrLogToCSV', function exportErr(req, res) {
       }
     });
 });
+
 /*Export operations_log table to a CSV file */
 router.get('/exportOpLogToCSV', function exportOp(req, res) {
   var query = "select * from operations_log";
