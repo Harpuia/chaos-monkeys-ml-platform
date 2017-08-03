@@ -111,6 +111,9 @@ public class AlgorithmResource {
             // delete the folder
             FileUtils.deleteQuietly(targetFolder);
             return genErrorResponse(validCode);
+        }else{  // unzipping successfully, delete the zip file
+            File zipFile = new File(targetFolder, fileName);   // the downloaded zip file
+            FileUtils.deleteQuietly(zipFile);
         }
         try {
             // avoid null value of description
