@@ -143,13 +143,13 @@ public class Launcher {
             //HeartBeatsClient hbClient = new HeartBeatsClient();
             //hbClient.startSendHeartBeat(coordinationIP);
             // input service heartbeats clients
-            if (serviceType.equals("DataInput")) {
+            if (serviceType.startsWith("DataInput-")) {
                 DatasetInputServiceHeartBeatsClient datasetInputServiceHeartBeatsClient = new DatasetInputServiceHeartBeatsClient();
                 datasetInputServiceHeartBeatsClient.startSendHeartBeat(coordinationIP);
-            } else if (serviceType.equals("Training") || serviceType.equals("Execution")) {
+            } else if (serviceType.startsWith("Train-") || serviceType.startsWith("Exec-")) {
                 ExecutionServiceHeartBeatsClient executionServiceHeartBeatsClient = new ExecutionServiceHeartBeatsClient();
                 executionServiceHeartBeatsClient.startSendHeartBeat(coordinationIP);
-            } else if (serviceType.equals("AlgrInput")) {
+            } else if (serviceType.startsWith("AlgInput-")) {
                 AlgorithmInputServiceHeartBeatsClient algorithmInputServiceHeartBeatsClient = new AlgorithmInputServiceHeartBeatsClient();
                 algorithmInputServiceHeartBeatsClient.startSendHeartBeat(coordinationIP);
             }
@@ -176,15 +176,17 @@ public class Launcher {
         //Create a resource config that scans for JAX-RS resources and providers in com.chaosmonkeys package
         //final ResourceConfig rc = new ResourceConfig().packages("com.chaosmonkeys");
         final ResourceConfig rc;
-        if (serviceType.equals("DataInput")) {
+        if (serviceType.startsWith("DataInput-")) {
             rc = new ResourceConfig().packages("com.chaosmonkeys.datasetinputservice");
-        } else if(serviceType.equals("AlgrInput")) {
+        } else if(serviceType.startsWith("AlgInput-")) {
             rc = new ResourceConfig().packages("com.chaosmonkeys.algrinputservice");
-        } else if(serviceType.equals("Training") || serviceType.equals("Execution")) {
+        } else if(serviceType.startsWith("Train-") || serviceType.startsWith("Exec-")) {
             rc = new ResourceConfig().packages("com.chaosmonkeys.train");
-        } else {
+        } else if(serviceType.equals("JerseyAll")) {
             rc = new ResourceConfig().packages("com.chaosmonkeys");
+        } else {
             Logger.SaveLog(LogType.Error, "ERROR: Service type" + serviceType + " not defined!");
+            rc = new ResourceConfig().packages("com.chaosmonkeys");
         }
         // register jackson for parsing JSON
         rc.register(JacksonFeature.class);
