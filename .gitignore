@@ -103,3 +103,6 @@ maven-archiver/
 
 # IML File
 basic-service.iml
+
+# Package Lock File
+package-lock.json
