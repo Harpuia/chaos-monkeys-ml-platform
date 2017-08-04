@@ -176,6 +176,14 @@ function displayDetails(experimentIndex) {
     $('#experimentDuration').text(msToTime(duration));
   }
 
+  //Showing errors depending on whether they exist
+  if (experimentsData[experimentIndex]['error_message']) {
+    var experimentError = '<h4>Experiment Error:</h4><p>' + experimentsData[experimentIndex]['error_message'] + '</p>';
+    console.log(experimentError);
+    $('#experimentErrorMessage').html(experimentError);
+  }
+
+
   //Showing the stop experiment button dynamically
   if (experimentsData[experimentIndex]['last_status'] !== 'SUCCESS' && experimentsData[experimentIndex]['last_status'] !== 'ERROR' && experimentsData[experimentIndex]['last_status'] !== 'CANCELLED') {
     var tmpExpName = experimentsData[experimentIndex].experiment_name;
