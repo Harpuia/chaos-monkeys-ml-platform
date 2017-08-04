@@ -3,6 +3,7 @@ package com.chaosmonkeys.algrinputservice;
 import com.chaosmonkeys.DTO.BaseResponse;
 import com.chaosmonkeys.Utilities.*;
 import com.chaosmonkeys.Utilities.db.DbUtils;
+import com.chaosmonkeys.dao.AlgorithmLanguage;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -33,8 +34,7 @@ public class AlgorithmResource {
     // states variables
     public static String serviceStatus = STATUS_IDLE;
 
-    // temporary support language list
-    private static final List<String> supportDevLanguageList = Arrays.asList("R","Python");
+    private static final List<String> supportDevLanguageList = new ArrayList<>();  // Arrays.asList("R","Python")
 
     // sets store data sets name that are under processing
     public static Set<String> uploadSet = new HashSet<>();
@@ -66,7 +66,7 @@ public class AlgorithmResource {
             Logger.Request("Received algorithm upload request - Algorithm Name: " + algrName);
         }
         // --::ERROR DETECTING
-        int validCode = detectUploadServiceParamError(fileInputStream, fileMetaData, algrName,algrDescription,language);
+        int validCode = detectUploadServiceParamError(fileInputStream, fileMetaData, algrName,language);
         if( validCode != CHECK_SUCCESS){
             Response errorResponse = genErrorResponse(validCode);
             return errorResponse;
@@ -198,10 +198,9 @@ public class AlgorithmResource {
      * @param fileInputStream
      * @param fileMetaData
      *@param name
-     * @param description
      * @param language     @return error code that has been defined in the global config or in the heading of this class
      */
-    public int detectUploadServiceParamError(InputStream fileInputStream, FormDataContentDisposition fileMetaData, String name, String description, String language){
+    public int detectUploadServiceParamError(InputStream fileInputStream, FormDataContentDisposition fileMetaData, String name, String language){
         // check all string parameters are not blank
         // check whether the bodypart/file content are attached
         if(null == fileInputStream || null == fileMetaData){
@@ -219,13 +218,22 @@ public class AlgorithmResource {
         }else{
             return ERR_INVALID_ZIP_EXT;
         }
-        boolean isParamsValid = StringUtils.isNoneBlank(name, description, language);
+        boolean isParamsValid = StringUtils.isNoneBlank(name, language);
         if(!isParamsValid){
             return ERR_BLANK_PARAMS;
         }
-        //TODO: dynamically load the supported language when receive supported language update notification from coordination service
+        // load supported dev language list
+        if(supportDevLanguageList.isEmpty()){   // load the language list from database
+            DbUtils.openConnection();
+            List<AlgorithmLanguage> languages = AlgorithmLanguage.findAll();
+            languages.stream()
+                    .filter( lang -> !lang.getLanguage().equals("") )
+                    .forEach( lang -> supportDevLanguageList.add(lang.getLanguage()));
+            DbUtils.closeConnection();
+            Logger.Info("Load supported language list: " + supportDevLanguageList);
+        }
         // or from database in the future, but it may involve compute cost for each upload/other services, so let's keep R, Python C++ and Matlab now
-        boolean isLangSupported = supportDevLanguageList.stream().anyMatch(lang -> lang.equals(language));
+        boolean isLangSupported = supportDevLanguageList.stream().anyMatch(lang -> lang.toLowerCase().equals(language.toLowerCase()));
         if(!isLangSupported){
             Logger.Info("Received algorithm uploading request with unsupported machine learning development language");
             return ERR_UNSUPPORTED_LANG;
