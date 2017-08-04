@@ -76,8 +76,8 @@ function loadPage() {
 
 //Shows upload spinner
 function showUploadingSpinner() {
-  $(".description").css('visibility', 'hidden');
-  $("#uploading")[0].style.display = "block";
+  $(".descriptionDataset").css('visibility', 'hidden');
+  $("#uploadingDataset")[0].style.display = "block";
 }
 
 //Checks if all required fields are filled correctly in the upload form
@@ -162,8 +162,8 @@ function submitForm() {
         }
       },
       complete: function () {
-        document.getElementById("uploading").style.display = "none";
-        $(".description").css('visibility', 'visible');
+        $("#uploadingDataset")[0].style.display = "none";
+        $(".descriptionDataset").css('visibility', 'visible');
       }
     });
   }

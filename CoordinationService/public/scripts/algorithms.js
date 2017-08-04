@@ -162,8 +162,8 @@ function submitForm() {
         }
       },
       complete: function () {
-        $("#uploading")[0].style.display = "none";
-        $(".description").css('visibility', 'visible');
+        $("#uploadingAlgorithm")[0].style.display = "none";
+        $(".descriptionAlgorithm").css('visibility', 'visible');
       }
     });
   }
@@ -171,8 +171,8 @@ function submitForm() {
 }
 
 function showUploadingSpinner() {
-  $(".description").css('visibility', 'hidden');
-  document.getElementById("uploading").style.display = "block";
+  $(".descriptionAlgorithm").css('visibility', 'hidden');
+  $("#uploadingAlgorithm")[0].style.display = "block";
 };
 
 // response is object which contains code: int, msg: string, and success: boolean

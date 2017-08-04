@@ -165,7 +165,7 @@
                             <h4 class="modal-title" id="uploadModalLabel">Upload Datasets</h4>
                         </div>
                         <div class="modal-body">
-                            <div class="uploadingpopup" id="uploading" style="display:none">
+                            <div class="uploadingpopup" id="uploadingDataset" style="display:none">
 
                                 <div style="height: 400px;">
 
@@ -187,7 +187,7 @@
                                 <div class="col-md-6 col-md-offset-1">
                                     <!-- in input label, using the name attribute to specify FormDataParam in jersey side-->
                                     <form id="dataForm" enctype="multipart/form-data">
-                                        <div class="description" id="contents" style="display:block">
+                                        <div class="descriptionDataset" id="contents" style="display:block">
                                             <div class="form-group required">
                                                 <label for="file" class="control-label">Data Files</label>
                                                 <input type="file" name="file" id="file" onchange="checkExtension()" />
