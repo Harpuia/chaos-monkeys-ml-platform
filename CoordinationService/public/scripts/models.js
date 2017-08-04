@@ -34,6 +34,15 @@ $(document).ready(function () {
     }
     $('#taskDatasetsNames').html(datasetsnames);
   });
+
+  //Load algorithms names
+  $.get("tasks/algorithmsnames", function (data) {
+    var algorithmsnames = '';
+    for (i = 0; i < data['algorithmsnames'].length; i++) {
+      algorithmsnames += '<option value="' + data['algorithmsnames'][i]['id'] + '">' + data['algorithmsnames'][i]['name'] + '</option>\n';
+    }
+    $('#algorithmNameInTaskModal').html(algorithmsnames);
+  });
 });
 
 //Displays details for a selected dataset
@@ -77,10 +86,8 @@ function submitTaskForm() {
   var alert = $('#formTaskError')[0];
   var alertText = $('#formTaskErrorText')[0];
   var tasksInfoForExecution = {
-    "project_id": $("#taskProjectId").val(),
     "dataset_id": $("#taskDatasetsNames").val(),
-    // TODO: Add algorithm id in the future if needed
-    "algorithm_id": null,
+    "algorithm_id": $("#algorithmNameInTaskModal").val(),
     "model_id": modelsData[selectedModelId]['id'],
     "name": $("#taskName").val(),
     "description": $("#taskDescription").val(),
@@ -113,10 +120,12 @@ function submitTaskForm() {
 
 //Checks required fields
 function checkRequiredTaskFields() {
+  var d = $("#taskDatasetsNames")[0];
+  var a = $("#algorithmNameInTaskModal")[0];
   var taskName = $("#taskName").val();
-  var projectId = $("#taskProjectId").val();
   var selectedTaskType = $("#taskType").val();
-  var selectedModelName = $("#taskModel").val();
+  var selectedDatasetName = d.options[d.selectedIndex] === undefined ? "" : d.options[d.selectedIndex].text;
+  var selectedAlgorithmName = a.options[a.selectedIndex] === undefined ? "" : a.options[a.selectedIndex].text;
   var alert = $('#formTaskError')[0];
   var alertText = $('#formTaskErrorText')[0];
 
@@ -128,11 +137,11 @@ function checkRequiredTaskFields() {
     showSubmissionResult('Please input a task name.', alert, alertText);
     return false;
   }
-  else if (projectId.length == 0) {
-    showSubmissionResult('Please input the Project ID.', alert, alertText);
+  else if (selectedDatasetName.length == 0) {
+    showSubmissionResult('Please select a dataset.', alert, alertText);
     return false;
   }
-  else if (selectedModelName.length == 0) {
+  else if (selectedAlgorithmName.length == 0) {
     showSubmissionResult('Please select an algorithm.', alert, alertText);
     return false;
   }
