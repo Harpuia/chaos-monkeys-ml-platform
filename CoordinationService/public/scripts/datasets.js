@@ -140,7 +140,7 @@ function submitForm() {
   var alertText = $('#formUploadErrorText')[0];
   var form = new FormData($('form#dataForm')[0]);
   //Sending post request
-  if (checkUploadFormRequiredFields()) {
+  if (checkUploadFormRequiredFields() && checkExtension()) {
     showUploadingSpinner();
     $.ajax({
       url: "http://127.0.0.1:8080/services/datasets/upload",
