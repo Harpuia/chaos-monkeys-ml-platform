@@ -5,7 +5,7 @@ var utilities = require('./dbUtilities');
 var log = require('./logUtilities');
 
 /* Convention: serviceType must be in the format specified by "ServiceTypes.xlsx",  i.e. "DataInput-<data_format>", "AlgInput-<language>", "Train-<language>" or "Exec-<language>" */
-router.post('/get/:serviceType', function routeRoot(req, res, next) {
+router.get('/get/:serviceType', function routeRoot(req, res, next) {
   //Getting the elements of the serviceType value
   var serviceType = req.params['serviceType'];
   if (serviceType) {

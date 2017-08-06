@@ -5,6 +5,7 @@ var utilities = require('./dbUtilities');
 var log = require('./logUtilities');
 var mysqlToCsv = require("mysql-to-csv")
 var nodeCmd = require("node-cmd");
+var url = require('url');
 var config = require('../config/logDbConfig.json');
 const SERVICE_EXISTS_ERRORCODE = 1062;
 
@@ -60,45 +61,23 @@ router.get('/table', function getServiceTable(req, res, next) {
   connection.end();
 });
 
-/* registers a service in the table */
-router.post('/registerService', function registerService(req, res, next) {
-  var currentdate = Date.now();
-  var newService = req.body;
-  //Connect to DB
-  var connection = createDbConnection();
-  connection.connect();
-  var sql = 'insert into connected_services (ip_address, type, name, description, status, last_updated) values (\'' + newService['ip'] + '\',\'' + newService['type'] + '\',\'' + newService['name'] + '\',\'' + newService['description'] + '\',\'' + newService['status'] + '\',' + currentdate + ')';
-  logMessage(false, log.operationType.QueryData, new Date(), sql);
-  connection.query(sql, function checkInsertOperationStatus(err, result) {
-    if (err) {
-      if (err.errno === SERVICE_EXISTS_ERRORCODE)
-        res.json({ response: 'The service already exists.' });
-      else
-        res.json({ response: err });
-    } else {
-      res.json({ response: 'OK' });
-    }
-  });
-  connection.end();
-});
-
 /* sets status */
 router.post('/setStatus', function handleHeartbeatMsg(req, res, next) {
   var currentdate = Date.now();
-  var serviceStatus = req.body;
+  var newService = req.body;
+  //Extracting IP address
+  var parsedUrl = url.parse(newService['ip']);
+  var ipAddress = parsedUrl.host;
   //Connect to DB
   var connection = createDbConnection();
   connection.connect();
-  var sql = 'update connected_services set status = \'' + JSON.stringify(serviceStatus['status']) + '\', last_updated = ' + currentdate + ' where ip_address =\'' + serviceStatus['ip'] + '\'';
+  var sql = 'insert into connected_services (ip_address, type, name, description, status, last_updated) values (\'' + ipAddress + '\',\'' + newService['type'] + '\',\'' + newService['name'] + '\',\'' + newService['description'] + '\',\'' + JSON.stringify(newService['status']) + '\',' + currentdate + ') on duplicate key update type=\'' + newService['type'] + '\', name=\'' + newService['name'] + '\', description=\'' + newService['description'] + '\', status=\'' + JSON.stringify(newService['status']) + '\', last_updated=' + currentdate;
   logMessage(false, log.operationType.QueryData, new Date(), sql);
   connection.query(sql, function checkUpdateOperationStatus(err, result) {
     if (err) {
       res.json({ response: err });
     } else {
-      if (result.affectedRows === 0)
-        res.json({ response: 'The service is not registered.' });
-      else
-        res.json({ response: 'Ok' });
+      res.json({ response: 'success' });
     }
   });
   connection.end();

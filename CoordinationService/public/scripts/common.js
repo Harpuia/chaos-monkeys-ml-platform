@@ -82,7 +82,8 @@ function formatDate(datetime) {
 
 //Dynamically loads the IP of a service
 function getServiceIp(serviceType) {
-    $.getJSON('http://' + location.host + '/dynamicIp/get/' + serviceType, function (data) {
+    var ip = 'http://' + location.host + '/dynamicIp/get/' + serviceType;
+    $.getJSON(ip, function (data) {
         if (data['message'] === 'success')
             return data['ip'];
         else
