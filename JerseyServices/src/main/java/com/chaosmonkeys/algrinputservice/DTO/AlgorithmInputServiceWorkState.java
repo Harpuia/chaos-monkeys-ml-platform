@@ -9,13 +9,6 @@ import java.util.Set;
  * including: datasets is under checking, datasets is under uploading
  */
 public class AlgorithmInputServiceWorkState {
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
     private String status;
 
@@ -27,7 +20,6 @@ public class AlgorithmInputServiceWorkState {
 
 
     // Constructors
-
     public AlgorithmInputServiceWorkState() {
 
     }
@@ -54,6 +46,15 @@ public class AlgorithmInputServiceWorkState {
             sb.append(";");
         }
         uploadingList = sb.toString();
+    }
+
+    // Getter and setters
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public List<String> getChecking() {
@@ -87,4 +88,6 @@ public class AlgorithmInputServiceWorkState {
     public void setUploadingList(String uploadingList) {
         this.uploadingList = uploadingList;
     }
+
+
 }

@@ -95,6 +95,32 @@ public class Launcher {
     }
 
     /**
+     * return the service host IP
+     */
+    public static String getServiceHost(){
+        return serviceHost;
+    }
+
+    public static String getServiceName() {
+        return serviceName;
+    }
+    public static void   setServiceName(String serviceName) {
+        Launcher.serviceName = serviceName;
+    }
+    public static String getServiceType() {
+        return serviceType;
+    }
+    public static void   setServiceType(String serviceType) {
+        Launcher.serviceType = serviceType;
+    }
+    public static String getServiceDescription() {
+        return serviceDescription;
+    }
+    public static void   setServiceDescription(String serviceDescription) {
+        Launcher.serviceDescription = serviceDescription;
+    }
+
+    /**
      * The service initialization process
      *
      * @param filePath configuration file path
@@ -135,35 +161,17 @@ public class Launcher {
         }
         Logger.SaveLog(LogType.Information, "Port of my system is := " + servicePort);
 
-        //Start registration
-        ThreadSafeRegister registerThread = new ThreadSafeRegister();
-        registerThread.start();
-
-        //Check register status
-        try {
-            registerThread.join();
-        } catch (InterruptedException e) {
-            Logger.SaveLog(LogType.Exception, "EXCEPTION: Failed to register.");
+        // input service heartbeats clients
+        if (serviceType.startsWith("DataInput-")) {
+            DatasetInputServiceHeartBeatsClient datasetInputServiceHeartBeatsClient = new DatasetInputServiceHeartBeatsClient();
+            datasetInputServiceHeartBeatsClient.startSendHeartBeat(coordinationIP);
+        } else if (serviceType.startsWith("Train-") || serviceType.startsWith("Exec-")) {
+            ExecutionServiceHeartBeatsClient executionServiceHeartBeatsClient = new ExecutionServiceHeartBeatsClient();
+            executionServiceHeartBeatsClient.startSendHeartBeat(coordinationIP);
+        } else if (serviceType.startsWith("AlgInput-")) {
+            AlgorithmInputServiceHeartBeatsClient algorithmInputServiceHeartBeatsClient = new AlgorithmInputServiceHeartBeatsClient();
+            algorithmInputServiceHeartBeatsClient.startSendHeartBeat(coordinationIP);
         }
-        if (isRegistered) {
-            //Send heartbeats
-            //HeartBeatsClient hbClient = new HeartBeatsClient();
-            //hbClient.startSendHeartBeat(coordinationIP);
-            // input service heartbeats clients
-            if (serviceType.startsWith("DataInput-")) {
-                DatasetInputServiceHeartBeatsClient datasetInputServiceHeartBeatsClient = new DatasetInputServiceHeartBeatsClient();
-                datasetInputServiceHeartBeatsClient.startSendHeartBeat(coordinationIP);
-            } else if (serviceType.startsWith("Train-") || serviceType.startsWith("Exec-")) {
-                ExecutionServiceHeartBeatsClient executionServiceHeartBeatsClient = new ExecutionServiceHeartBeatsClient();
-                executionServiceHeartBeatsClient.startSendHeartBeat(coordinationIP);
-            } else if (serviceType.startsWith("AlgInput-")) {
-                AlgorithmInputServiceHeartBeatsClient algorithmInputServiceHeartBeatsClient = new AlgorithmInputServiceHeartBeatsClient();
-                algorithmInputServiceHeartBeatsClient.startSendHeartBeat(coordinationIP);
-            }
-        } else {
-            Logger.SaveLog(LogType.Error, "ERROR: Failed to register on coordination service! Please contact administrator.");
-        }
-
     }
 
     /**
@@ -204,47 +212,6 @@ public class Launcher {
 
         //Create and start a new instance of grizzly http server exposing the Jersey application at Service Host
         return GrizzlyHttpServerFactory.createHttpServer(URI.create(serviceHost), rc);
-    }
-
-    /**
-     * Registration thread.
-     */
-    public class ThreadSafeRegister extends Thread {
-        public volatile boolean exit = false;
-
-        public void run() {
-            //Creating a web client to send registration calls and status update calls
-            Client client = ClientBuilder.newClient(new ClientConfig().register(LoggingFilter.class));
-
-            //Setting up a web target for the calls
-            WebTarget webTarget = client.target(coordinationIP).path("registerService");
-
-            RegistrationInfo serviceInfo = new RegistrationInfo(serviceHost, serviceType, serviceName, serviceDescription);
-            while (!exit) {
-                Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON);
-                Response response = null;
-                try {
-                    response = invocationBuilder.post(Entity.entity(serviceInfo, MediaType.APPLICATION_JSON));
-                } catch (ProcessingException e) {
-                    Logger.SaveLog(LogType.Exception, "EXCEPTION: Register Connection timeout, retrying...");
-                }
-                if (null != response) {
-                    BasicResponse basicResponse = response.readEntity(BasicResponse.class);
-                    String responseText = basicResponse.getResponse();
-                    if (responseText.equals("OK")) {
-                        isRegistered = true;
-                        exit = true;
-                    }
-                }
-                // sleep 3 seconds
-                try {
-                    Thread.sleep(3 * 1000);
-                } catch (InterruptedException e) {
-                    Logger.SaveLog(LogType.Exception, "EXCEPTION: Interrupted Exception.");
-                }
-            }
-
-        }
     }
 
     /**

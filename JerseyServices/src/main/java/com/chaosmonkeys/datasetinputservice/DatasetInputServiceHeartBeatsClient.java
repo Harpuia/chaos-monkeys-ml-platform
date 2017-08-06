@@ -27,13 +27,11 @@ public class DatasetInputServiceHeartBeatsClient {
             return;
         }
         coordinationIP = ip;
-        ScheduledExecutorService scheduledExecutorService =
-                Executors.newScheduledThreadPool(5);
+        // start a single thread
+        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        SendHeartBeatTask heartbeatTask = new SendHeartBeatTask();
+        scheduledExecutorService.submit(heartbeatTask);
 
-//        Client client = ClientBuilder.newBuilder().newClient(new ClientConfig().register(LoggingFilter.class));
-
-        Thread thread = new Thread(new DatasetInputServiceHeartBeatsClient.SendHeartBeatTask());
-        thread.start();
     }
 
     class SendHeartBeatTask implements Runnable {
@@ -47,7 +45,7 @@ public class DatasetInputServiceHeartBeatsClient {
             while (true) {
                 try {
                     DatasetInputServiceWorkState workState = new DatasetInputServiceWorkState(DatasetInputService.checkSet, DatasetInputService.uploadSet, DatasetInputService.serviceStatus);
-                    DatasetInputServiceStatusInfo serviceStatusInfo = new DatasetInputServiceStatusInfo(Launcher.getHostIP(), workState);
+                    DatasetInputServiceStatusInfo serviceStatusInfo = new DatasetInputServiceStatusInfo(Launcher.getServiceHost(), Launcher.getServiceType(), Launcher.getServiceName(), Launcher.getServiceDescription(), workState);
 
                     Response response = invocationBuilder.post(Entity.entity(serviceStatusInfo, MediaType.APPLICATION_JSON));
                 } catch (ProcessingException e) {

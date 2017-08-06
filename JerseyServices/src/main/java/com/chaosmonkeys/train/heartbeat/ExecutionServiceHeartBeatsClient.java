@@ -33,7 +33,6 @@ public class ExecutionServiceHeartBeatsClient {
         }
         coordinationIP = ip;
 
-//        Client client = ClientBuilder.newBuilder().newClient(new ClientConfig().register(LoggingFilter.class));
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(this::sendHeartBeatTask);
     }
@@ -47,7 +46,7 @@ public class ExecutionServiceHeartBeatsClient {
             try {
                 int runningNum = TrainingTaskManager.INSTANCE.getRunningTaskNum() + ExecutionTaskManager.INSTANCE.getRunningTaskNum();
                 String runState = runningNum > 0 ? Constants.STATUS_RUN : Constants.STATUS_IDLE;
-                ExecutionServiceStatus status = new ExecutionServiceStatus(Launcher.getHostIP(), runState);
+                ExecutionServiceStatus status = new ExecutionServiceStatus(Launcher.getServiceHost(), Launcher.getServiceType(), Launcher.getServiceName(), Launcher.getServiceDescription(), runState);
 
                 Response response = invocationBuilder.post(Entity.entity(status, MediaType.APPLICATION_JSON));
             } catch (ProcessingException e) {

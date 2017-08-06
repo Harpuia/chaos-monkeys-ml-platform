@@ -27,13 +27,10 @@ public class AlgorithmInputServiceHeartBeatsClient {
             return;
         }
         coordinationIP = ip;
-        ScheduledExecutorService scheduledExecutorService =
-                Executors.newScheduledThreadPool(5);
+        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 
-//        Client client = ClientBuilder.newBuilder().newClient(new ClientConfig().register(LoggingFilter.class));
+        scheduledExecutorService.submit(new SendHeartBeatTask());
 
-        Thread thread = new Thread(new AlgorithmInputServiceHeartBeatsClient.SendHeartBeatTask());
-        thread.start();
     }
 
     class SendHeartBeatTask implements Runnable {
@@ -47,7 +44,7 @@ public class AlgorithmInputServiceHeartBeatsClient {
             while (true) {
                 try {
                     AlgorithmInputServiceWorkState workState = new AlgorithmInputServiceWorkState(AlgorithmResource.checkSet, AlgorithmResource.uploadSet, AlgorithmResource.serviceStatus);
-                    AlgorithmInputServiceStatusInfo serviceStatusInfo = new AlgorithmInputServiceStatusInfo(Launcher.getHostIP(), workState);
+                    AlgorithmInputServiceStatusInfo serviceStatusInfo = new AlgorithmInputServiceStatusInfo(Launcher.getServiceHost(), Launcher.getServiceType(), Launcher.getServiceName(), Launcher.getServiceDescription(), workState);
 
                     Response response = invocationBuilder.post(Entity.entity(serviceStatusInfo, MediaType.APPLICATION_JSON));
                 } catch (ProcessingException e) {
