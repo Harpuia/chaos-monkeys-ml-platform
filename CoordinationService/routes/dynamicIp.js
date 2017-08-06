@@ -14,7 +14,7 @@ router.get('/get/:serviceType', function routeRoot(req, res, next) {
       //Connect to DB
       var connection = createDbConnection();
       connection.connect();
-      var query = 'select type, ip_address from connected_services where type ="' + serviceType + '"';
+      var query = 'select type, ip_address from connected_services where `type`="' + serviceType + '"';
       logMessage(false, log.operationType.QueryData, new Date(), query);
       //Return all services
       connection.query(query, function selectServiceTypes(err, rows, fields) {
