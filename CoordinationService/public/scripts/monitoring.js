@@ -1,6 +1,10 @@
+$(document).ready(function () {
+  $('#serverIP').text(location.host);
+});
+
 //Update view with table values
 setInterval(function () {
-  $.getJSON('http://127.0.0.1:3000/table', function (data) {
+  $.getJSON('http://' + location.host + '/table', function (data) {
     var tr = '<tr class="table-active"><th>IP</th><th>Type</th><th>Name</th><th>Description</th><th>Status</th><th>Last Contacted (seconds ago)</th></tr>';
     var color;
     var displayStatus;

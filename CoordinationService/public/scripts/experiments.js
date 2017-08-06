@@ -74,7 +74,7 @@ function submitForm() {
     $('#submitButton').prop("disabled", true);
 
     $.ajax({
-      url: "http://127.0.0.1:3000/experiments/create",
+      url: 'http://' + location.host + "/experiments/create",
       type: "POST",
       dataType: "json",
       contentType: 'application/json',
@@ -104,6 +104,7 @@ function stopExperiment(expName) {
     experiment_name: expName
   }
   $('#stopExperimentButton').prop("disabled", true);
+  
   $.ajax({
     url: "http://127.0.0.1:8080/services/exp/stop",
     type: "POST",

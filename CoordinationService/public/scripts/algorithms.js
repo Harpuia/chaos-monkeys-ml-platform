@@ -139,8 +139,9 @@ function submitForm() {
   if (checkAlgorithmUploadFormRequiredFields()) {
     //Sending post request
     showUploadingSpinner();
+    var serviceIp = getServiceIp('AlgInput-' + $('#language option:selected').text());
     $.ajax({
-      url: "http://127.0.0.1:8080/services/algr/upload",
+      url: "http://" + serviceIp + "/services/algr/upload",
       type: "POST",
       dataType: 'json',
       data: form,
@@ -195,7 +196,7 @@ function displayDetails(algorithmIndex) {
   $('#algorithmName').text(algorithmsData[algorithmIndex]['name']);
   $('#algorithmDescription').text(algorithmsData[algorithmIndex]['description']);
   $('#algorithmLanguage').text(algorithmsData[algorithmIndex]['language']);
-  $('#algorithmPath').html('<a href="http://127.0.0.1:3000/download/algorithm/' + algorithmsData[algorithmIndex]['id'] + '" target="_blank">Download</a>');
+  $('#algorithmPath').html('<a href="http://' + location.host + '/download/algorithm/' + algorithmsData[algorithmIndex]['id'] + '" target="_blank">Download</a>');
 
   //Load algorithms types
   $.get("tasks/listByAlgorithm/" + algorithmsData[algorithmIndex]['id'], function (data) {
@@ -249,10 +250,10 @@ function submitTaskForm() {
   if (checkRequiredTaskFields()) {
     if (tasksInfoForTrain.type.toLowerCase() === "training") {
       objectToSend = JSON.stringify(tasksInfoForTrain);
-      url = 'http://127.0.0.1:3000/tasks/createTrainingTask';
+      url = 'http://' + location.host + '/tasks/createTrainingTask';
     } else if (tasksInfoForExe.type.toLowerCase() === "execution") {
       objectToSend = JSON.stringify(tasksInfoForExe);
-      url = 'http://127.0.0.1:3000/tasks/createExecutionTask';
+      url = 'http://' + location.host + '/tasks/createExecutionTask';
     }
 
     //Disabling submit button

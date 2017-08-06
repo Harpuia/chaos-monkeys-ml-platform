@@ -142,8 +142,9 @@ function submitForm() {
   //Sending post request
   if (checkUploadFormRequiredFields() && checkExtension()) {
     showUploadingSpinner();
+    var serviceIp = getServiceIp('DataInput-' + $('#format option:selected').text());
     $.ajax({
-      url: "http://127.0.0.1:8080/services/datasets/upload",
+      url: "http://" + serviceIp + "/services/datasets/upload",
       type: "POST",
       data: form,
       processData: false,
@@ -192,7 +193,7 @@ function displayDetails(datasetIndex) {
   $('#datasetName').text(datasetsData[datasetIndex]['name']);
   $('#datasetDescription').text(datasetsData[datasetIndex]['description']);
   $('#datasetFormat').text(datasetsData[datasetIndex]['format']);
-  $('#datasetPath').html('<a href="http://127.0.0.1:3000/download/dataset/' + datasetsData[datasetIndex]['id'] + '" target="_blank">Download</a>');
+  $('#datasetPath').html('<a href="http://' + location.host + '/download/dataset/' + datasetsData[datasetIndex]['id'] + '" target="_blank">Download</a>');
 
   //Load tasks types
   $.get("tasks/listByDataset/" + datasetsData[datasetIndex]['id'], function (data) {
@@ -253,11 +254,11 @@ function submitTaskForm() {
 
     if (type.toLowerCase() == "training") {
       objectToSend = tasksInfoForTrain;
-      url = 'http://127.0.0.1:3000/tasks/createTrainingTask';
+      url = 'http://' + location.host + '/tasks/createTrainingTask';
     }
     else if (type.toLowerCase() == "execution") {
       objectToSend = tasksInfoForExe;
-      url = 'http://127.0.0.1:3000/tasks/createExecutionTask';
+      url = 'http://' + location.host + '/tasks/createExecutionTask';
     }
     $.ajax({
       url: url,
