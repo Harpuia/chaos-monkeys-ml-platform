@@ -11,12 +11,16 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.*;
-import java.nio.file.Files;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Class containing all possible service calls relevant to upload algorithm(API methods)
@@ -32,7 +36,7 @@ public class AlgorithmResource {
     private static final String STATUS_IDLE = "IDLE";
 
     // states variables
-    public static String serviceStatus = STATUS_IDLE;
+    private static String serviceStatus = STATUS_IDLE;
 
     private static final List<String> supportDevLanguageList = new ArrayList<>();  // Arrays.asList("R","Python")
 
@@ -41,17 +45,31 @@ public class AlgorithmResource {
     public static Set<String> checkSet = new HashSet<>();
 
     // Success Code
+    /**
+     * Basic successful response will have code=0 and success = true
+     * HTTP status code = 200 and if failed http status code will be assigned to 400(BAD REQUEST)
+     */
     public static final int CHECK_SUCCESS = 0;
     // Error Code
-    public static final int ERR_BLANK_PARAMS = 201;
-    public static final int ERR_UNSUPPORTED_LANG = 202;
-    public static final int ERR_TRANSMISSION_FILE = 203;
-    public static final int ERR_FILE_BODYPART_MISSING = 204;
-    public static final int ERR_UNZIP_EXCEPTION = 205;
-    public static final int ERR_REQUIRED_FILE_MISSING = 206;
-    public static final int ERR_CANNOT_CREATE_FILE = 207;
-    public static final int ERR_INVALID_ZIP_EXT = 208;
-    public static final int ERR_UNKNOWN = 299;
+    private static final int ERR_BLANK_PARAMS = 201;
+    private static final int ERR_UNSUPPORTED_LANG = 202;
+    private static final int ERR_TRANSMISSION_FILE = 203;
+    private static final int ERR_FILE_BODYPART_MISSING = 204;
+    private static final int ERR_UNZIP_EXCEPTION = 205;
+    private static final int ERR_REQUIRED_FILE_MISSING = 206;
+    private static final int ERR_CANNOT_CREATE_FILE = 207;
+    private static final int ERR_INVALID_ZIP_EXT = 208;
+    private static final int ERR_UNKNOWN = 299;
+
+    /**
+     * API for receiving uploading algorithm request
+     * @param fileInputStream uploaded file stream
+     * @param fileMetaData  uploaded file metadata, containing file name
+     * @param algrName algorithm name
+     * @param algrDescription   algorithm decription (optional)
+     * @param language  algorithm developing language
+     * @return  JSON response contains {success:bool, code:int, msg:string}
+     */
     @POST
     @Path("/upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -133,8 +151,13 @@ public class AlgorithmResource {
 
     }
 
-
-    public boolean unzipRequiredFile(File zipFile, File targetFolder){
+    /**
+     * call ZipUtils to unzip zip file
+     * @param zipFile  target zip file
+     * @param targetFolder  extracting folder
+     * @return succeed or not
+     */
+    private boolean unzipRequiredFile(File zipFile, File targetFolder){
         try {
             ZipUtils.unzip(zipFile, targetFolder);
         } catch (IOException e) {
@@ -147,10 +170,10 @@ public class AlgorithmResource {
 
     /**
      * check if the required files and folders has been provided
-     * @param folder
-     * @return
+     * @param folder folder that contains extracted files
+     * @return  boolean: valid or not
      */
-    public boolean isAllRequiredFilesProvide(File folder){
+    private boolean isAllRequiredFilesProvide(File folder){
         List<String> optionalFolderList = Arrays.asList("input","output");
         for (String folderName : optionalFolderList){
             File optionalFolder = new File(folder, folderName);
@@ -169,6 +192,13 @@ public class AlgorithmResource {
         return true;
     }
 
+    /**
+     * File receiving via InputStream
+     * @param fileInputStream uploaded file stream
+     * @param targetFolder  storage folder
+     * @param fileName  new file name
+     * @return boolean: succeed or not
+     */
     public boolean receiveFile(InputStream fileInputStream, File targetFolder, String fileName){
         // receive all file parts and store in targetFolder using filename
         // if exception happen, delete targetFolder
@@ -195,10 +225,11 @@ public class AlgorithmResource {
     /**
      * Detect whether all parameters are fulfilled or not
      *
-     * @param fileInputStream
-     * @param fileMetaData
-     *@param name
-     * @param language     @return error code that has been defined in the global config or in the heading of this class
+     * @param fileInputStream uploaded file stream
+     * @param fileMetaData  file metadata
+     *@param name algorithm name, must not be empty
+     * @param language algorithm developing language, must be consistent with database
+     * @return error code that has been defined in the global config or in the heading of this class
      */
     public int detectUploadServiceParamError(InputStream fileInputStream, FormDataContentDisposition fileMetaData, String name, String language){
         // check all string parameters are not blank
@@ -243,10 +274,10 @@ public class AlgorithmResource {
 
     /**
      * Generate corrpesponding error message based on error code
-     * @param errorCode
-     * @return
+     * @param errorCode pre-defined error code
+     * @return JSON response contains {success:bool, code:int, msg:string}
      */
-    public Response genErrorResponse(int errorCode){
+    private Response genErrorResponse(int errorCode){
         BaseResponse responseEntity = new BaseResponse();
         String msg;
         switch (errorCode){
@@ -284,9 +315,9 @@ public class AlgorithmResource {
     }
     /**
      * Generate corrpesponding successful message
-     * @return Success Response
+     * @return Success Response, JSON response contains {success:bool, code:int, msg:string}
      */
-    public Response genSuccResponse(){
+    private Response genSuccResponse(){
         BaseResponse responseEntity = new BaseResponse();
         responseEntity.successful("algorithm upload successfully");
         Logger.Response("Respond success");

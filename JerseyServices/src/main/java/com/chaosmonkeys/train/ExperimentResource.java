@@ -40,6 +40,11 @@ public class ExperimentResource {
     // reference to the task manager
     private TrainingTaskManager taskManager;
 
+    /**
+     * Start an experiment that is valid and stored in database without duplicate
+     * @param experimentDto json object need to be sent by frontend
+     * @return JSON response contains {success:bool, code:int, msg:string}
+     */
     @POST
     @Path("/start")
     @Consumes(MediaType.APPLICATION_JSON)

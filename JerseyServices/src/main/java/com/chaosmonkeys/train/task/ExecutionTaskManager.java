@@ -56,8 +56,8 @@ public enum ExecutionTaskManager implements  TaskManager{
     //---------------
     /**
      * Update experiment task status in database
-     * @param taskId
-     * @param state
+     * @param taskId abstract task ID (the UUID one)
+     * @param state new task state
      */
     public ExecutionTask updateTaskStatus(String taskId, TaskState state){
         ExecutionTask task = taskMap.get(taskId);
@@ -111,7 +111,7 @@ public enum ExecutionTaskManager implements  TaskManager{
 
         @Override
         public void onCancelled(String taskId) {
-            ExecutionTask task = updateTaskStatus(taskId, TaskState.CANCELLED);
+            updateTaskStatus(taskId, TaskState.CANCELLED);
             runningTaskNum.decrementAndGet();
         }
 

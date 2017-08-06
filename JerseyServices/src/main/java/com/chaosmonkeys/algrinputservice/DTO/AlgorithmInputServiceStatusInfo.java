@@ -1,8 +1,8 @@
 package com.chaosmonkeys.algrinputservice.DTO;
 
 /**
- * DTO for AlgorithmInputService,
- * including IP, name, description and InputServiceStatus
+ * DTO for algorithmInputService heartbeats client,
+ * including IP, name, description and status
  */
 public class AlgorithmInputServiceStatusInfo {
     private String IP;

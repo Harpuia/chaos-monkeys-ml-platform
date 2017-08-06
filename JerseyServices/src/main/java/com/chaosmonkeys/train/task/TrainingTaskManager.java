@@ -57,8 +57,8 @@ public enum TrainingTaskManager implements TaskManager{
 
     /**
      * Update experiment task status in database
-     * @param taskId
-     * @param state
+     * @param taskId task ID, the UUID one
+     * @param state new task state
      */
     public TrainingTask updateTaskStatus(String taskId, TaskState state){
         TrainingTask task = taskMap.get(taskId);

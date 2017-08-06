@@ -36,24 +36,24 @@ public class DatasetInputService {
     // Success Code
     public static final int CHECK_SUCCESS = 0;
     // Error Code
-    public static final int ERR_BLANK_PARAMS = 101;
-    public static final int ERR_UNSUPPORTED_FORMAT = 102;
-    public static final int ERR_TRANSMISSION_FILE = 103;
-    public static final int ERR_FILE_BODYPART_MISSING = 104;
-    public static final int ERR_STORE_IN_DB = 105;
-    public static final int ERR_INVALID_FILE = 106;
-    public static final int ERR_INVALID_FILE_EXT = 107; // invalid file extension
-    public static final int ERR_UNKNOWN = 199;
+    private static final int ERR_BLANK_PARAMS = 101;
+    private static final int ERR_UNSUPPORTED_FORMAT = 102;
+    private static final int ERR_TRANSMISSION_FILE = 103;
+    private static final int ERR_FILE_BODYPART_MISSING = 104;
+    private static final int ERR_STORE_IN_DB = 105;
+    private static final int ERR_INVALID_FILE = 106;
+    private static final int ERR_INVALID_FILE_EXT = 107; // invalid file extension
+    private static final int ERR_UNKNOWN = 199;
 
     /**
      * Handling upload request and store file under dataset folder
      *  using multipart form
-     * @param fileInputStream
-     * @param fileMetaData
-     * @param dataName
-     * @param dataDescription
-     * @param format
-     * @return
+     * @param fileInputStream uploaded file stream
+     * @param fileMetaData file metadata
+     * @param dataName  dataset name specified by user
+     * @param dataDescription   dataset description specified by user
+     * @param format    dataset format
+     * @return JSON response contains {success:bool, code:int, msg:string}
      */
     @POST
     @Path("/upload")

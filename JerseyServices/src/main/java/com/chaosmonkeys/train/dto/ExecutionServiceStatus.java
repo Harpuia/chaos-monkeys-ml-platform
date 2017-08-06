@@ -1,5 +1,8 @@
 package com.chaosmonkeys.train.dto;
 
+/**
+ * DTO as heartbeats message
+ */
 public class ExecutionServiceStatus {
     private String IP;
     private String status;

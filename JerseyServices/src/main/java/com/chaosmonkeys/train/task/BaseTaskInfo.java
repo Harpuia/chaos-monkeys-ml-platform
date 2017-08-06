@@ -41,7 +41,7 @@ public class BaseTaskInfo {
 
     /**
      * Obtain the identifier of the task
-     * @return
+     * @return task id (an instance of UUID string)
      */
     public String getTaskId(){
         return this.TASK_ID;

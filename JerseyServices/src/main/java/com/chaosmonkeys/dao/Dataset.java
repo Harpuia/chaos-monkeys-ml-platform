@@ -3,13 +3,16 @@ package com.chaosmonkeys.dao;
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.annotations.DbName;
 
+/**
+ * class used to manipulate database using ActiveJDBC ORM
+ */
 @DbName("ConfigurationDatabase")
 public class Dataset extends Model {
     private volatile String dataSetPath;
 
     /**
      * Query once and retur dataset path
-     * @return
+     * @return dataset file path
      */
     public String getDatasetPath(){
         if(null == dataSetPath){

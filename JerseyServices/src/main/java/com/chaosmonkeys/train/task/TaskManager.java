@@ -5,8 +5,8 @@ package com.chaosmonkeys.train.task;
  */
 public interface TaskManager {
 
-    public boolean submitTask(BaseTaskInfo taskInfo);
-    public boolean cancelTask(String taskId);
-    public boolean cancelTaskByExperimentName(String experimentName);
+    boolean submitTask(BaseTaskInfo taskInfo);
+    boolean cancelTask(String taskId);
+    boolean cancelTaskByExperimentName(String experimentName);
 
 }
