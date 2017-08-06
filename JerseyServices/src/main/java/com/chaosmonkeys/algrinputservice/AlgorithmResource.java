@@ -36,7 +36,7 @@ public class AlgorithmResource {
     private static final String STATUS_IDLE = "IDLE";
 
     // states variables
-    private static String serviceStatus = STATUS_IDLE;
+    public static String serviceStatus = STATUS_IDLE;
 
     private static final List<String> supportDevLanguageList = new ArrayList<>();  // Arrays.asList("R","Python")
 
