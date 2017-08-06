@@ -79,3 +79,13 @@ function formatDate(datetime) {
     var second = datetime.getSeconds();
     return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
 }
+
+//Dynamically loads the IP of a service
+function getServiceIp(serviceType) {
+    $.getJSON('http://' + location.host + '/dynamicIp/get/' + serviceType, function (data) {
+        if (data['message'] === 'success')
+            return data['ip'];
+        else
+            return undefined;
+    });
+}

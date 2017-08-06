@@ -14,7 +14,8 @@ createLogDbConnection = function () {
 //Error type object
 var errorType = {
     'DBError': 'DBError',
-    'JerseyError': 'JerseyError'
+    'JerseyError': 'JerseyError',
+    'LogicError': 'LogicError'
 }
 //Operation type object
 var operationType = {

@@ -123,11 +123,11 @@ function submitTaskForm() {
     //Choosing object to send and url
     if (type.toLowerCase() === "training") {
       objectToSend = JSON.stringify(tasksInfoForTrain);
-      serviceUrl = 'http://127.0.0.1:3000/tasks/createTrainingTask';
+      serviceUrl = 'http://' + location.host + '/tasks/createTrainingTask';
     }
     else if (type.toLowerCase() === "execution") {
       objectToSend = JSON.stringify(tasksInfoForExe);
-      serviceUrl = 'http://127.0.0.1:3000/tasks/createExecutionTask';
+      serviceUrl = 'http://' + location.host + '/tasks/createExecutionTask';
     }
 
     //Disabling submit button
@@ -256,7 +256,7 @@ function submitExperimentForm() {
     //Disabling submit button
     $('#submitButton').prop("disabled", true);
     $.ajax({
-      url: "http://127.0.0.1:3000/experiments/create",
+      url: 'http://' + location.host + '/experiments/create',
       type: "POST",
       dataType: "json",
       contentType: 'application/json',
