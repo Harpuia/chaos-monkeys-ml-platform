@@ -51,15 +51,15 @@ public class AlgorithmResource {
      */
     public static final int CHECK_SUCCESS = 0;
     // Error Code
-    private static final int ERR_BLANK_PARAMS = 201;
-    private static final int ERR_UNSUPPORTED_LANG = 202;
-    private static final int ERR_TRANSMISSION_FILE = 203;
-    private static final int ERR_FILE_BODYPART_MISSING = 204;
-    private static final int ERR_UNZIP_EXCEPTION = 205;
-    private static final int ERR_REQUIRED_FILE_MISSING = 206;
-    private static final int ERR_CANNOT_CREATE_FILE = 207;
-    private static final int ERR_INVALID_ZIP_EXT = 208;
-    private static final int ERR_UNKNOWN = 299;
+    public static final int ERR_BLANK_PARAMS = 201;
+    public static final int ERR_UNSUPPORTED_LANG = 202;
+    public static final int ERR_TRANSMISSION_FILE = 203;
+    public static final int ERR_FILE_BODYPART_MISSING = 204;
+    public static final int ERR_UNZIP_EXCEPTION = 205;
+    public static final int ERR_REQUIRED_FILE_MISSING = 206;
+    public static final int ERR_CANNOT_CREATE_FILE = 207;
+    public static final int ERR_INVALID_ZIP_EXT = 208;
+    public static final int ERR_UNKNOWN = 299;
 
     /**
      * API for receiving uploading algorithm request
