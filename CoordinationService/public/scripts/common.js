@@ -81,12 +81,11 @@ function formatDate(datetime) {
 }
 
 //Dynamically loads the IP of a service
-function getServiceIp(serviceType) {
-    var ip = 'http://' + location.host + '/dynamicIp/get/' + serviceType;
-    $.getJSON(ip, function (data) {
+serviceIp = '';
+function getServiceIp(serviceType, callback) {
+    var coordinationUrl = 'http://' + location.host + '/dynamicIp/get/' + serviceType;
+    $.getJSON(coordinationUrl, function (data) {
         if (data['message'] === 'success')
-            return data['ip'];
-        else
-            return undefined;
+            callback(data['ip']);
     });
 }

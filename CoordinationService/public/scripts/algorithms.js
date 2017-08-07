@@ -139,36 +139,37 @@ function submitForm() {
   if (checkAlgorithmUploadFormRequiredFields()) {
     //Sending post request
     showUploadingSpinner();
-    var serviceIp = getServiceIp('AlgInput-' + $('#language option:selected').text());
-    $.ajax({
-      url: "http://" + serviceIp + "/services/algr/upload",
-      type: "POST",
-      dataType: 'json',
-      data: form,
-      processData: false,
-      contentType: false,
-      success: function (data) {
-        showSubmissionResult("Success!", success, successText);
-        loadPage();
-      },
-      error: function (jqXHR, status, error) {
-        if (jqXHR.responseJSON) {
-          var resObject = jqXHR.responseJSON;
-          displayAlertByType(resObject);
-        } else {
-          var alert = $('#formUploadError')[0];
-          var alertText = $('#formUploadErrorText')[0];
-          var networkErr = "Upload request failed, please check your network connection";
-          showSubmissionResult(networkErr, alert, alertText);
+    var serviceType = 'AlgInput-' + $('#language option:selected').text();
+    getServiceIp(serviceType, function (serviceIp) {
+      $.ajax({
+        url: "http://" + serviceIp + "/services/algr/upload",
+        type: "POST",
+        dataType: 'json',
+        data: form,
+        processData: false,
+        contentType: false,
+        success: function (data) {
+          showSubmissionResult("Success!", success, successText);
+          loadPage();
+        },
+        error: function (jqXHR, status, error) {
+          if (jqXHR.responseJSON) {
+            var resObject = jqXHR.responseJSON;
+            displayAlertByType(resObject);
+          } else {
+            var alert = $('#formUploadError')[0];
+            var alertText = $('#formUploadErrorText')[0];
+            var networkErr = "Upload request failed, please check your network connection";
+            showSubmissionResult(networkErr, alert, alertText);
+          }
+        },
+        complete: function () {
+          $("#uploadingAlgorithm")[0].style.display = "none";
+          $(".descriptionAlgorithm").css('visibility', 'visible');
         }
-      },
-      complete: function () {
-        $("#uploadingAlgorithm")[0].style.display = "none";
-        $(".descriptionAlgorithm").css('visibility', 'visible');
-      }
+      });
     });
   }
-
 }
 
 function showUploadingSpinner() {

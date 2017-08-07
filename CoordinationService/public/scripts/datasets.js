@@ -142,30 +142,32 @@ function submitForm() {
   //Sending post request
   if (checkUploadFormRequiredFields() && checkExtension()) {
     showUploadingSpinner();
-    var serviceIp = getServiceIp('DataInput-' + $('#format option:selected').text());
-    $.ajax({
-      url: "http://" + serviceIp + "/services/datasets/upload",
-      type: "POST",
-      data: form,
-      processData: false,
-      contentType: false,
-      success: function (data) {
-        showSubmissionResult("Success!", success, successText);
-        loadPage();
-      },
-      error: function (jqXHR, status, error) {
-        if (jqXHR.responseJSON) {
-          var resObject = jqXHR.responseJSON;
-          displayAlertByType(resObject, alert, alertText);
-        } else {
-          var networkErr = "Upload request failed, please check your network connection or contact the server administrator";
-          showSubmissionResult(networkErr, alert, alertText);
+    var serviceType = 'DataInput-' + $('#format option:selected').text();
+    getServiceIp(serviceType, function (serviceIp) {
+      $.ajax({
+        url: "http://" + serviceIp + "/services/datasets/upload",
+        type: "POST",
+        data: form,
+        processData: false,
+        contentType: false,
+        success: function (data) {
+          showSubmissionResult("Success!", success, successText);
+          loadPage();
+        },
+        error: function (jqXHR, status, error) {
+          if (jqXHR.responseJSON) {
+            var resObject = jqXHR.responseJSON;
+            displayAlertByType(resObject, alert, alertText);
+          } else {
+            var networkErr = "Upload request failed, please check your network connection or contact the server administrator";
+            showSubmissionResult(networkErr, alert, alertText);
+          }
+        },
+        complete: function () {
+          $("#uploadingDataset")[0].style.display = "none";
+          $(".descriptionDataset").css('visibility', 'visible');
         }
-      },
-      complete: function () {
-        $("#uploadingDataset")[0].style.display = "none";
-        $(".descriptionDataset").css('visibility', 'visible');
-      }
+      });
     });
   }
 }
