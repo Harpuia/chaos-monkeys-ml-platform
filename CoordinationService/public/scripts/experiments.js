@@ -21,12 +21,18 @@ function loadPage() {
       for (i = 0; i < data['experimentsData'].length; i++) {
         loading = false;
         var cssLabel;
-        if (data['experimentsData'][i]['last_status'] === 'SUCCESS' || data['experimentsData'][i]['last_status'] === 'CANCELED')
+        if (data['experimentsData'][i]['last_status'] === 'SUCCESS' || data['experimentsData'][i]['last_status'] === 'CANCELED') {
           cssLabel = 'label-success';
-        else if (data['experimentsData'][i]['last_status'] === 'ERROR')
+          loading = false;
+        }
+        else if (data['experimentsData'][i]['last_status'] === 'ERROR') {
           cssLabel = 'label-danger';
-        else if (data['experimentsData'][i]['last_status'] === 'IDLE')
+          loading = false;
+        }
+        else if (data['experimentsData'][i]['last_status'] === 'IDLE') {
           cssLabel = 'label-default';
+          loading = false;
+        }
         else {
           cssLabel = 'label-warning';
           loading = true;
@@ -127,7 +133,7 @@ function stopExperiment(expName, task_id) {
           displayAlertByType("Oops! An error occurs when canceling the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
         }
       });
-    } else{
+    } else {
       displayAlertByType("Stopping experiment failed, please check your network connection, otherwise the service may not be started up." + status + error, alert, alertText);
     }
   });
