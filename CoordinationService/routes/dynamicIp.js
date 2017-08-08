@@ -13,6 +13,47 @@ router.get('/get/:serviceType', function loadIp(req, res, next) {
   });
 });
 
+//Allows to get experiment IP from experiment id
+router.get('/getExperimentIp/:experimentTaskId', function loadIp(req, res, next) {
+  //Getting the elements of the serviceType value
+  var taskId = req.params['experimentTaskId'];
+
+  //Querying for experiment type
+  //Connect to DB
+  var connection = createDbConnection();
+  connection.connect();
+  var query = 'select tasks.`type` as `type`, algorithms.`language` as `language` from tasks inner join algorithms on tasks.algorithm_id=algorithms.id where tasks.id=' + taskId;
+  logMessage(false, log.operationType.QueryData, new Date(), query);
+  //Return all services
+  var results = connection.query(query, function getTaskType(err, rows, fields) {
+    if (err) {  // pass the err to error handler
+      logMessage(true, log.errorType.DBError, new Date(), err);
+    }
+    else {
+      logMessage(false, log.operationType.ResponseReceived, new Date(), "Received the task type");
+      if (rows.length > 0) {
+        //Deciding which service to call
+        var taskType = rows[0]['type'];
+        var taskLanguage = rows[0]['language'];
+        var serviceType = '-' + taskLanguage;
+        if (taskType === 'Training')
+          serviceType = 'Train' + serviceType;
+        else
+          serviceType = 'Exec' + serviceType;
+
+        //Getting service IP
+        loadServiceIp(serviceType, function (value) {
+          res.send(value);
+        });
+      } else {
+        res.send({ message: 'No service of type ' + serviceType + ' found.', ip: undefined })
+      }
+    }
+  });
+  //Closing connection
+  connection.end();
+});
+
 loadServiceIp = function (serviceType, callback) {
   if (serviceType) {
     var typeElements = serviceType.split('-');

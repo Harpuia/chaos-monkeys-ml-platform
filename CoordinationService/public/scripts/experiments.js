@@ -68,8 +68,8 @@ function submitForm() {
     "last_updated": null,
     "description": $("#description").val()
   };
-
   if (checkRequiredFields()) {
+
     //Disabling submit button
     $('#submitButton').prop("disabled", true);
 
@@ -91,33 +91,44 @@ function submitForm() {
           var resObject = jqXHR.responseJSON;  // this object contains keys: code and msg
           displayAlertByType(resObject, alert, alertText);
         } else {
-          var networkErr = "Submitting experiment request failed, please check your network connection or the server may be not startup";
+          var networkErr = "Submitting experiment request failed, please check your network connection, otherwise the service may not be started up.";
           showSubmissionResult(networkErr, alert, alertText);
         }
       }
     });
   }
 }
+
 /* stop the experiment shown in detail now*/
-function stopExperiment(expName) {
+function stopExperiment(expName, task_id) {
+  var success = $('#formSuccess')[0];
+  var successText = $('#formSuccessText')[0];
+  var alert = $('#formError')[0];
+  var alertText = $('#formErrorText')[0];
   var experimentInfo = {
     experiment_name: expName
   }
   $('#stopExperimentButton').prop("disabled", true);
-  
-  $.ajax({
-    url: "http://127.0.0.1:8080/services/exp/stop",
-    type: "POST",
-    contentType: 'application/json',
-    data: JSON.stringify(experimentInfo),
-    success: function (data) {
-      alert("The experiment " + experimentInfo.experiment_name + " has been stopped successfully.");
-    },
-    error: function (request, status, error) {
-      //Disabling submit button
-      $('#stopExperimentButton').prop("disabled", false);
-      //TODO: change alert to bootstrap alert
-      alert("Oops! An error occurs when canceling the task. Please check the error log in log path for possible reasons: " + status + error);
+
+  //Getting experiment IP
+  $.get("dynamicIp/getExperimentIp/" + task_id, function (data) {
+    if (data.message === 'success') {
+      $.ajax({
+        url: "http://" + data.ip + "/services/exp/stop",
+        type: "POST",
+        contentType: 'application/json',
+        data: JSON.stringify(experimentInfo),
+        success: function (data) {
+          displayAlertByType("The experiment " + experimentInfo.experiment_name + " has been stopped successfully.", success, successText);
+        },
+        error: function (request, status, error) {
+          //Disabling submit button
+          $('#stopExperimentButton').prop("disabled", false);
+          displayAlertByType("Oops! An error occurs when canceling the task. Please check the error log in log path for possible reasons: " + status + error, alert, alertText);
+        }
+      });
+    } else{
+      displayAlertByType("Stopping experiment failed, please check your network connection, otherwise the service may not be started up." + status + error, alert, alertText);
     }
   });
 }
@@ -191,7 +202,7 @@ function displayDetails(experimentIndex) {
     $('#stopExperimentButton').html('<button class="btn btn-primary" id="stopButton" >Stop Experiment</button>');
     var stopButton = $('#stopButton')
     stopButton.click(function () {
-      stopExperiment(tmpExpName);
+      stopExperiment(tmpExpName, experimentsData[experimentIndex].task_id);
     });
   } else {
     $('#stopExperimentButton').html('');
