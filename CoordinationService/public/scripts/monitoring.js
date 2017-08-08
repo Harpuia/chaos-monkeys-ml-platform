@@ -18,7 +18,8 @@ setInterval(function () {
       else
         color = 'class="bg-success"';
       displayStatus = '';
-      if (item['status']) {
+      var itemType = item['type'].split('-')[0];
+      if (item['status'] && (itemType === 'DataInput' || itemType === 'AlgInput')) {
         jsonStatus = JSON.parse(item['status']);
         for (var name in jsonStatus) {
           displayStatus += '<p><strong>' + name + '</strong> :' + jsonStatus[name] + '</p>';
