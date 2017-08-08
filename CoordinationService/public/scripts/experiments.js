@@ -181,6 +181,7 @@ function displayDetails(experimentIndex) {
   $('#experimentLastStatus').text(experimentsData[experimentIndex]['last_status']);
   $('#experimentLastUpdated').text(displayDateTime(experimentsData[experimentIndex]['last_updated']));
   $('#experimentDescription').text(experimentsData[experimentIndex]['description']);
+  if (experimentsData[experimentIndex]['prediction_id']) $('#predictionPath').html('<a href="http://' + location.host + '/download/prediction/' + experimentsData[experimentIndex]['prediction_id'] + '" target="_blank">Download</a>');
 
   //Show the duration for each experiment in "xx days xx hours xx minutes xx seconds" format
   if (experimentsData[experimentIndex]['last_status'] === 'SUCCESS' || experimentsData[experimentIndex]['last_status'] === 'ERROR' || experimentsData[experimentIndex]['last_status'] === 'CANCELLED' || experimentsData[experimentIndex]['last_status'] === 'IDLE') {

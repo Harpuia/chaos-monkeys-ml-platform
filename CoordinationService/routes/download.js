@@ -3,6 +3,8 @@ var router = express.Router();
 var path = require('path');
 var utilities = require('./dbUtilities');
 var request = require('request');
+var zipFolder = require('zip-folder');
+var fs = require('fs');
 
 /* Downloads a document stored in one of the services */
 router.get('/:entity/:id', function routeRoot(req, res, next) {
@@ -10,7 +12,7 @@ router.get('/:entity/:id', function routeRoot(req, res, next) {
   var entityName = req.params['entity'];
   var entityId = req.params['id'];
   var sql;
-  var path;
+  var filePath;
   var tableName;
   switch (entityName) {
     case ('model'):
@@ -46,8 +48,24 @@ router.get('/:entity/:id', function routeRoot(req, res, next) {
     }
     else {
       if (result && result.length > 0) {
-        path = result[0]['path'];
-        res.download(path);
+        filePath = result[0]['path'];
+        if (tableName === 'models' || tableName === 'algorithms' || tableName === 'predictions') {
+          var fullPath = path.join(filePath, 'archive.zip');
+          if (!fs.existsSync(path)) {
+            zipFolder(filePath, fullPath, function (err) {
+              if (err) {
+                console.log('oh no!', err);
+              } else {
+                console.log('EXCELLENT');
+                res.download(fullPath);
+              }
+            });
+          } else{
+            res.download(fullPath);
+          }
+        } else {
+          res.download(filePath);
+        }
       }
     }
   });
