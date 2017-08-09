@@ -64,7 +64,7 @@ $ mysql -u root -p configurationdatabase < 08-08-2017-V1.4.sql
 $ mysql -u root -p logdatabase < logdb-08-06-2017-V0.2.sql
 ```
 
-* Next, you will need to configure the parameters of MySQL in both Coordination Service and the Jersey Services to your customized settings. You can do this by editing the database config files in the path `CoordinationService/config/dbConfig.json` and `JerseySerices/dbConfig.ini`.
+* Next, you will need to configure the parameters of MySQL in both Coordination Service and the Jersey Services to your customized settings. You can do this by editing the database config files in the path `CoordinationService/config/dbConfig.json`, `CoordinationService\config\logDbConfig.json` and `JerseySerices/dbConfig.ini`.
 
 ## To Build and Run the Coordination Service
 
@@ -73,13 +73,6 @@ $ cd CoordinationServices
 $ npm install
 $ npm start
 ```
-
-
-## Prerequisites
-
-You will need to install MySQL, the latest JRE (and JDK if you would like to modify the code and rebuild), the latest Maven, Node, NPM and R.
-A prerequisite to running the algorithm services is having R installed, with the commands "rscript" and "r" configured to be executed in command line.
-Before running the system, make sure you create databases ("configurationdb" and "logdb") from the scripts in the SQL folder (latest versions), then modify the configuration files: "JerseyServices\dbConfig.ini", "CoordinationService\config\dbConfig.json" and "CoordinationService\config\logDbConfig.json" to point them to the databases.
 
 ## To Build Jersey Services
 
@@ -123,12 +116,3 @@ $ bash run_training.sh
 $ cd JerseyServices/launch_scripts/
 $ bash run_algr_input.sh
 ```
-
-## To Build and Run the Coordination Service
-
-```
-$ cd CoordinationService
-$ npm install
-$ npm start
-```
-
