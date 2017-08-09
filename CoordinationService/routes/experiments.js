@@ -10,7 +10,7 @@ var dynamicIp = require('./dynamicIp');
 router.get("/list", function getExperiments(req, res, next) {
   var connection = createDbConnection();
   connection.connect();
-  var query = 'select experiments.id as id, experiments.task_id as task_id, experiments.experiment_name as experiment_name, experiments.start as start, experiments.end as end, experiments.last_status as last_status, experiments.last_updated as last_updated, experiments.description as description, experiments.error_message as error_message, predictions.id as prediction_id from experiments inner join predictions on experiments.id = predictions.experiment_id';
+  var query = 'select experiments.id as id, experiments.task_id as task_id, experiments.experiment_name as experiment_name, experiments.start as start, experiments.end as end, experiments.last_status as last_status, experiments.last_updated as last_updated, experiments.description as description, experiments.error_message as error_message, predictions.id as prediction_id from experiments left join predictions on experiments.id = predictions.experiment_id';
   logMessage(false, log.operationType.QueryData, new Date(), query);
   //Return all services
   var results = connection.query(query, function getAllExperiments(err, rows, fields) {
