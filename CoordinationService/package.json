@@ -24,6 +24,7 @@
     "should": "^11.2.1",
     "socket.io": "^2.0.3",
     "stylus": "0.54.5",
-    "supertest": "^3.0.0"
+    "supertest": "^3.0.0",
+    "zip-folder": "^1.0.0"
   }
 }
