@@ -1,4 +1,4 @@
-# CMU Chaos Monkeys Experimentation Platform
+# Chaos Monkeys Experimentation Platform
 
 ## Introduction
 
